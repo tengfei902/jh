@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jh.dao.local.AccountOprLogDao" >
+  <resultMap id="BaseResultMap" type="jh.model.AccountOprLog" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="account_id" property="accountId" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="trd_order_id" property="trdOrderId" jdbcType="BIGINT" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="no" property="no" jdbcType="VARCHAR" />
+    <result column="opr_type" property="oprType" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, account_id, user_id, trd_order_id, out_trade_no, `no`, opr_type, remark, price, 
+    `status`, version, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from account_opr_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from account_opr_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="jh.model.AccountOprLog" >
+    insert into account_opr_log (id, account_id, user_id, 
+      trd_order_id, out_trade_no, `no`, 
+      opr_type, remark, price, 
+      `status`, version, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{accountId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{trdOrderId,jdbcType=BIGINT}, #{outTradeNo,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, 
+      #{oprType,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
+      #{status,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="jh.model.AccountOprLog" >
+    insert into account_opr_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="accountId != null" >
+        account_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="trdOrderId != null" >
+        trd_order_id,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="no != null" >
+        `no`,
+      </if>
+      <if test="oprType != null" >
+        opr_type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="status != null" >
+        `status`,
+      </if>
+      <if test="version != null" >
+        version,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="trdOrderId != null" >
+        #{trdOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="oprType != null" >
+        #{oprType,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.AccountOprLog" >
+    update account_opr_log
+    <set >
+      <if test="accountId != null" >
+        account_id = #{accountId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="trdOrderId != null" >
+        trd_order_id = #{trdOrderId,jdbcType=BIGINT},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="no != null" >
+        `no` = #{no,jdbcType=VARCHAR},
+      </if>
+      <if test="oprType != null" >
+        opr_type = #{oprType,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="status != null" >
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="jh.model.AccountOprLog" >
+    update account_opr_log
+    set account_id = #{accountId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      trd_order_id = #{trdOrderId,jdbcType=BIGINT},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      `no` = #{no,jdbcType=VARCHAR},
+      opr_type = #{oprType,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      `status` = #{status,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByTrdOrderId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from account_opr_log
+    where trd_order_id = #{trdOrderId,jdbcType=BIGINT} and opr_type = #{oprType,jdbcType=INTEGER}
+  </select>
+
+  <update id="updateStatusById" >
+    update account_opr_log
+    set
+    `status` = #{toStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
+  </update>
+</mapper>

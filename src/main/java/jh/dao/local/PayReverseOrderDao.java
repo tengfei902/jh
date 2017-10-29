@@ -1,0 +1,22 @@
+package jh.dao.local;
+
+import jh.model.PayReverseOrder;
+import org.apache.ibatis.annotations.Param;
+
+public interface PayReverseOrderDao {
+    int deleteByPrimaryKey(Long id);
+
+    int insert(PayReverseOrder record);
+
+    int insertSelective(PayReverseOrder record);
+
+    PayReverseOrder selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(PayReverseOrder record);
+
+    int updateByPrimaryKey(PayReverseOrder record);
+
+    PayReverseOrder selectByTrdOrder(@Param("outTradeNo") String outTradeNo);
+
+    int updateStatus(@Param("id")Long id,@Param("fromStatus")Integer fromStatus,@Param("toStatus") Integer toStatus);
+}
