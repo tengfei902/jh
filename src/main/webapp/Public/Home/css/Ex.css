@@ -1,0 +1,389 @@
+/* CSS Document */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #fff;
+}
+.submitbtn {
+  width: 140px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  color: #fff;
+  background-color: #009DFC;
+  border: 1px solid #009dfc;
+  font-size: 16px;
+  margin-right: 70px;
+  margin-bottom: 20px;
+}
+.box {
+  width: 1200px;
+  margin: 0 auto;
+  box-shadow: 1px 1px 5px 5px #eee;
+  margin-top: 56px;
+  margin-bottom: 30px;
+  padding-top: 20px;
+  /*头部*/
+  /*步骤*/
+  /*产品提交页面*/
+  /*支付页面*/
+  /*提交按钮*/
+  /*弹窗*/
+}
+.box .ibox-title {
+  width: 1160px;
+  height: 60px;
+  margin: 0 auto;
+  line-height: 60px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  color: #333333;
+}
+.box .ibox-content {
+  margin-top: 40px;
+}
+.box .ibox-content .steps {
+  height: 40px;
+  width: 774px;
+  margin: 0 auto;
+}
+.box .ibox-content .steps .step:first-of-type {
+  margin-left: 0;
+}
+.box .ibox-content .steps .step {
+  width: 198px;
+  height: 49px;
+  float: left;
+  margin-left: 90px;
+  line-height: 40px;
+  text-align: left;
+  padding-left: 28px;
+  font-size: 18px;
+  color: #bfbfbf;
+  background-image: url("../images/no.png")/*tpa=http://demo.ddi9.com/Public/Home/images/no.png*/;
+}
+.box .ibox-content .steps .step .num {
+  font-size: 26px;
+}
+.box .ibox-content .steps .current {
+  background-image: url("../images/current.png")/*tpa=http://demo.ddi9.com/Public/Home/images/current.png*/;
+  color: #fff;
+}
+.box .product {
+  width: 1160px;
+  margin: 0 auto;
+  margin-top: 64px;
+}
+.box .product::before {
+  content: '';
+  display: block;
+  clear: both;
+}
+.box .product::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.box .product .product-img {
+  width: 220px;
+  height: 264px;
+  margin-left: 76px;
+  float: left;
+}
+.box .product .product-img img {
+  width: 100%;
+}
+.box .product .product-info {
+  width: 500px;
+  float: left;
+  margin-left: 29px;
+}
+.box .product .product-info .product-name {
+  width: 100%;
+  font-size: 16px;
+  color: #666666;
+}
+.box .product .product-info .paymoney {
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 16px;
+  color: #666666;
+  margin-top: 58px;
+}
+.box .product .product-info .paymoney input {
+  width: 130px;
+  height: 30px;
+  margin-left: 10px;
+}
+.box .pay {
+  width: 1160px;
+  margin: 0 auto;
+  margin-top: 48px;
+}
+.box .pay .notice {
+  width: 100%;
+}
+.box .pay .notice .notice-up {
+  font-size: 16px;
+  color: #333333;
+}
+.box .pay .notice .notice-down {
+  font-size: 12px;
+  color: #666666;
+  margin-top: 9px;
+}
+.box .pay .notice .notice-down .red {
+  color: #fd7b7b;
+}
+.box .pay .product-info {
+  width: 100%;
+  height: 60px;
+  line-height: 60px;
+  margin-top: 26px;
+  border: 1px solid #eee;
+}
+.box .pay .product-info > div {
+  width: 33.3%;
+  height: 60px;
+  float: left;
+}
+.box .pay .product-info > div input {
+  width: 64%;
+  height: 30px;
+  margin-top: 15px;
+  border: none;
+  background-color: transparent;
+}
+.box .pay .product-info > div:first-of-type {
+  padding-left: 50px;
+}
+.box .pay .product-info > div:last-of-type {
+  padding-right: 50px;
+}
+.box .pay .product-info .money {
+  font-size: 24px;
+  color: #fd7b7b;
+  padding-left: 10px;
+}
+.box .pay .product-info .textleft {
+  text-align: left;
+}
+.box .pay .product-info .textcenter {
+  text-align: center;
+}
+.box .pay .product-info .textright {
+  text-align: right;
+}
+.box .pay .paytype-title {
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  color: #666666;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.box .pay .type {
+  width: 100%;
+  border: 1px solid #eee;
+}
+.box .pay .type .paytypes {
+  width: 100%;
+  height: 40px;
+  margin: 22px;
+  margin-right: 0px;
+}
+.box .pay .type .paytypes > div {
+  width: 150px;
+  height: 40px;
+  float: left;
+  margin-left: 40px;
+  border: 1px solid #eee;
+  text-align: center;
+}
+.box .pay .type .paytypes > div:first-of-type {
+  margin-left: 0px;
+}
+.box .pay .type .banklist {
+  display: none;
+}
+.box .pay .type .banklist .bank-title {
+  font-size: 14px;
+  color: #666;
+  padding-left: 22px;
+}
+.box .pay .type .banklist .bank-title .blue {
+  color: #119DFC;
+}
+.box .pay .type .banklist .bank-item {
+  width: 100%;
+  height: 40px;
+  margin-top: 16px;
+}
+.box .pay .type .banklist .bank-item label {
+  width: 180px;
+  height: 40px;
+  margin-left: 40px;
+  border: 1px solid #eee;
+  text-align: center;
+  line-height: 40px;
+}
+.box .pay .type .banklist .bank-item label:first-of-type {
+  margin-left: 34px;
+}
+.box .pay .type .banklist .bank-item label:last-of-type {
+  margin-right: 30px;
+}
+.box .pay .type .banklist .bank-item #more {
+  text-align: left;
+  border: none;
+}
+.box .pay .type .banklist .bank-item #more a {
+  font-size: 12px;
+  color: #0099ff;
+}
+.box .pay .type .banklist .bank-item:last-of-type {
+  margin-bottom: 22px;
+}
+.box .pay .type .active {
+  border: 1px solid #009dfc !important;
+}
+.box .mask {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.box .notice-box {
+  display: none;
+  width: 400px;
+  height: 238px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -119px;
+  margin-left: -200px;
+  background-color: #fff;
+}
+.box .notice-box .box-title {
+  width: 100%;
+  height: 38px;
+  text-align: center;
+  line-height: 38px;
+  font-size: 14px;
+  color: #333333;
+}
+.box .notice-box .tip {
+  width: 100%;
+  text-align: center;
+}
+.box .notice-box .tip1 {
+  color: #333333;
+  font-size: 13px;
+  margin-top: 26px;
+}
+.box .notice-box .tip2 {
+  font-size: 12px;
+  color: #767676;
+  margin-top: 10px;
+}
+.box .notice-box .tip3 {
+  font-size: 12px;
+  color: #666666;
+  margin-top: 14px;
+}
+.box .notice-box .notice-btn {
+  width: 100%;
+  height: 30px;
+  margin-top: 26px;
+  text-align: center;
+}
+.box .notice-box .notice-btn .btn {
+  width: 130px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-size: 14px;
+  padding: 0;
+}
+.box .notice-box .notice-btn .over {
+  border: 1px solid #119dfc;
+  background-color: #119dfc;
+  color: #fff;
+}
+.box .notice-box .notice-btn .change {
+  border: 1px solid #ddd;
+  color: #666666;
+  margin-left: 30px;
+}
+.box .callback {
+  width: 1120px;
+  margin: 0 auto;
+  margin-top: 106px;
+  padding-bottom: 20px;
+}
+.box .callback .title {
+  margin-left: 10px;
+}
+.box .callback .title .tiptext {
+  font-size: 22px;
+  color: #333333;
+  margin-left: 22px;
+  line-height: 20px;
+}
+.box .callback .callback-info {
+  width: 1120px;
+  margin: 0 auto;
+  border: 1px solid #999999;
+}
+.box .callback .callback-info > div {
+  font-size: 16px;
+  color: #333333;
+  margin-top: 18px;
+  margin-left: 50px;
+}
+.box .callback .callback-info > div .callback-text {
+  color: #666666;
+}
+.box .callback .callback-info > div .pink {
+  color: #fd7b7b;
+}
+.box .callback .callback-info > div:last-of-type {
+  margin-bottom: 20px;
+}
+.box .callback .callback-info > div:first-of-type {
+  margin-top: 20px;
+}
+.box .callback .toindex {
+  text-align: right;
+  margin-top: 90px;
+}
+.box .callback .toindex button {
+  height: 50px;
+  line-height: 50px;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 3px;
+}
+.box .callback .toindex .agen {
+  width: 150px;
+  background-color: #fd7b7b;
+  border: 1px solid #fd7b7b;
+  margin-right: 48px;
+}
+.box .callback .toindex .goindex {
+  width: 180px;
+  background-color: #119dfc;
+  border: 1px solid #119dfc;
+}
+.box .submit {
+  width: 100%;
+  height: 90px;
+  line-height: 90px;
+  margin-top: 12px;
+  text-align: right;
+}
