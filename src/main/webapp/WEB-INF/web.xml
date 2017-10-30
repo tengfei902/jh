@@ -4,7 +4,6 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
-
   <servlet>
     <servlet-name>weaverServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -34,6 +33,10 @@
   <listener>
     <listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
   </listener>
+
+  <welcome-file-list>
+    <welcome-file>shouye.html</welcome-file>
+  </welcome-file-list>
 
   <filter>
     <filter-name>characterEncodingFilter</filter-name>

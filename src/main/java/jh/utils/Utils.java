@@ -1,11 +1,15 @@
 package jh.utils;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
+import sun.security.provider.MD5;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -74,6 +78,16 @@ public class Utils {
         int z = objs.length;
         for(int i = 0; i < z - 1; i += 2) {
             map.put((K)objs[i], (V)objs[i + 1]);
+        }
+    }
+
+    public static String convertPassword(String str) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("md5");
+            return new BigInteger(1, digest.digest()).toString(16);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

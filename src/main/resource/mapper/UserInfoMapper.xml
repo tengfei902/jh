@@ -13,10 +13,11 @@
     <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
     <result column="outlet_no" property="outletNo" jdbcType="VARCHAR" />
     <result column="user_type" property="userType" jdbcType="INTEGER" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, user_name, login_id, `password`, bank, deposit, card_no, `status`, merchant_no, 
-    outlet_no, user_type
+    outlet_no, user_type,email
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -38,7 +39,7 @@
       #{cardNo,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{merchantNo,jdbcType=VARCHAR}, 
       #{outletNo,jdbcType=VARCHAR}, #{userType,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.UserInfo" >
+  <insert id="insertSelective" parameterType="jh.model.UserInfo"  useGeneratedKeys="true" keyProperty="id">
     insert into user_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -74,6 +75,9 @@
       <if test="userType != null" >
         user_type,
       </if>
+      <if test="email != null" >
+        email,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -108,6 +112,9 @@
       </if>
       <if test="userType != null" >
         #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -166,7 +173,7 @@
     select
     <include refid="Base_Column_List" />
     from user_info
-    where login_id = #{loginId,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
+    where login_id = #{loginId,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR} and status != 99
   </select>
 
   <select id="selectByMerchantNo" resultMap="BaseResultMap">
@@ -174,5 +181,12 @@
     <include refid="Base_Column_List" />
     from user_info
     where merchant_no =  #{merchantNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByLoginId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where login_id = #{loginId,jdbcType=VARCHAR}
   </select>
 </mapper>

@@ -23,6 +23,8 @@ public class UserInfo {
 
     private Integer userType;
 
+    private String email;
+
     public Long getId() {
         return id;
     }
@@ -109,5 +111,26 @@ public class UserInfo {
 
     public void setUserType(Integer userType) {
         this.userType = userType;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public interface STATUS {
+        int INIT = 0;
+        int COMPLETE_INFO = 1;
+        int AVAILABLE = 2;
+        int INVALID = 99;
+    }
+
+    public interface USER_TYPE {
+        int ADMIN = 0;
+        int AGENT = 1;
+        int CUSTOMER = 2;
     }
 }

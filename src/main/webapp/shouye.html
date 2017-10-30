@@ -257,7 +257,7 @@
 <!-- 登陆框 -->
 <section id="login">
 <div class="login-zz"></div>
-<form class="form-horizontal" id="formlogin" method="post" role="form" action="/User_Login_checklogin.html">
+<form class="form-horizontal" id="formlogin" method="post" role="form" action="/jh/user/login">
   <div class="login-box">
       <div class="login-title">商户登陆</div>
       <div class="login-name">
@@ -266,9 +266,9 @@
       <div class="login-password">
         <input type="password" class="form-control pword m-b" id="password" name="password" placeholder="密码" required="" aria-required="true"/>
       </div>
-      <div class="login-verify">
-        <input type="text" class="form-control uname m-b" id="verification" name="varification" ajaxurl="" placeholder="验证码" required=""/><img class="verifyimg" alt="点击刷新验证码" src="User_Login_verifycode.html" style="cursor:pointer;" onclick='javascript:$(".verifyimg").attr("src","User_Login_verifycode.html?a="+(Math.random()*100))' itle="点击刷新验证码"> 
-      </div>
+      <!--<div class="login-verify">-->
+        <!--<input type="text" class="form-control uname m-b" id="verification" name="varification" ajaxurl="" placeholder="验证码" required=""/><img class="verifyimg" alt="点击刷新验证码" src="User_Login_verifycode.html" style="cursor:pointer;" onclick='javascript:$(".verifyimg").attr("src","User_Login_verifycode.html?a="+(Math.random()*100))' itle="点击刷新验证码"> -->
+      <!--</div>-->
       <div class="login-btn">
           <button class="btn btn-success btn-block">登录</button>
       </div>

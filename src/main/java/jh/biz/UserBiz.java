@@ -5,5 +5,7 @@ package jh.biz;
  */
 public interface UserBiz {
 
+    Long register(String username,String password,String email);
 
+    boolean login(String loginId,String password);
 }

@@ -1,0 +1,480 @@
+<html><head><link id="layuicss-laydate" rel="stylesheet" href="http://demo.ddi9.com/Public/Front/js/plugins/layui/css/modules/laydate/default/laydate.css?v=5.0.2" media="all"><link id="layuicss-layer" rel="stylesheet" href="http://demo.ddi9.com/Public/Front/js/plugins/layui/css/modules/layer/default/layer.css?v=3.0.3" media="all"><link id="layuicss-skincodecss" rel="stylesheet" href="http://demo.ddi9.com/Public/Front/js/plugins/layui/css/modules/code.css" media="all"></head><body class="gray-bg"><div class="bread"><span class="bread-title">您的当前位置 : </span>订单管理 &gt;&gt; 交易管理</div>
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>威付宝支付系统---管理</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="/Public/Front/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/Public/Front/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/Public/Front/css/animate.css" rel="stylesheet">
+    <link href="/Public/Front/css/style.css" rel="stylesheet">
+    <link href="/Public/Admin/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="/Public/Front/js/plugins/layui/css/layui.css">
+    <link rel="stylesheet" href="css/bootstrap.css.css">
+    <link rel="stylesheet" href="css/layui.css">
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .layui-form-label {width:110px;padding:4px}
+        .layui-form-item .layui-form-checkbox[lay-skin="primary"]{margin-top:0;}
+        .layui-form-switch {width:54px;margin-top:0px;}
+    </style>
+
+
+<div class="wrapper wrapper-content animated">
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="ibox float-e-margins">
+      <!--条件查询-->
+      <div class="ibox-title">
+        <h5>订单管理</h5>
+        <div class="ibox-tools">
+          <i class="layui-icon" onclick="location.replace(location.href);" title="刷新" style="cursor:pointer;">ဂ</i>
+        </div>
+      </div>
+      <!--条件查询-->
+      <div class="ibox-content">
+        <form class="layui-form" action="" method="get" autocomplete="off" id="orderform">
+          <input type="hidden" name="m" value="Admin">
+          <input type="hidden" name="c" value="Order">
+          <input type="hidden" name="a" value="index" id="action">
+          <div class="layui-form-item">
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <input type="text" name="memberid" autocomplete="off" placeholder="请输入商户号" class="layui-input" value="">
+              </div>
+
+              <div class="layui-input-inline">
+                <input type="text" name="orderid" autocomplete="off" placeholder="请输入订单号" class="layui-input" value="">
+              </div>
+              <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="createtime" id="createtime" placeholder="创建起始时间" value="" lay-key="1">
+              </div>
+              <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="successtime" id="successtime" placeholder="完成起始时间" value="" lay-key="2">
+              </div>
+            </div>
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <select name="tongdao">
+                  <option value="">全部通道</option>
+                  <option value="901">微信公众号</option><option value="902">微信扫码支付</option><option value="903">支付宝扫码支付</option><option value="904">支付宝手机</option><option value="905">QQ手机支付</option><option value="907">网银支付</option><option value="908">QQ扫码支付</option><option value="909">百度钱包</option><option value="910">京东支付</option><option value="911">牛支付微信扫码</option><option value="912">牛支付支付宝扫码</option><option value="913">工商银行</option><option value="914">招商银行</option><option value="915">农业银行</option><option value="916">建设银行</option><option value="917">交通银行</option><option value="918">兴业银行</option><option value="919">民生银行</option><option value="920">光大银行</option><option value="921">中国银行</option><option value="922">中信银行</option><option value="923">深圳发展银行</option><option value="924">广发银行</option><option value="925">上海浦东发展银行</option><option value="926">中国邮政</option><option value="927">平安银行</option><option value="928">华夏银行</option><option value="930">QQ钱包</option>                </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input type="text" placeholder="全部通道" value="" readonly="" class="layui-input layui-unselect"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit"><dd lay-value="" class="layui-select-tips">全部通道</dd><dd lay-value="901" class="">微信公众号</dd><dd lay-value="902" class="">微信扫码支付</dd><dd lay-value="903" class="">支付宝扫码支付</dd><dd lay-value="904" class="">支付宝手机</dd><dd lay-value="905" class="">QQ手机支付</dd><dd lay-value="907" class="">网银支付</dd><dd lay-value="908" class="">QQ扫码支付</dd><dd lay-value="909" class="">百度钱包</dd><dd lay-value="910" class="">京东支付</dd><dd lay-value="911" class="">牛支付微信扫码</dd><dd lay-value="912" class="">牛支付支付宝扫码</dd><dd lay-value="913" class="">工商银行</dd><dd lay-value="914" class="">招商银行</dd><dd lay-value="915" class="">农业银行</dd><dd lay-value="916" class="">建设银行</dd><dd lay-value="917" class="">交通银行</dd><dd lay-value="918" class="">兴业银行</dd><dd lay-value="919" class="">民生银行</dd><dd lay-value="920" class="">光大银行</dd><dd lay-value="921" class="">中国银行</dd><dd lay-value="922" class="">中信银行</dd><dd lay-value="923" class="">深圳发展银行</dd><dd lay-value="924" class="">广发银行</dd><dd lay-value="925" class="">上海浦东发展银行</dd><dd lay-value="926" class="">中国邮政</dd><dd lay-value="927" class="">平安银行</dd><dd lay-value="928" class="">华夏银行</dd><dd lay-value="930" class="">QQ钱包</dd></dl></div>
+              </div>
+              <div class="layui-input-inline">
+                <select name="bank">
+                  <option value="">全部银行</option>
+                  <option value="WxSm">微信扫码支付</option><option value="WxGzh">微信H5</option><option value="Aliscan">支付宝扫码</option><option value="Aliwap">支付宝H5</option><option value="QQSCAN">QQ扫码</option><option value="NiuZhiFu">牛支付</option>                </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input type="text" placeholder="全部银行" value="" readonly="" class="layui-input layui-unselect"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit"><dd lay-value="" class="layui-select-tips">全部银行</dd><dd lay-value="WxSm" class="">微信扫码支付</dd><dd lay-value="WxGzh" class="">微信H5</dd><dd lay-value="Aliscan" class="">支付宝扫码</dd><dd lay-value="Aliwap" class="">支付宝H5</dd><dd lay-value="QQSCAN" class="">QQ扫码</dd><dd lay-value="NiuZhiFu" class="">牛支付</dd></dl></div>
+              </div>
+              <div class="layui-input-inline">
+                <select name="status">
+                  <option value="">全部状态</option>
+                  <option value="0">未处理</option>
+                  <option value="1">成功，未返回</option>
+                  <option value="2">成功，已返回</option>
+                </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input type="text" placeholder="全部状态" value="" readonly="" class="layui-input layui-unselect"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit"><dd lay-value="" class="layui-select-tips">全部状态</dd><dd lay-value="0" class="">未处理</dd><dd lay-value="1" class="">成功，未返回</dd><dd lay-value="2" class="">成功，已返回</dd></dl></div>
+              </div>
+              <div class="layui-input-inline">
+                <select name="ddlx">
+                  <option value="">订单类型</option>
+                  <option value="0">收款订单</option>
+                  <option value="1">充值订单</option>
+                </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input type="text" placeholder="订单类型" value="" readonly="" class="layui-input layui-unselect"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit"><dd lay-value="" class="layui-select-tips">订单类型</dd><dd lay-value="0" class="">收款订单</dd><dd lay-value="1" class="">充值订单</dd></dl></div>
+              </div>
+            </div>
+
+            <div class="layui-inline">
+              <button type="submit" class="layui-btn"><span class="glyphicon glyphicon-search"></span> 搜索
+              </button>
+              <a href="javascript:;" id="export" class="layui-btn layui-btn-danger"><span class="glyphicon glyphicon-export"></span> 导出数据</a>
+            </div>
+          </div>
+        </form>
+        <blockquote class="layui-elem-quote" style="font-size:14px;padding;8px;">成功交易总金额：<span class="label label-info">0元</span> 平台收入：<span class="label label-info">0元</span> 支付金额：<span class="label label-info">0元</span></blockquote>
+        <!--交易列表-->
+        <table class="layui-table" lay-data="{width:'100%',id:'userData'}">
+          <thead>
+          <tr>
+            <th lay-data="{field:'key',width:60}"></th>
+            <th lay-data="{field:'ddlx', width:90}">订单类型</th>
+            <th lay-data="{field:'out_trade_id', width:240,style:'color:#060;'}">订单号</th>
+            <th lay-data="{field:'memberid', width:90}">商户编号</th>
+            <th lay-data="{field:'amount', width:100,style:'color:#060;'}">交易金额</th>
+            <th lay-data="{field:'rate', width:90}">手续费</th>
+            <th lay-data="{field:'actualamount', width:100,style:'color:#C00;'}">实际金额</th>
+            <th lay-data="{field:'applydate', width:160}">提交时间</th>
+            <th lay-data="{field:'successdate', width:160}">成功时间</th>
+            <th lay-data="{field:'zh_tongdao', width:120}">支付通道</th>
+            <th lay-data="{field:'bankname', width:120}">支付银行</th>
+            <th lay-data="{field:'tjurl', width:100}">来源地址</th>
+            <th lay-data="{field:'status', width:110}">状态</th>
+            <th lay-data="{field:'op',width:80}">操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+              <td>261</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710181032137449                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-18 10:32:23</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710181032137449','/Admin_Order_show_oid_261.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>260</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710172341553788                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">0.01</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">0.01</td>
+              <td style="text-align:center;">2017-10-17 23:42:05</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710172341553788','/Admin_Order_show_oid_260.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>259</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710172204158124                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 22:04:18</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付微信扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710172204158124','/Admin_Order_show_oid_259.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>258</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710171836006281                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 18:36:03</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710171836006281','/Admin_Order_show_oid_258.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>257</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710171827383316                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 18:27:46</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710171827383316','/Admin_Order_show_oid_257.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>256</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710171537238462                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 15:37:26</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710171537238462','/Admin_Order_show_oid_256.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>255</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710171446139382                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 14:46:18</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710171446139382','/Admin_Order_show_oid_255.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>254</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710171250426166                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 12:50:45</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710171250426166','/Admin_Order_show_oid_254.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>253</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710170826214701                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-17 08:26:25</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付微信扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710170826214701','/Admin_Order_show_oid_253.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>252</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710162109002724                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-16 21:09:03</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710162109002724','/Admin_Order_show_oid_252.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>251</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710161937069158                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-16 19:37:19</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710161937069158','/Admin_Order_show_oid_251.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>250</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710160050369823                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-16 00:50:46</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付微信扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710160050369823','/Admin_Order_show_oid_250.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>249</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710151801055616                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-15 18:01:08</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710151801055616','/Admin_Order_show_oid_249.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>248</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710151526007324                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-15 15:26:11</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710151526007324','/Admin_Order_show_oid_248.html',600,400)">查看
+              </a></td>
+            </tr><tr>
+              <td>247</td>
+              <td>
+                收款              </td>
+              <td style="text-align:center; color:#090;">Demopay201710150335452373                              </td>
+              <td style="text-align:center;">10011</td>
+              <td style="text-align:center; color:#060">2.00</td>
+              <td style="text-align:center; color:#666">0.00</td>
+              <td style="text-align:center; color:#C00">2.00</td>
+              <td style="text-align:center;">2017-10-15 03:35:53</td>
+              <td style="text-align:center;"> ---</td>
+              <td style="text-align:center;">牛支付</td>
+              <td style="text-align:center;">牛支付支付宝扫码</td>
+              <td style="text-align:center;"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></td>
+              <td style="text-align:center; color:#369"><span style="color:#f00">未处理</span></td>
+              <td><a href="javascript:order_view('系统订单号:Demopay201710150335452373','/Admin_Order_show_oid_247.html',600,400)">查看
+              </a></td>
+            </tr>          </tbody>
+        </table><div class="layui-form layui-border-box layui-table-view" lay-filter="LAY-table-1" style="width:100%px; "><div class="layui-table-header"><table cellspacing="0" cellpadding="0" border="0" class="layui-table"><thead><tr><th data-field="key"><div class="layui-table-cell laytable-cell-1-key"><span></span></div></th><th data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx"><span>订单类型</span></div></th><th data-field="out_trade_id"><div class="layui-table-cell laytable-cell-1-out_trade_id"><span>订单号</span></div></th><th data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid"><span>商户编号</span></div></th><th data-field="amount"><div class="layui-table-cell laytable-cell-1-amount"><span>交易金额</span></div></th><th data-field="rate"><div class="layui-table-cell laytable-cell-1-rate"><span>手续费</span></div></th><th data-field="actualamount"><div class="layui-table-cell laytable-cell-1-actualamount"><span>实际金额</span></div></th><th data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate"><span>提交时间</span></div></th><th data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"><span>成功时间</span></div></th><th data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao"><span>支付通道</span></div></th><th data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname"><span>支付银行</span></div></th><th data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><span>来源地址</span></div></th><th data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span>状态</span></div></th><th data-field="op"><div class="layui-table-cell laytable-cell-1-op"><span>操作</span></div></th></tr></thead></table></div><div class="layui-table-body layui-table-main"><table cellspacing="0" cellpadding="0" border="0" class="layui-table"><tbody><tr data-index="0"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">261</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710181032137449                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-18 10:32:23</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710181032137449','/Admin_Order_show_oid_261.html',600,400)">查看
+              </a></div></td></tr><tr data-index="1"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">260</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710172341553788                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">0.01</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">0.01</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 23:42:05</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710172341553788','/Admin_Order_show_oid_260.html',600,400)">查看
+              </a></div></td></tr><tr data-index="2"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">259</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710172204158124                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 22:04:18</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付微信扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710172204158124','/Admin_Order_show_oid_259.html',600,400)">查看
+              </a></div></td></tr><tr data-index="3"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">258</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710171836006281                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 18:36:03</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710171836006281','/Admin_Order_show_oid_258.html',600,400)">查看
+              </a></div></td></tr><tr data-index="4"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">257</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710171827383316                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 18:27:46</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710171827383316','/Admin_Order_show_oid_257.html',600,400)">查看
+              </a></div></td></tr><tr data-index="5"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">256</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710171537238462                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 15:37:26</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710171537238462','/Admin_Order_show_oid_256.html',600,400)">查看
+              </a></div></td></tr><tr data-index="6"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">255</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710171446139382                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 14:46:18</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710171446139382','/Admin_Order_show_oid_255.html',600,400)">查看
+              </a></div></td></tr><tr data-index="7"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">254</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710171250426166                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 12:50:45</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710171250426166','/Admin_Order_show_oid_254.html',600,400)">查看
+              </a></div></td></tr><tr data-index="8"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">253</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710170826214701                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-17 08:26:25</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付微信扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710170826214701','/Admin_Order_show_oid_253.html',600,400)">查看
+              </a></div></td></tr><tr data-index="9"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">252</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710162109002724                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-16 21:09:03</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710162109002724','/Admin_Order_show_oid_252.html',600,400)">查看
+              </a></div></td></tr><tr data-index="10"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">251</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710161937069158                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-16 19:37:19</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710161937069158','/Admin_Order_show_oid_251.html',600,400)">查看
+              </a></div></td></tr><tr data-index="11"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">250</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710160050369823                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-16 00:50:46</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付微信扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710160050369823','/Admin_Order_show_oid_250.html',600,400)">查看
+              </a></div></td></tr><tr data-index="12"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">249</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710151801055616                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-15 18:01:08</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710151801055616','/Admin_Order_show_oid_249.html',600,400)">查看
+              </a></div></td></tr><tr data-index="13"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">248</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710151526007324                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-15 15:26:11</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710151526007324','/Admin_Order_show_oid_248.html',600,400)">查看
+              </a></div></td></tr><tr data-index="14"><td data-field="key"><div class="layui-table-cell laytable-cell-1-key">247</div></td><td data-field="ddlx"><div class="layui-table-cell laytable-cell-1-ddlx">
+                收款              </div></td><td data-field="out_trade_id" style="color:#060;"><div class="layui-table-cell laytable-cell-1-out_trade_id">Demopay201710150335452373                              </div></td><td data-field="memberid"><div class="layui-table-cell laytable-cell-1-memberid">10011</div></td><td data-field="amount" style="color:#060;"><div class="layui-table-cell laytable-cell-1-amount">2.00</div></td><td data-field="rate"><div class="layui-table-cell laytable-cell-1-rate">0.00</div></td><td data-field="actualamount" style="color:#C00;"><div class="layui-table-cell laytable-cell-1-actualamount">2.00</div></td><td data-field="applydate"><div class="layui-table-cell laytable-cell-1-applydate">2017-10-15 03:35:53</div></td><td data-field="successdate"><div class="layui-table-cell laytable-cell-1-successdate"> ---</div></td><td data-field="zh_tongdao"><div class="layui-table-cell laytable-cell-1-zh_tongdao">牛支付</div></td><td data-field="bankname"><div class="layui-table-cell laytable-cell-1-bankname">牛支付支付宝扫码</div></td><td data-field="tjurl"><div class="layui-table-cell laytable-cell-1-tjurl"><a href="http://demo.ddi9.com/Ex_pay.html" target="_blank" title="http://demo.ddi9.com/Ex_pay.html">
+                来源地址</a></div></td><td data-field="status"><div class="layui-table-cell laytable-cell-1-status"><span style="color:#f00">未处理</span></div></td><td data-field="op"><div class="layui-table-cell laytable-cell-1-op"><a href="javascript:order_view('系统订单号:Demopay201710150335452373','/Admin_Order_show_oid_247.html',600,400)">查看
+              </a></div></td></tr></tbody></table></div><style>.laytable-cell-1-key{ width:60px }.laytable-cell-1-ddlx{ width:90px }.laytable-cell-1-out_trade_id{ width:240px }.laytable-cell-1-memberid{ width:90px }.laytable-cell-1-amount{ width:100px }.laytable-cell-1-rate{ width:90px }.laytable-cell-1-actualamount{ width:100px }.laytable-cell-1-applydate{ width:160px }.laytable-cell-1-successdate{ width:160px }.laytable-cell-1-zh_tongdao{ width:120px }.laytable-cell-1-bankname{ width:120px }.laytable-cell-1-tjurl{ width:100px }.laytable-cell-1-status{ width:110px }.laytable-cell-1-op{ width:80px }</style></div>
+        <!--交易列表-->
+        <div class="pagex"> <div class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">  <span class="layui-laypage-curr current"><em class="layui-laypage-em"></em><em>1</em></span><a class="num" href="/Admin_Order_index_p_2.html">2</a><a class="num" href="/Admin_Order_index_p_3.html">3</a><a class="num" href="/Admin_Order_index_p_4.html">4</a><a class="num" href="/Admin_Order_index_p_5.html">5</a> <a class="next layui-laypage-next" href="/Admin_Order_index_p_2.html">下一页</a> </div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/jquery.peity.min.js"></script>
+<script src="js/content.js"></script>
+<script src="js/layui.all.js" charset="utf-8"></script>
+<script src="js/x-layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'form'], function() {
+        var laydate = layui.laydate //日期
+            , laypage = layui.laypage //分页
+            ,layer = layui.layer //弹层
+            ,form = layui.form //表单
+            , table = layui.table; //表格
+        //日期时间范围
+        laydate.render({
+            elem: '#createtime'
+            , type: 'datetime'
+            ,theme: 'molv'
+            , range: '|'
+        });
+        //日期时间范围
+        laydate.render({
+            elem: '#successtime'
+            , type: 'datetime'
+            ,theme: 'molv'
+            , range: '|'
+        });
+    });
+    /*订单-查看*/
+    function order_view(title,url,w,h){
+        x_admin_show(title,url,w,h);
+    }
+    $('#export').on('click',function(){
+        window.location.href
+            ="/Admin_Order_exportorder.html";
+    });
+    
+</script>
+
+</body></html>

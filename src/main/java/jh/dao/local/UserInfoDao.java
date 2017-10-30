@@ -19,4 +19,6 @@ public interface UserInfoDao {
     UserInfo checkLogin(@Param("loginId")String loginId,@Param("password")String password);
 
     UserInfo selectByMerchantNo(@Param("merchantNo") String merchantNo);
+
+    UserInfo selectByLoginId(@Param("loginId") String loginId);
 }
