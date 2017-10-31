@@ -50,6 +50,10 @@
 <script src="#springUrl('/Public/Front/js/hplus.js')"></script>
 <script type="text/javascript" src="#springUrl('/Public/Front/js/contabs.js')"></script>
 <script src="#springUrl('/Public/Front/js/plugins/pace/pace.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/peity/jquery.peity.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/content.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/layui/layui.js')" charset="utf-8"></script>
+<script src="#springUrl('/Public/Front/js/x-layui.js')" charset="utf-8"></script>
 
 <script>
     $(".fa").click(function(){
