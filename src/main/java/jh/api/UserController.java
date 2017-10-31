@@ -9,6 +9,7 @@ import jh.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -84,6 +85,28 @@ public class UserController {
         String bank = request.getParameter("bank");
         String deposit = request.getParameter("deposit");
         String cardNo = request.getParameter("cardNo");
+    }
 
+    @RequestMapping(value="/hello")
+    public ModelAndView printWelcome(HttpServletRequest request,HttpServletResponse response) {
+        ModelAndView mav= new ModelAndView();
+        mav.addObject("city","test");
+        mav.setViewName("hello");
+        return mav;
+    }
+
+    @RequestMapping(value="/redirect/{pathStr}")
+    public ModelAndView redirect(@PathVariable("pathStr") String pathStr) {
+        ModelAndView mav= new ModelAndView();
+        mav.setViewName("user/"+pathStr);
+        return mav;
+    }
+
+    @RequestMapping(value="/getFrame/{page}")
+    public ModelAndView getFrame(@PathVariable("page") String page) {
+        ModelAndView mav= new ModelAndView();
+        mav.addObject("page",page);
+        mav.setViewName("hello");
+        return mav;
     }
 }

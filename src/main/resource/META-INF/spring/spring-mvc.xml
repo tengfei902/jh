@@ -25,9 +25,4 @@
             <beans:bean class="jh.interceptor.UserInterceptor"/>
         </mvc:interceptor>
     </mvc:interceptors>
-
-    <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
-        <beans:property name="prefix" value=""/>
-        <beans:property name="suffix" value=""/>
-    </beans:bean>
 </beans:beans>

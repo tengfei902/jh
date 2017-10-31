@@ -23,4 +23,23 @@
 	<task:executor id="asyncExecutor" pool-size="5-10" queue-capacity="200" rejection-policy="CALLER_RUNS"/>
 
 	<bean class="org.springframework.web.client.RestTemplate"/>
+
+	<bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/velocity/" /><!-- 模板存放的路径 -->
+		<property name="configLocation" value="classpath:velocity.properties"/>
+	</bean>
+
+	<bean id="ViewResolver" class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+		<property name="cache" value="true" />
+		<property name="prefix" value="/" /><!-- 视图文件的前缀，即存放的路径 -->
+		<property name="suffix" value=".vm" /><!-- 视图文件的后缀名 -->
+		<!--<property name="toolboxConfigLocation" value="/WEB-INF/tools.xml" /><!–toolbox配置文件路径–>-->
+		<property name="dateToolAttribute" value="date" /><!--日期函数名称-->
+		<property name="numberToolAttribute" value="number" /><!--数字函数名称-->
+		<property name="contentType" value="text/html;charset=UTF-8" />
+		<property name="layoutUrl" value="layout/layout.vm" />
+		<property name="exposeSpringMacroHelpers" value="true" /><!--是否使用spring对宏定义的支持-->
+		<property name="exposeRequestAttributes" value="true" /><!--是否开放request属性-->
+		<property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->
+	</bean>
 </beans>
