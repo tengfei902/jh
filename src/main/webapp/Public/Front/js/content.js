@@ -1,6 +1,6 @@
 /*
  *
- *   H+ - 鍚庡彴涓婚UI妗嗘灦
+ *   H+ - 后台主题UI框架
  *   version 4.5
  *
 */
@@ -17,12 +17,12 @@ $('.tooltip-demo').tooltip({
     container: "body"
 });
 
-// 浣跨敤animation.css淇敼Bootstrap Modal
+// 使用animation.css修改Bootstrap Modal
 $('.modal').appendTo("body");
 
 $("[data-toggle=popover]").popover();
 
-//鎶樺彔ibox
+//折叠ibox
 $('.collapse-link').click(function () {
     var ibox = $(this).closest('div.ibox');
     var button = $(this).find('i');
@@ -36,15 +36,15 @@ $('.collapse-link').click(function () {
     }, 50);
 });
 
-//鍏抽棴ibox
+//关闭ibox
 $('.close-link').click(function () {
     var content = $(this).closest('div.ibox');
     content.remove();
 });
 
-//鍒ゆ柇褰撳墠椤甸潰鏄惁鍦╥frame涓�
+//判断当前页面是否在iframe中
 // if (top == this) {
-//     var gohome = '<div class="gohome"><a class="animated bounceInUp" href="index.html?v=4.0" title="杩斿洖棣栭〉"><i class="fa fa-home"></i></a></div>';
+//     var gohome = '<div class="gohome"><a class="animated bounceInUp" href="index.html?v=4.0" title="返回首页"><i class="fa fa-home"></i></a></div>';
 //     $('body').append(gohome);
 // }
 
@@ -56,24 +56,24 @@ function animationHover(element, animation) {
             element.addClass('animated ' + animation);
         },
         function () {
-            //鍔ㄧ敾瀹屾垚涔嬪墠绉婚櫎class
+            //动画完成之前移除class
             window.setTimeout(function () {
                 element.removeClass('animated ' + animation);
             }, 2000);
         });
 }
 
-//鎷栧姩闈㈡澘
+//拖动面板
 function WinMove() {
     var element = "[class*=col]";
     var handle = ".ibox-title";
     var connect = "[class*=col]";
     $(element).sortable({
-        handle: handle,
-        connectWith: connect,
-        tolerance: 'pointer',
-        forcePlaceholderSize: true,
-        opacity: 0.8,
-    })
+            handle: handle,
+            connectWith: connect,
+            tolerance: 'pointer',
+            forcePlaceholderSize: true,
+            opacity: 0.8,
+        })
         .disableSelection();
 };

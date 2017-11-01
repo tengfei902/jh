@@ -1,13 +1,13 @@
 /*
  *
- *   H+ - 鍚庡彴涓婚UI妗嗘灦
+ *   H+ - 后台主题UI框架
  *   version 4.5
  *
 */
 
-//鑷畾涔塲s
+//自定义js
 
-//鍏叡閰嶇疆
+//公共配置
 
 
 $(document).ready(function () {
@@ -15,25 +15,25 @@ $(document).ready(function () {
     // MetsiMenu
     $('#side-menu').metisMenu();
 
-    // 鎵撳紑鍙充晶杈规爮
+    // 打开右侧边栏
     $('.right-sidebar-toggle').click(function () {
         $('#right-sidebar').toggleClass('sidebar-open');
     });
 
-    // 鍙充晶杈规爮浣跨敤slimscroll
+    // 右侧边栏使用slimscroll
     $('.sidebar-container').slimScroll({
         height: '100%',
         railOpacity: 0.4,
         wheelStep: 10
     });
 
-    // 鎵撳紑鑱婂ぉ绐楀彛
+    // 打开聊天窗口
     $('.open-small-chat').click(function () {
         $(this).children().toggleClass('fa-comments').toggleClass('fa-remove');
         $('.small-chat-box').toggleClass('active');
     });
 
-    // 鑱婂ぉ绐楀彛浣跨敤slimscroll
+    // 聊天窗口使用slimscroll
     $('.small-chat-box .content').slimScroll({
         height: '234px',
         railOpacity: 0.4
@@ -48,7 +48,7 @@ $(document).ready(function () {
         return false;
     });
 
-    //鍥哄畾鑿滃崟鏍�
+    //固定菜单栏
     $(function () {
         $('.sidebar-collapse').slimScroll({
             height: '100%',
@@ -58,14 +58,14 @@ $(document).ready(function () {
     });
 
 
-    // 鑿滃崟鍒囨崲
+    // 菜单切换
     $('.navbar-minimalize').click(function () {
         $("body").toggleClass("mini-navbar");
         SmoothlyMenu();
     });
 
 
-    // 渚ц竟鏍忛珮搴�
+    // 侧边栏高度
     function fix_height() {
         var heightWithoutNavbar = $("body > #wrapper").height() - 61;
         $(".sidebard-panel").css("min-height", heightWithoutNavbar + "px");
@@ -78,7 +78,7 @@ $(document).ready(function () {
         }
     });
 
-    //渚ц竟鏍忔粴鍔�
+    //侧边栏滚动
     $(window).scroll(function () {
         if ($(window).scrollTop() > 0 && !$('body').hasClass('fixed-nav')) {
             $('#right-sidebar').addClass('sidebar-top');
@@ -104,7 +104,7 @@ $(document).ready(function () {
 
     $('.nav-close').click(NavToggle);
 
-    //ios娴忚鍣ㄥ吋瀹规€у鐞�
+    //ios浏览器兼容性处理
     if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
         $('#content-main').css('overflow-y', 'auto');
     }
@@ -141,10 +141,10 @@ function SmoothlyMenu() {
 }
 
 
-//涓婚璁剧疆
+//主题设置
 $(function () {
 
-    // 椤堕儴鑿滃崟鍥哄畾
+    // 顶部菜单固定
     $('#fixednavbar').click(function () {
         if ($('#fixednavbar').is(':checked')) {
             $(".navbar-static-top").removeClass('navbar-static-top').addClass('navbar-fixed-top');
@@ -170,7 +170,7 @@ $(function () {
     });
 
 
-    // 鏀惰捣宸︿晶鑿滃崟
+    // 收起左侧菜单
     $('#collapsemenu').click(function () {
         if ($('#collapsemenu').is(':checked')) {
             $("body").addClass('mini-navbar');
@@ -190,7 +190,7 @@ $(function () {
         }
     });
 
-    // 鍥哄畾瀹藉害
+    // 固定宽度
     $('#boxedlayout').click(function () {
         if ($('#boxedlayout').is(':checked')) {
             $("body").addClass('boxed-layout');
@@ -214,7 +214,7 @@ $(function () {
         }
     });
 
-    // 榛樿涓婚
+    // 默认主题
     $('.s-skin-0').click(function () {
         $("body").removeClass("skin-1");
         $("body").removeClass("skin-2");
@@ -222,7 +222,7 @@ $(function () {
         return false;
     });
 
-    // 钃濊壊涓婚
+    // 蓝色主题
     $('.s-skin-1').click(function () {
         $("body").removeClass("skin-2");
         $("body").removeClass("skin-3");
@@ -230,7 +230,7 @@ $(function () {
         return false;
     });
 
-    // 榛勮壊涓婚
+    // 黄色主题
     $('.s-skin-3').click(function () {
         $("body").removeClass("skin-1");
         $("body").removeClass("skin-2");
@@ -279,7 +279,7 @@ $(function () {
     }
 });
 
-//鍒ゆ柇娴忚鍣ㄦ槸鍚︽敮鎸乭tml5鏈湴瀛樺偍
+//判断浏览器是否支持html5本地存储
 function localStorageSupport() {
     return (('localStorage' in window) && window['localStorage'] !== null)
 }

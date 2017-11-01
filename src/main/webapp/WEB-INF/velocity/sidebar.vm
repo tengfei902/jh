@@ -16,7 +16,7 @@
             <li><a href="#"> <i class="fa fa fa-user"></i> <span class="nav-label">账户管理</span> </a>
                 <ul class="nav nav-second-level">
                     <li><a href="#springUrl('/user/redirect/user_account_profile')" class="J_menuItem"><strong>基本信息</strong></a> </li>
-                    <li><a href="/User_Account_bankcard.html" class="J_menuItem"><strong>银行卡管理</strong></a> </li>
+                    <li><a href="#springUrl('/common/user/user_account_bankcard')" class="J_menuItem"><strong>银行卡管理</strong></a> </li>
                     <li><a href="/User_Account_authorized.html" class="J_menuItem"><strong>认证信息</strong></a> </li>
                     <li><a href="/User_Account_editPassword.html" class="J_menuItem"><strong>登录密码</strong></a> </li>
                     <li><a href="/User_Account_editPaypassword.html" class="J_menuItem"><strong>支付密码</strong></a> </li>

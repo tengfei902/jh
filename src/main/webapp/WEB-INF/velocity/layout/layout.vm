@@ -37,8 +37,13 @@
 
     <div class="row J_mainContent" id="content-main">
         <div class="navbar-header hidden"><a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a></div>
-        $screen_content
+##        $screen_content
+        <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="${page}" frameborder="0"
+                data-id="${page}" seamless></iframe>
+
     </div>
+
+
 </div>
 
 <!-- 全局js -->

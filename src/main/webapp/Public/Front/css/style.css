@@ -3761,7 +3761,7 @@ nav.page-tabs .page-tabs-content {
     line-height: 1.42857;
     padding: 8px;
     vertical-align: middle;
-    text-align:center;
+	text-align:center;
 }
 
 
@@ -7211,7 +7211,7 @@ body.rtls.top-navigation .footer.fixed {
 
 /*
  *
- *   SKIN 1 - H+ - åŽå°ä¸»é¢˜UIæ¡†æž¶
+ *   SKIN 1 - H+ - 后台主题UI框架
  *   NAME - Blue light
  *
 */
@@ -7360,7 +7360,7 @@ body.skin-1 {
 
 /*
  *
- *   SKIN 3 - H+ - åŽå°ä¸»é¢˜UIæ¡†æž¶
+ *   SKIN 3 - H+ - 后台主题UI框架
  *   NAME - Yellow/purple
  *
 */
