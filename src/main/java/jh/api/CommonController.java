@@ -24,12 +24,11 @@ public class CommonController {
         return modelAndView;
     }
 
-    @RequestMapping(value="/main")
-    public ModelAndView main() {
+    @RequestMapping(value="/{page}")
+    public ModelAndView main(@PathVariable("page")String page) {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/index");
+        modelAndView.setViewName(String.format("/%s",page));
         return modelAndView;
-
     }
 }

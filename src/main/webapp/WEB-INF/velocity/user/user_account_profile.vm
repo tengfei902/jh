@@ -119,30 +119,6 @@
         laydate.render({
             elem: '#date'
         });
-        //监听提交
-        form.on('submit(profile)', function(data){
-            $.ajax({
-                url:"/User_Account_saveProfile.html",
-                type:"post",
-                data:$('#profile').serialize(),
-                success:function(res){
-                    if(res.status){
-                        layer.alert("编辑成功", {icon: 6},function () {
-                            parent.location.reload();
-                            var index = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(index);
-                        });
-                    }else{
-                        layer.alert("操作失败", {icon: 5},function () {
-                            parent.location.reload();
-                            var index = parent.layer.getFrameIndex(window.name);
-                            parent.layer.close(index);
-                        });
-                    }
-                }
-            });
-            return false;
-        });
     });
 </script>
 </body>
