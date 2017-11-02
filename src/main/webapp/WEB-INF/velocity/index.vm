@@ -86,15 +86,15 @@
                 </li>
                 <li><a href="#"> <i class="fa fa fa-check"></i> <span class="nav-label">结算管理</span> </a>
                     <ul class="nav nav-second-level">
-                        <li><a href="/User_Withdrawal_clearing.html" class="J_menuItem"><strong>申请结算</strong></a>     </li>
-                        <li><a href="/User_Withdrawal_index.html" class="J_menuItem"><strong>结算记录</strong></a>     </li>
-                        <li><a href="/User_Withdrawal_payment.html" class="J_menuItem"><strong>委托结算记录</strong></a>     </li>
+                        <li><a href="#springUrl('/common/user/user_withdraw')" class="J_menuItem"><strong>申请结算</strong></a>     </li>
+                        <li><a href="#springUrl('/common/user/user_withdraw_record')" class="J_menuItem"><strong>结算记录</strong></a>     </li>
+                        <li><a href="#springUrl('/common/user/user_withdraw_request')" class="J_menuItem"><strong>委托结算记录</strong></a>     </li>
                     </ul>
                 </li>
 
                 <li><a href="#"> <i class="fa fa fa-sellsy"></i> <span class="nav-label">交易管理</span> </a>
                     <ul class="nav nav-second-level">
-                        <li><a href="/User_Order_index.html" class="J_menuItem"><strong>交易记录</strong></a>
+                        <li><a href="#springUrl('/common/user/user_order_record')" class="J_menuItem"><strong>交易记录</strong></a>
                         </li>
 
                     </ul>
