@@ -8,12 +8,12 @@
     <meta name="renderer" content="webkit">
     <title>威付宝支付系统---用户管理中心</title>
     <link rel="shortcut icon" href="favicon.ico">
-    <link href="/Public/Front/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/Public/Front/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/Public/Front/css/animate.css" rel="stylesheet">
-    <link href="/Public/Front/css/style.css" rel="stylesheet">
-    <link href="/Public/User/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="/Public/Front/js/plugins/layui/css/layui.css">
+    <link href="#springUrl('/Public/Front/css/bootstrap.min.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/font-awesome.min.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/animate.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/style.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/User/css/style.css')" rel="stylesheet">
+    <link rel="stylesheet" href="#springUrl('/Public/Front/js/plugins/layui/css/layui.css')">
     <style>
         .layui-form-label {width:110px;padding:4px}
         .layui-form-item .layui-form-checkbox[lay-skin="primary"]{margin-top:0;}
@@ -54,12 +54,12 @@
         </div>
     </div>
 </div>
-<script src="/Public/Front/js/jquery.min.js"></script>
-<script src="/Public/Front/js/bootstrap.min.js"></script>
-<script src="/Public/Front/js/plugins/peity/jquery.peity.min.js"></script>
-<script src="/Public/Front/js/content.js"></script>
-<script src="/Public/Front/js/plugins/layui/layui.js" charset="utf-8"></script>
-<script src="/Public/Front/js/x-layui.js" charset="utf-8"></script>
+<script src="#springUrl('/Public/Front/js/jquery.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/bootstrap.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/peity/jquery.peity.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/content.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/layui/layui.js')" charset="utf-8"></script>
+<script src="#springUrl('/Public/Front/js/x-layui.js')" charset="utf-8"></script>
 <script>
     layui.use(['laydate', 'form', 'layer', 'table', 'element'], function(){
         var laydate = layui.laydate //日期
@@ -79,7 +79,7 @@
         form.on('switch(switchTest)', function (data) {
             var isopen = this.checked ? 1 : 0,
                     id = $(this).attr('data-id');
-            $.ajax({
+            jQuery.ajax({
                 url: "/User_Account_editBankStatus.html",
                 type: 'post',
                 data: "id=" + id + "&isopen=" + isopen,
@@ -105,7 +105,7 @@
     /*删除-银行卡*/
     function bank_del(obj,id){
         layer.confirm('确认要删除吗？', function (index) {
-            $.ajax({
+            jQuery.ajax({
                 url:"/User_Account_delBankcard.html",
                 type:'post',
                 data:'id='+id,

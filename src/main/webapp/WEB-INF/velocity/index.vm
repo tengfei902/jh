@@ -22,7 +22,7 @@
     <!-- 头部开始 -->
     <div class="row head-bar" id="head-bar">
         <div class="col-lg-8 col-md-5 col-sm-7 col-xs-4 head-left">
-            <img src="logo.png"/>
+            <img src="#springUrl('/images/logo.png')"/>
             <span class="hidden-xs">商户后台</span>
         </div>
         <div class="col-lg-4 col-md-7 col-sm-5 col-xs-8 head-right">
@@ -47,7 +47,7 @@
                 </ul>
             </div>
             <div class="userimg hidden">
-			<span><img alt="image" class="img-circle" src="/Public/Front/img/avatar.jpg"
+			<span><img alt="image" class="img-circle" src="#springUrl('/Public/Front/img/avatar.jpg')"
             ></span>
             </div>
             <div class="welcom hidden-xs">欢迎您</div>
@@ -74,17 +74,14 @@
                 <li><a href="#"> <i class="fa fa fa-user"></i> <span class="nav-label">账户管理</span> </a>
                     <ul class="nav nav-second-level">
                         <li><a href="#springUrl('/common/user/user_account_profile')" class="J_menuItem"><strong>基本信息</strong></a> </li>
-                        <li><a href="/User_Account_bankcard.html" class="J_menuItem"><strong>银行卡管理</strong></a> </li>
-                        <li><a href="/User_Account_authorized.html" class="J_menuItem"><strong>认证信息</strong></a> </li>
-                        <li><a href="/User_Account_editPassword.html" class="J_menuItem"><strong>登录密码</strong></a> </li>
-                        <li><a href="/User_Account_editPaypassword.html" class="J_menuItem"><strong>支付密码</strong></a> </li>
-                        <li><a href="/User_Account_loginrecord.html" class="J_menuItem"><strong>登录记录</strong></a> </li>
-
+                        <li><a href="#springUrl('/common/user/user_account_bankcard')" class="J_menuItem"><strong>银行卡管理</strong></a> </li>
+                        <li><a href="#springUrl('/common/user/user_account_authorized')" class="J_menuItem"><strong>认证信息</strong></a> </li>
+                        <li><a href="#springUrl('/common/user/user_account_editPassword')" class="J_menuItem"><strong>登录密码</strong></a> </li>
                     </ul>
                 </li>
                 <li><a href="#"> <i class="fa fa-money"></i> <span class="nav-label">财务管理</span> </a>
                     <ul class="nav nav-second-level">
-                        <li><a href="/User_Account_changeRecord.html" class="J_menuItem"><strong>资金变动记录</strong></a> </li>
+                        <li><a href="#springUrl('/common/user/user_account_change_record')" class="J_menuItem"><strong>资金变动记录</strong></a> </li>
                     </ul>
                 </li>
                 <li><a href="#"> <i class="fa fa fa-check"></i> <span class="nav-label">结算管理</span> </a>

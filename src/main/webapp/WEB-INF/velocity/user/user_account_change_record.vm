@@ -1,0 +1,265 @@
+#set($layout="/layout/empty.vm")
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>威付宝支付系统---用户管理中心</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="#springUrl('/Public/Front/css/bootstrap.min.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/font-awesome.min.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/animate.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/style.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/User/css/style.css')" rel="stylesheet">
+    <link rel="stylesheet" href="#springUrl('/Public/Front/js/plugins/layui/css/layui.css')">
+    <style>
+        .layui-form-label {width:110px;padding:4px}
+        .layui-form-item .layui-form-checkbox[lay-skin="primary"]{margin-top:0;}
+        .layui-form-switch {width:54px;margin-top:0px;}
+
+    </style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ibox float-e-margins">
+                <!--条件查询-->
+                <div class="ibox-title">
+                    <h5>资金变动管理</h5>
+                    <div class="ibox-tools">
+                        <i class="layui-icon" onclick="location.replace(location.href);" title="刷新"
+                           style="cursor:pointer;">ဂ</i>
+                    </div>
+                </div>
+                <!--条件查询-->
+                <div class="ibox-content">
+                    <form class="layui-form" action="" method="get" autocomplete="off" id="orderform">
+                        <input type="hidden" name="m" value="User">
+                        <input type="hidden" name="c" value="Account">
+                        <input type="hidden" name="a" value="changeRecord">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <div class="layui-input-inline">
+                                    <input type="text" name="orderid" autocomplete="off" placeholder="请输入订单号"
+                                           class="layui-input" value="">
+                                </div>
+                                <div class="layui-input-inline">
+                                    <input type="text" class="layui-input" name="createtime" id="createtime"
+                                           placeholder="起始时间" value="">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <div class="layui-input-inline">
+                                    <select name="tongdao">
+                                        <option value="">全部通道</option>
+                                        <option                                         value="WXJSAPI">微信公众号</option><option                                         value="DBANK">网银支付</option><option                                         value="wxcode">牛支付微信扫码</option><option                                         value="alipay">牛支付支付宝扫码</option><option                                         value="ICBC">工商银行</option><option                                         value="CMBCHINA">招商银行</option><option                                         value="ABC">农业银行</option><option                                         value="CCB">建设银行</option><option                                         value="BOCO">交通银行</option><option                                         value="CIB">兴业银行</option><option                                         value="CMBC">民生银行</option><option                                         value="CEB">光大银行</option><option                                         value="BOC">中国银行</option><option                                         value="ECITIC">中信银行</option><option                                         value="SDB">深圳发展银行</option><option                                         value="GDB">广发银行</option><option                                         value="SPDB">上海浦东发展银行</option><option                                         value="POST">中国邮政</option><option                                         value="PINGANBANK">平安银行</option><option                                         value="HXB">华夏银行</option><option                                         value="tenpay">QQ钱包</option>                                </select>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <select name="bank">
+                                        <option value="">全部类型</option>
+                                        <option  value="1">付款</option>
+                                        <option  value="3">手动增加</option>
+                                        <option  value="4">手动减少</option>
+                                        <option  value="6">结算</option>
+                                        <option  value="7">冻结</option>
+                                        <option  value="8">解冻</option>
+                                        <option  value="9">提成</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="layui-inline">
+                                <button type="submit" class="layui-btn"><span
+                                        class="glyphicon glyphicon-search"></span> 搜索
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!--交易列表-->
+                    <table class="layui-table" lay-data="{width:'100%',id:'userData'}">
+                        <thead>
+                        <tr>
+                            <th lay-data="{field:'key',width:60}"></th>
+                            <th lay-data="{field:'transid', width:240}">订单号</th>
+                            <th lay-data="{field:'userid', width:100,style:'color:#060;'}">用户名</th>
+                            <th lay-data="{field:'lx', width:90}">类型</th>
+                            <th lay-data="{field:'tcuserid', width:100,style:'color:#060;'}">提成用户名</th>
+                            <th lay-data="{field:'tcdengji', width:90}">提成级别</th>
+                            <th lay-data="{field:'money', width:100}">变动金额</th>
+                            <th lay-data="{field:'datetime', width:180}">变动时间</th>
+                            <th lay-data="{field:'tongdao', width:120}">通道</th>
+                            <th lay-data="{field:'contentstr', width:100}">备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>63</td>
+                            <td style="text-align:center;">201710311030516172</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.020                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-31 10:31:14</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>62</td>
+                            <td style="text-align:center;">201710311029418463</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-31 10:30:01</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>61</td>
+                            <td style="text-align:center;">201710311028403880</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-31 10:29:04</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>60</td>
+                            <td style="text-align:center;">201710311027323540</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-31 10:28:12</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>59</td>
+                            <td style="text-align:center;">201710310957294625</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-31 09:58:09</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>58</td>
+                            <td style="text-align:center;">201710301551362193</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-30 15:52:15</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>57</td>
+                            <td style="text-align:center;">20171030154108669</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-30 15:41:45</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr><tr>
+                            <td>56</td>
+                            <td style="text-align:center;">201710301532264283</td>
+                            <td style="text-align:center; color:#090;">
+                                demouu                            </td>
+                            <td style="text-align:center;">
+                                付款                            </td>
+                            <td style="text-align:center; color:#060">
+                                -                            </td>
+                            <td style="color:#666">&nbsp;</td>
+                            <td>
+                                <span style="color:#030">                                0.010                                </span>
+                            </td>
+                            <td style="text-align:center;">2017-10-30 15:33:13</td>
+                            <td style="text-align:center;">牛支付微信扫码</td>
+                            <td style="text-align:center;">
+                                <spans style='color:#060;'>充值订单</span>                                                                </td>
+                        </tr>                    </tbody>
+                    </table>
+                    <!--交易列表-->
+                    <div class="pagex"> <div  class="layui-box layui-laypage layui-laypage-default" id="layui-laypage-0">    </div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="#springUrl('/Public/Front/js/jquery.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/bootstrap.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/peity/jquery.peity.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/content.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/layui/layui.js')" charset="utf-8"></script>
+<script src="#springUrl('/Public/Front/js/x-layui.js')" charset="utf-8"></script>
+<script>
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'form'], function() {
+        var laydate = layui.laydate //日期
+                , laypage = layui.laypage //分页
+                ,layer = layui.layer //弹层
+                ,form = layui.form //表单
+                , table = layui.table; //表格
+        //日期时间范围
+        laydate.render({
+            elem: '#createtime'
+            , type: 'datetime'
+            ,theme: 'molv'
+            , range: '|'
+        });
+    });
+</script>
+</body>
+</html>
