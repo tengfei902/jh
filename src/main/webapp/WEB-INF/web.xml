@@ -35,7 +35,7 @@
   </listener>
 
   <welcome-file-list>
-    <welcome-file>shouye.html</welcome-file>
+    <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>
 
   <filter>

@@ -63,13 +63,7 @@
                 <li>
                     <div class="logo-element visible-xs">MENU</div>
                 </li>
-                <li><a href="/User_Index_index.html"> <i class="fa fa-home"></i> <span class="nav-label">管理中心</span> </a>
-                </li>
-                <li><a href="#"> <i class="fa fa-volume-up"></i> <span
-                        class="nav-label">公告</span></a>
-                    <ul class="nav nav-second-level">
-                        <li><a href="/User_Index_gonggao.html" class="J_menuItem"><strong>站内公告</strong></a></a> </li>
-                    </ul>
+                <li><a href="/User_Index_index.html"> <i class="fa fa-home"></i> <span class="nav-label">个人中心</span> </a>
                 </li>
                 <li><a href="#"> <i class="fa fa fa-user"></i> <span class="nav-label">账户管理</span> </a>
                     <ul class="nav nav-second-level">
@@ -101,8 +95,7 @@
                 </li>
                 <li><a href="#"> <i class="fa fa fa-bank"></i> <span class="nav-label">API管理</span> </a>
                     <ul class="nav nav-second-level">
-                        <li><a href="/User_Channel_index.html" class="J_menuItem"><strong>查看通道费率</strong></a>  </li>
-                        <li><a href="/User_Channel_apidocumnet.html" class="J_menuItem"><strong>API开发文档</strong></a>  </li>
+                        <li><a href="#springUrl('/common/user/user_channel_index')" class="J_menuItem"><strong>查看通道费率</strong></a>  </li>
                     </ul>
                 </li>
             </ul>

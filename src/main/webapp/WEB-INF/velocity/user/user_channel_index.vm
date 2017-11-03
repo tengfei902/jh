@@ -1,0 +1,165 @@
+#set($layout="/layout/empty.vm")
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>威付宝支付系统---用户管理中心</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="#springUrl('/Public/Front/css/bootstrap.min.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/font-awesome.min.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/animate.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/Front/css/style.css')" rel="stylesheet">
+    <link href="#springUrl('/Public/User/css/style.css')" rel="stylesheet">
+    <link rel="stylesheet" href="#springUrl('/Public/Front/js/plugins/layui/css/layui.css')">
+    <style>
+        .layui-form-label {width:110px;padding:4px}
+        .layui-form-item .layui-form-checkbox[lay-skin="primary"]{margin-top:0;}
+        .layui-form-switch {width:54px;margin-top:0px;}
+
+    </style>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>查看通道费率</h5>
+                </div>
+                <!--条件查询-->
+                <div class="ibox-content">
+                    <blockquote class="layui-elem-quote">
+                        <p class="text-danger">结算方式：
+                            T+1</p>
+                    </blockquote>
+                    <table class="layui-table" lay-skin="row">
+                        <thead>
+                        <tr>
+                            <th>编码</th>
+                            <th>通道名称</th>
+                            <th>通道费率</th>
+                            <th>通道状态</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>901</td>
+                            <td>微信公众号</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>907</td>
+                            <td>网银支付</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>911</td>
+                            <td>牛支付微信扫码</td>
+                            <td>6 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>912</td>
+                            <td>牛支付支付宝扫码</td>
+                            <td>6 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>913</td>
+                            <td>工商银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>914</td>
+                            <td>招商银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>915</td>
+                            <td>农业银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>916</td>
+                            <td>建设银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>917</td>
+                            <td>交通银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>918</td>
+                            <td>兴业银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>919</td>
+                            <td>民生银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>920</td>
+                            <td>光大银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>921</td>
+                            <td>中国银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>922</td>
+                            <td>中信银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>923</td>
+                            <td>深圳发展银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>924</td>
+                            <td>广发银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>925</td>
+                            <td>上海浦东发展银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>926</td>
+                            <td>中国邮政</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>927</td>
+                            <td>平安银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>928</td>
+                            <td>华夏银行</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr><tr>
+                            <td>930</td>
+                            <td>QQ钱包</td>
+                            <td>0 ‰</td>
+                            <td>开通</td>
+                        </tr>                    </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="#springUrl('/Public/Front/js/jquery.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/bootstrap.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/peity/jquery.peity.min.js')"></script>
+<script src="#springUrl('/Public/Front/js/content.js')"></script>
+<script src="#springUrl('/Public/Front/js/plugins/layui/layui.js')" charset="utf-8"></script>
+<script src="#springUrl('/Public/Front/js/x-layui.js')" charset="utf-8"></script>
+</body>
+</html>
