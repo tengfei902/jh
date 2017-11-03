@@ -51,10 +51,10 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
     <script>
-        jQuery.(".login").click(function(){
-        jQuery.(".login-zz").css("display","block");
-        jQuery.(".login-box").css("display","block");
-        });
+       $(".login").click(function(){
+             $(".login-zz").css("display","block");
+             $(".login-box").css("display","block");
+           });
     </script>
 </nav>
 <!-- 导航结束 -->
@@ -264,9 +264,6 @@
             </div>
             <div class="login-password">
                 <input type="password" class="form-control pword m-b" id="password" name="password" placeholder="密码" required="" aria-required="true"/>
-            </div>
-            <div class="login-verify">
-                <input type="text" class="form-control uname m-b" id="verification" name="varification" ajaxurl="" placeholder="验证码" required=""/><img class="verifyimg" alt="点击刷新验证码" src="/User_Login_verifycode.html" style="cursor:pointer;" onclick='javascript:$(".verifyimg").attr("src","/User_Login_verifycode.html?a="+(Math.random()*100))' itle="点击刷新验证码">
             </div>
             <div class="login-btn">
                 <button class="btn btn-success btn-block">登录</button>

@@ -2,7 +2,6 @@ package jh.test.user;
 
 import com.google.gson.Gson;
 import jh.biz.UserBiz;
-import jh.dao.local.UserInfoDao;
 import jh.model.UserInfo;
 import jh.test.BaseTestCase;
 import jh.utils.Utils;

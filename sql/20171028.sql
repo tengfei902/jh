@@ -93,3 +93,25 @@ create table pay_reverse_order
 	UNIQUE KEY unq_no(no,ext_id)
 ) ;
 
+
+create table user_info
+(
+	id bigint(32) not null primary key AUTO_INCREMENT,
+	login_id varchar(100) not null,
+	password varchar(100) not null,
+	name varchar(100) not null,
+	id_card varchar(18) not null,
+	tel varchar(11) not null,
+	qq varchar(15) not null default '',
+	birthdate datetime not null default CURRENT_TIMESTAMP,
+	sex int(1) not null default 0,
+	address varchar(100) not null default '',
+	type int(1) not null default 0 comment '0:初始，1:管理员,2:代理商,3:商户',
+	status int(2) not null default 0 comment '0:初始，1:审核中，2:审核通过，99:驳回',
+	sub_user_id bigint(32) not null default 0,
+	admin_id bigint(32) not null default 0,
+	UNIQUE KEY `unq_login_id` (`login_id`),
+	UNIQUE KEY `unq_id_card` (`id_card`),
+	UNIQUE KEY `unq_tel` (`tel`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+

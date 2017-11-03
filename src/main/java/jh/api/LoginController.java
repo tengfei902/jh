@@ -1,6 +1,5 @@
 package jh.api;
 
-import jh.dao.local.UserInfoDao;
 import jh.model.UserInfo;
 import jh.model.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;

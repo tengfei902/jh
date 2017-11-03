@@ -1,7 +1,6 @@
 package jh.biz.impl;
 
 import jh.biz.UserBiz;
-import jh.dao.local.UserInfoDao;
 import jh.model.UserInfo;
 import jh.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
