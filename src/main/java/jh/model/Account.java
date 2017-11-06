@@ -16,6 +16,10 @@ public class Account {
 
     private BigDecimal lockAmount;
 
+    private BigDecimal paidAmount;
+
+    private BigDecimal fee;
+
     private Integer status;
 
     private Integer version;
@@ -102,5 +106,21 @@ public class Account {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
     }
 }

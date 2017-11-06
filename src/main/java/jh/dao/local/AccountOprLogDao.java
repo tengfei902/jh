@@ -1,7 +1,9 @@
 package jh.dao.local;
 
 import jh.model.AccountOprLog;
-import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 public interface AccountOprLogDao {
     int deleteByPrimaryKey(Long id);
@@ -16,7 +18,5 @@ public interface AccountOprLogDao {
 
     int updateByPrimaryKey(AccountOprLog record);
 
-    AccountOprLog selectByTrdOrderId(@Param("trdOrderId") Long trdOrderId,@Param("oprType")Integer oprType);
-
-    int updateStatusById(@Param("id")Long id , @Param("fromStatus") Integer fromStatus,@Param("toStatus") Integer toStatus);
+    List<AccountOprLog> select(Map<String,Object> conditions);
 }

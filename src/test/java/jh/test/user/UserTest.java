@@ -1,7 +1,9 @@
 package jh.test.user;
 
 import com.google.gson.Gson;
+import jh.api.UserController;
 import jh.biz.UserBiz;
+import jh.dao.local.UserInfoDao;
 import jh.model.UserInfo;
 import jh.test.BaseTestCase;
 import jh.utils.Utils;
@@ -9,14 +11,27 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Created by tengfei on 2017/10/29.
  */
 public class UserTest extends BaseTestCase {
     @Autowired
-    private UserBiz userBiz;
-    @Autowired
     private UserInfoDao userInfoDao;
+    @Autowired
+    private UserController userController;
+    @Autowired
+    private UserBiz userBiz;
 
     @Test
     public void register() {
@@ -41,5 +56,16 @@ public class UserTest extends BaseTestCase {
         System.out.println(Utils.convertPassword(password));
         System.out.println(Utils.convertPassword(password));
         System.out.println(Utils.convertPassword(password));
+    }
+
+    @Test
+    public void testResgister() {
+        String username = "test";
+        String password = "1234567";
+        String subUserId = "1";
+        Long userId = userBiz.register(username,password,subUserId);
+        UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
+
+        System.out.println(new Gson().toJson(userInfo));
     }
 }

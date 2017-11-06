@@ -1,29 +1,35 @@
 package jh.model;
 
+import java.util.Date;
+
 public class UserInfo {
     private Long id;
-
-    private String userName;
 
     private String loginId;
 
     private String password;
 
-    private String bank;
+    private String name;
 
-    private String deposit;
+    private String idCard;
 
-    private String cardNo;
+    private String tel;
+
+    private String qq;
+
+    private Date birthdate;
+
+    private Integer sex;
+
+    private String address;
+
+    private Integer type;
 
     private Integer status;
 
-    private String merchantNo;
+    private Long subUserId;
 
-    private String outletNo;
-
-    private Integer userType;
-
-    private String email;
+    private Long adminId;
 
     public Long getId() {
         return id;
@@ -31,14 +37,6 @@ public class UserInfo {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
     }
 
     public String getLoginId() {
@@ -57,28 +55,68 @@ public class UserInfo {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getBank() {
-        return bank;
+    public String getName() {
+        return name;
     }
 
-    public void setBank(String bank) {
-        this.bank = bank == null ? null : bank.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public String getDeposit() {
-        return deposit;
+    public String getIdCard() {
+        return idCard;
     }
 
-    public void setDeposit(String deposit) {
-        this.deposit = deposit == null ? null : deposit.trim();
+    public void setIdCard(String idCard) {
+        this.idCard = idCard == null ? null : idCard.trim();
     }
 
-    public String getCardNo() {
-        return cardNo;
+    public String getTel() {
+        return tel;
     }
 
-    public void setCardNo(String cardNo) {
-        this.cardNo = cardNo == null ? null : cardNo.trim();
+    public void setTel(String tel) {
+        this.tel = tel == null ? null : tel.trim();
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq == null ? null : qq.trim();
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address == null ? null : address.trim();
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Integer getStatus() {
@@ -89,48 +127,33 @@ public class UserInfo {
         this.status = status;
     }
 
-    public String getMerchantNo() {
-        return merchantNo;
+    public Long getSubUserId() {
+        return subUserId;
     }
 
-    public void setMerchantNo(String merchantNo) {
-        this.merchantNo = merchantNo == null ? null : merchantNo.trim();
+    public void setSubUserId(Long subUserId) {
+        this.subUserId = subUserId;
     }
 
-    public String getOutletNo() {
-        return outletNo;
+    public Long getAdminId() {
+        return adminId;
     }
 
-    public void setOutletNo(String outletNo) {
-        this.outletNo = outletNo == null ? null : outletNo.trim();
-    }
-
-    public Integer getUserType() {
-        return userType;
-    }
-
-    public void setUserType(Integer userType) {
-        this.userType = userType;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 
     public interface STATUS {
         int INIT = 0;
-        int COMPLETE_INFO = 1;
+        int PROCESSING = 1;
         int AVAILABLE = 2;
-        int INVALID = 99;
+        int FAILED = 3;
     }
 
-    public interface USER_TYPE {
-        int ADMIN = 0;
-        int AGENT = 1;
-        int CUSTOMER = 2;
+    public interface TYPE {
+        int INIT = 0;
+        int ADMIN = 1;
+        int AGENT = 2;
+        int CUSTOMER = 3;
     }
 }

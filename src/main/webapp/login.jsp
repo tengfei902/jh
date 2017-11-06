@@ -46,7 +46,7 @@
             <ul class="nav navbar-nav navbar-right">
                 <li class="navbar-nav-li hidden-xs"><a href="#" class="tel">400-008-0059</a></li>
                 <li class="navbar-nav-li"><a class="login" href="javascript:;">登陆</a></li>
-                <li class="navbar-nav-li"><a href="/User_Login_register.html" class="register">注册</a></li>
+                <li class="navbar-nav-li"><a href="register.jsp" class="register">注册</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
@@ -245,7 +245,7 @@
 <section id="footer">
     <div class='container-fuild'>
         <div class='bgimg'>
-            <a href="/User_Login_register.html">立即注册</a>
+            <a href="register.jsp">立即注册</a>
             <div class="copy">
                 侯维科技有限公司旗下产品威付宝&nbsp;&nbsp;&nbsp;渝IPC备16015651-3
             </div>
@@ -256,7 +256,7 @@
 <!-- 登陆框 -->
 <section id="login">
     <div class="login-zz"></div>
-    <form class="form-horizontal" id="formlogin" method="post" role="form" action="/User_Login_checklogin.html">
+    <form class="form-horizontal" id="formlogin" method="post" role="form" action="">
         <div class="login-box">
             <div class="login-title">商户登陆</div>
             <div class="login-name">
@@ -268,7 +268,7 @@
             <div class="login-btn">
                 <button class="btn btn-success btn-block">登录</button>
             </div>
-            <p>还没有账号?<a href="/User_Login_register.html">立即注册</a>
+            <p>还没有账号?<a href="register.jsp">立即注册</a>
             <div class="colse">×</div>
             <script>
                 $(".colse").click(function(){

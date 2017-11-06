@@ -1,5 +1,7 @@
 package jh.model;
 
+import jh.model.enums.OprType;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -29,6 +31,18 @@ public class AccountOprLog {
     private Date createTime;
 
     private Date updateTime;
+
+    private Long channelId;
+
+    private Integer channelType;
+
+    private String channel;
+
+    private BigDecimal userFeeRate;
+
+    private BigDecimal priceIn;
+
+    private BigDecimal fee;
 
     public Long getId() {
         return id;
@@ -134,16 +148,82 @@ public class AccountOprLog {
         this.updateTime = updateTime;
     }
 
-    public interface OPR_TYPE {
-        int UNIFIED = 0;
-        int REFUND = 1;
-        int REVERSE = 2;
-        int WITHDRAW = 3;
+    public Long getChannelId() {
+        return channelId;
     }
 
-    public interface STATUS {
-        int INIT = 0;
-        int SUCCESS = 1;
-        int FAILED = 99;
+    public void setChannelId(Long channelId) {
+        this.channelId = channelId;
+    }
+
+    public Integer getChannelType() {
+        return channelType;
+    }
+
+    public void setChannelType(Integer channelType) {
+        this.channelType = channelType;
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel == null ? null : channel.trim();
+    }
+
+    public BigDecimal getUserFeeRate() {
+        return userFeeRate;
+    }
+
+    public void setUserFeeRate(BigDecimal userFeeRate) {
+        this.userFeeRate = userFeeRate;
+    }
+
+    public BigDecimal getPriceIn() {
+        return priceIn;
+    }
+
+    public void setPriceIn(BigDecimal priceIn) {
+        this.priceIn = priceIn;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
+
+    public enum OprStatus {
+        INIT(0,"待付款"),
+        PAID(1,"已付款"),
+        REVERSE(2,"已撤销交易"),
+        REFUND(3,"已退款"),
+        CLOSE(4,"已结算"),
+        CLOSING(10,"结算中"),
+        FAILED(99,"结算失败");
+
+        private int value;
+        private String desc;
+
+        OprStatus(int value,String desc) {
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public static OprStatus parse(int value) {
+            for(OprStatus oprStatus:OprStatus.values()) {
+                if(value == oprStatus.value) {
+                    return oprStatus;
+                }
+            }
+            return null;
+        }
+
+        public String getDesc() {
+            return this.desc;
+        }
     }
 }

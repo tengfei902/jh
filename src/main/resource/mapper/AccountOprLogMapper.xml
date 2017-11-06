@@ -15,10 +15,17 @@
     <result column="version" property="version" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="channel_id" property="channelId" jdbcType="BIGINT" />
+    <result column="channel_type" property="channelType" jdbcType="INTEGER" />
+    <result column="channel" property="channel" jdbcType="VARCHAR" />
+    <result column="user_fee_rate" property="userFeeRate" jdbcType="DECIMAL" />
+    <result column="price_in" property="priceIn" jdbcType="DECIMAL" />
+    <result column="fee" property="fee" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, account_id, user_id, trd_order_id, out_trade_no, `no`, opr_type, remark, price, 
-    `status`, version, create_time, update_time
+    `status`, version, create_time, update_time, channel_id, channel_type, channel, user_fee_rate, 
+    price_in, fee
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -35,12 +42,16 @@
       trd_order_id, out_trade_no, `no`, 
       opr_type, remark, price, 
       `status`, version, create_time, 
-      update_time)
+      update_time, channel_id, channel_type, 
+      channel, user_fee_rate, price_in, 
+      fee)
     values (#{id,jdbcType=BIGINT}, #{accountId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
       #{trdOrderId,jdbcType=BIGINT}, #{outTradeNo,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, 
       #{oprType,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
       #{status,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{updateTime,jdbcType=TIMESTAMP}, #{channelId,jdbcType=BIGINT}, #{channelType,jdbcType=INTEGER}, 
+      #{channel,jdbcType=VARCHAR}, #{userFeeRate,jdbcType=DECIMAL}, #{priceIn,jdbcType=DECIMAL}, 
+      #{fee,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="jh.model.AccountOprLog" >
     insert into account_opr_log
@@ -84,6 +95,24 @@
       <if test="updateTime != null" >
         update_time,
       </if>
+      <if test="channelId != null" >
+        channel_id,
+      </if>
+      <if test="channelType != null" >
+        channel_type,
+      </if>
+      <if test="channel != null" >
+        channel,
+      </if>
+      <if test="userFeeRate != null" >
+        user_fee_rate,
+      </if>
+      <if test="priceIn != null" >
+        price_in,
+      </if>
+      <if test="fee != null" >
+        fee,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -124,6 +153,24 @@
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="channelId != null" >
+        #{channelId,jdbcType=BIGINT},
+      </if>
+      <if test="channelType != null" >
+        #{channelType,jdbcType=INTEGER},
+      </if>
+      <if test="channel != null" >
+        #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="userFeeRate != null" >
+        #{userFeeRate,jdbcType=DECIMAL},
+      </if>
+      <if test="priceIn != null" >
+        #{priceIn,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -166,6 +213,24 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="channelId != null" >
+        channel_id = #{channelId,jdbcType=BIGINT},
+      </if>
+      <if test="channelType != null" >
+        channel_type = #{channelType,jdbcType=INTEGER},
+      </if>
+      <if test="channel != null" >
+        channel = #{channel,jdbcType=VARCHAR},
+      </if>
+      <if test="userFeeRate != null" >
+        user_fee_rate = #{userFeeRate,jdbcType=DECIMAL},
+      </if>
+      <if test="priceIn != null" >
+        price_in = #{priceIn,jdbcType=DECIMAL},
+      </if>
+      <if test="fee != null" >
+        fee = #{fee,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -182,21 +247,13 @@
       `status` = #{status,jdbcType=INTEGER},
       version = #{version,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      channel_id = #{channelId,jdbcType=BIGINT},
+      channel_type = #{channelType,jdbcType=INTEGER},
+      channel = #{channel,jdbcType=VARCHAR},
+      user_fee_rate = #{userFeeRate,jdbcType=DECIMAL},
+      price_in = #{priceIn,jdbcType=DECIMAL},
+      fee = #{fee,jdbcType=DECIMAL}
     where id = #{id,jdbcType=BIGINT}
-  </update>
-
-  <select id="selectByTrdOrderId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select
-    <include refid="Base_Column_List" />
-    from account_opr_log
-    where trd_order_id = #{trdOrderId,jdbcType=BIGINT} and opr_type = #{oprType,jdbcType=INTEGER}
-  </select>
-
-  <update id="updateStatusById" >
-    update account_opr_log
-    set
-    `status` = #{toStatus,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
   </update>
 </mapper>

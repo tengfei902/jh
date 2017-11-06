@@ -56,7 +56,7 @@ public class PayServiceImpl implements PayService {
         AccountOprLog accountOprLog = new AccountOprLog();
         accountOprLog.setAccountId(account.getId());
         accountOprLog.setOutTradeNo(payTrdOrder.getOutTradeNo());
-        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.UNIFIED);
+//        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.UNIFIED);
         //total与actualTotal是否一致
         accountOprLog.setPrice(new BigDecimal(payTrdOrder.getTotal()));
         accountOprLog.setRemark(payTrdOrder.getRemark());
@@ -80,7 +80,7 @@ public class PayServiceImpl implements PayService {
         AccountOprLog accountOprLog = new AccountOprLog();
         accountOprLog.setAccountId(account.getId());
         accountOprLog.setOutTradeNo(payRefundOrder.getOriNo());
-        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.REFUND);
+//        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.REFUND);
         //total与actualTotal是否一致
         accountOprLog.setPrice(new BigDecimal(refundRequest.getRefund_fee()));
         accountOprLog.setRemark(payRefundOrder.getMessage());
@@ -104,7 +104,7 @@ public class PayServiceImpl implements PayService {
         AccountOprLog accountOprLog = new AccountOprLog();
         accountOprLog.setAccountId(account.getId());
         accountOprLog.setOutTradeNo(reverseRequest.getOut_trade_no());
-        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.REVERSE);
+//        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.REVERSE);
         //total与actualTotal是否一致
         accountOprLog.setPrice(new BigDecimal(payTrdOrder.getTotal()));
         accountOprLog.setRemark("交易撤销");

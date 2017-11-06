@@ -20,10 +20,10 @@ public class UserDto {
 
     public UserDto(UserInfo userInfo) {
         this.id = userInfo.getId();
-        this.name = userInfo.getUserName();
-        this.merchantNo = userInfo.getMerchantNo();
-        this.outletNo = userInfo.getOutletNo();
-        this.userType = userInfo.getUserType();
+        this.name = userInfo.getName();
+//        this.merchantNo = userInfo.getMerchantNo();
+//        this.outletNo = userInfo.getOutletNo();
+        this.userType = userInfo.getType();
         this.loginId = userInfo.getLoginId();
         this.msg = "登录成功";
     }

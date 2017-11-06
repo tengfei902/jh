@@ -85,9 +85,9 @@
                             <th lay-data="{field:'transid', width:240}">订单号</th>
                             <th lay-data="{field:'userid', width:100,style:'color:#060;'}">用户名</th>
                             <th lay-data="{field:'lx', width:90}">类型</th>
-                            <th lay-data="{field:'tcuserid', width:100,style:'color:#060;'}">提成用户名</th>
-                            <th lay-data="{field:'tcdengji', width:90}">提成级别</th>
+                            <th lay-data="{field:'lx', width:90}">状态</th>
                             <th lay-data="{field:'money', width:100}">变动金额</th>
+                            <th lay-data="{field:'money', width:100}">原始金额</th>
                             <th lay-data="{field:'datetime', width:180}">变动时间</th>
                             <th lay-data="{field:'tongdao', width:120}">通道</th>
                             <th lay-data="{field:'contentstr', width:100}">备注</th>

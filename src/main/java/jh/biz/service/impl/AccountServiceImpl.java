@@ -33,58 +33,58 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     @Override
     public void pay(PayTrdOrder payTrdOrder) {
-        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payTrdOrder.getId(),AccountOprLog.OPR_TYPE.UNIFIED);
-
-        PayProof payProof = payProofDao.selectByTrdNo(payTrdOrder.getOutTradeNo());
-        UserInfo userInfo = userInfoDao.selectByMerchantNo(payTrdOrder.getMerchantNo());
-        Account account = accountDao.selectByUserId(userInfo.getId());
-        int count = accountDao.addAmount(account.getId(),new BigDecimal(payProof.getActualTotal()),account.getVersion());
-        if(count<=0) {
-            throw new BizException("更新账户失败");
-        }
-
-        count = accountOprLogDao.updateStatusById(oprLog.getId(),AccountOprLog.STATUS.INIT,AccountOprLog.STATUS.SUCCESS);
-
-        if(count<=0) {
-            throw new BizException("更新账户日志失败");
-        }
+//        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payTrdOrder.getId(),AccountOprLog.OPR_TYPE.UNIFIED);
+//
+//        PayProof payProof = payProofDao.selectByTrdNo(payTrdOrder.getOutTradeNo());
+//        UserInfo userInfo = userInfoDao.selectByMerchantNo(payTrdOrder.getMerchantNo());
+//        Account account = accountDao.selectByUserId(userInfo.getId());
+//        int count = accountDao.addAmount(account.getId(),new BigDecimal(payProof.getActualTotal()),account.getVersion());
+//        if(count<=0) {
+//            throw new BizException("更新账户失败");
+//        }
+//
+//        count = accountOprLogDao.updateStatusById(oprLog.getId(),AccountOprLog.STATUS.INIT,AccountOprLog.STATUS.SUCCESS);
+//
+//        if(count<=0) {
+//            throw new BizException("更新账户日志失败");
+//        }
     }
 
     @Transactional
     @Override
     public void refund(RefundResponse refundResponse) {
-        PayRefundOrder payRefundOrder = payRefundOrderDao.selectByNo(refundResponse.getNo());
-        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payRefundOrder.getId(),AccountOprLog.OPR_TYPE.REFUND);
-
-        UserInfo userInfo = userInfoDao.selectByMerchantNo(payRefundOrder.getMerchantNo());
-        Account account = accountDao.selectByUserId(userInfo.getId());
-        int count = accountDao.addAmount(account.getId(),oprLog.getPrice().negate(),account.getVersion());
-        if(count <= 0) {
-            throw new BizException("更新账户失败");
-        }
-
-        count = accountOprLogDao.updateStatusById(oprLog.getId(),AccountOprLog.STATUS.INIT,AccountOprLog.STATUS.SUCCESS);
-        if(count<=0) {
-            throw new BizException("更新明细状态失败");
-        }
+//        PayRefundOrder payRefundOrder = payRefundOrderDao.selectByNo(refundResponse.getNo());
+//        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payRefundOrder.getId(),AccountOprLog.OPR_TYPE.REFUND);
+//
+//        UserInfo userInfo = userInfoDao.selectByMerchantNo(payRefundOrder.getMerchantNo());
+//        Account account = accountDao.selectByUserId(userInfo.getId());
+//        int count = accountDao.addAmount(account.getId(),oprLog.getPrice().negate(),account.getVersion());
+//        if(count <= 0) {
+//            throw new BizException("更新账户失败");
+//        }
+//
+//        count = accountOprLogDao.updateStatusById(oprLog.getId(),AccountOprLog.STATUS.INIT,AccountOprLog.STATUS.SUCCESS);
+//        if(count<=0) {
+//            throw new BizException("更新明细状态失败");
+//        }
     }
 
     @Transactional
     @Override
     public void reverse(ReverseResponse reverseResponse) {
-        PayReverseOrder payReverseOrder = payReverseOrderDao.selectByTrdOrder(reverseResponse.getOut_trade_no());
-        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payReverseOrder.getId(),AccountOprLog.OPR_TYPE.REVERSE);
-
-        UserInfo userInfo = userInfoDao.selectByMerchantNo(payReverseOrder.getMerchantNo());
-        Account account = accountDao.selectByUserId(userInfo.getId());
-        int count = accountDao.addAmount(account.getId(),oprLog.getPrice().negate(),account.getVersion());
-        if(count <= 0) {
-            throw new BizException("更新账户失败");
-        }
-
-        count = accountOprLogDao.updateStatusById(oprLog.getId(),AccountOprLog.STATUS.INIT,AccountOprLog.STATUS.SUCCESS);
-        if(count<=0) {
-            throw new BizException("更新明细状态失败");
-        }
+//        PayReverseOrder payReverseOrder = payReverseOrderDao.selectByTrdOrder(reverseResponse.getOut_trade_no());
+//        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payReverseOrder.getId(),AccountOprLog.OPR_TYPE.REVERSE);
+//
+//        UserInfo userInfo = userInfoDao.selectByMerchantNo(payReverseOrder.getMerchantNo());
+//        Account account = accountDao.selectByUserId(userInfo.getId());
+//        int count = accountDao.addAmount(account.getId(),oprLog.getPrice().negate(),account.getVersion());
+//        if(count <= 0) {
+//            throw new BizException("更新账户失败");
+//        }
+//
+//        count = accountOprLogDao.updateStatusById(oprLog.getId(),AccountOprLog.STATUS.INIT,AccountOprLog.STATUS.SUCCESS);
+//        if(count<=0) {
+//            throw new BizException("更新明细状态失败");
+//        }
     }
 }
