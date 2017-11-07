@@ -9,6 +9,8 @@ import jh.model.UserInfo;
 import jh.model.constant.Constants;
 import jh.model.dto.ResponseResult;
 import jh.model.dto.UserDto;
+import jh.model.enums.Auth;
+import jh.utils.ParameterRequestWrapper;
 import jh.utils.TypeConverter;
 import jh.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
@@ -128,15 +130,28 @@ public class UserController {
 
     @RequestMapping(value = "/edit_user_info",method = RequestMethod.POST)
     public ModelAndView editUserInfo(HttpServletRequest request,HttpServletResponse response) {
+        ModelAndView modelAndView = new ModelAndView();
+        ParameterRequestWrapper requestWrapper = new ParameterRequestWrapper(request);
+        requestWrapper.addParameter("userId","1");
+        requestWrapper.addParameter("status",1);
+
         try {
-            UserInfo userInfo = TypeConverter.convert(request,UserInfo.class);
+            //todo
+
+            UserInfo userInfo = TypeConverter.convert(requestWrapper,UserInfo.class);
             userBiz.edit(userInfo);
 
-            return null;
-        } catch (Exception e) {
+            modelAndView.setViewName("/user/user_account_authorized");
+            modelAndView.addObject("desc", Auth.parse(1).getDesc());
 
+            return modelAndView;
+
+        } catch (Exception e) {
+            UserInfo userInfo = userInfoDao.selectByPrimaryKey(Long.parseLong(requestWrapper.getParameter("userId")));
+            modelAndView.addObject("userInfo",userInfo);
+            modelAndView.setViewName("/user/user_account_profile");
+            return modelAndView;
         }
-        return null;
     }
 
     @RequestMapping(value = "/get_user_bank",method = RequestMethod.GET)
@@ -148,7 +163,7 @@ public class UserController {
     @RequestMapping(value = "/save_user_card",method = RequestMethod.POST)
     public void saveBankCard(HttpServletRequest request,HttpServletResponse response) {
         try {
-            UserBankCard userBankCard = TypeConverter.convert(request,UserBankCard.class);
+            UserBankCard userBankCard = TypeConverter.convert((ParameterRequestWrapper) request,UserBankCard.class);
 
             userBankCardDao.insertSelective(userBankCard);
         } catch (Exception e) {

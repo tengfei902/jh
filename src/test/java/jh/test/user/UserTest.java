@@ -13,9 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -67,5 +71,21 @@ public class UserTest extends BaseTestCase {
         UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
 
         System.out.println(new Gson().toJson(userInfo));
+    }
+
+    @Test
+    public void testGetAnnotations() throws Exception {
+        Field[] fields = UserInfo.class.getDeclaredFields();
+
+        for(Field field:fields) {
+            jh.model.annotations.Field field1 = field.getDeclaredAnnotation(jh.model.annotations.Field.class);
+            System.out.println("---------");
+        }
+
+        BeanInfo beanInfo = Introspector.getBeanInfo(UserInfo.class);
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        for(PropertyDescriptor propertyDescriptor:propertyDescriptors) {
+            
+        }
     }
 }

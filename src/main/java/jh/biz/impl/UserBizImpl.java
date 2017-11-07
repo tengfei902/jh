@@ -45,7 +45,7 @@ public class UserBizImpl implements UserBiz {
             throw new BizException("用户状态不允许修改");
         }
 
-        int count = userInfoDao.udpate(userInfo);
+        int count = userInfoDao.updateByPrimaryKeySelective(userInfo);
 
         if(count <=0) {
             throw new BizException("用户更新失败");

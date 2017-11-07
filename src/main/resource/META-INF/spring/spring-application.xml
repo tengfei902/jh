@@ -41,5 +41,6 @@
 		<property name="exposeSpringMacroHelpers" value="true" /><!--是否使用spring对宏定义的支持-->
 		<property name="exposeRequestAttributes" value="true" /><!--是否开放request属性-->
 		<property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->
+		<property name="toolboxConfigLocation" value="/WEB-INF/toolbox.xml"/>
 	</bean>
 </beans>

@@ -1,30 +1,33 @@
 package jh.model;
 
+import jh.model.annotations.Field;
+
 import java.util.Date;
 
 public class UserInfo {
+    @Field(required = true,alias = "userId")
     private Long id;
 
     private String loginId;
 
     private String password;
-
+    @Field(required = true)
     private String name;
-
+    @Field(required = true)
     private String idCard;
-
+    @Field(required = true)
     private String tel;
-
+    @Field(required = true)
     private String qq;
-
+    @Field(required = true)
     private Date birthdate;
-
+    @Field(required = true)
     private Integer sex;
-
+    @Field(required = true)
     private String address;
 
     private Integer type;
-
+    @Field(required = true)
     private Integer status;
 
     private Long subUserId;

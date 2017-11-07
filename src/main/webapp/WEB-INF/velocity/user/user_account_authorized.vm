@@ -30,7 +30,7 @@
                     <h5>申请认证</h5>
                 </div>
                 <div class="ibox-content">
-                    <p class="bg-success" style="padding:10px 0px 10px 30px">您已成功认证！</p>
+                    <p class="bg-success" style="padding:10px 0px 10px 30px">${desc}</p>
                 </div>
             </div>
         </div>

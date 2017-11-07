@@ -32,19 +32,19 @@
                 </div>
                 <div class="ibox-content">
                     <!--用户信息-->
-                    <form class="layui-form" action="" autocomplete="off" id="profile">
+                    <form class="layui-form" action="#springUrl('/user/edit_user_info')" autocomplete="off" id="profile" method="POST">
                         <input type="hidden" name="id" value="13">
                         <div class="layui-form-item">
                             <label class="layui-form-label">姓名：</label>
                             <div class="layui-input-block">
-                                <input type="text" name="p[realname]" lay-verify="title" autocomplete="off"
-                                       placeholder="姓名" class="layui-input" value="">
+                                <input type="text" id="name" name="name" lay-verify="title" autocomplete="off"
+                                       placeholder="姓名" class="layui-input" value=${userInfo.name}>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">身份证号码：</label>
                             <div class="layui-input-block">
-                                <input type="text" name="p[sfznumber]" lay-verify="identity" placeholder="身份证号码" autocomplete="off" class="layui-input" value="">
+                                <input type="text" id="idCard" name="idCard" lay-verify="identity" placeholder="身份证号码" autocomplete="off" class="layui-input" value=${userInfo.idCard}>
                             </div>
                         </div>
 
@@ -52,15 +52,15 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">手机：</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="p[mobile]" lay-verify="phone" autocomplete="off"
-                                           class="layui-input" value="">
+                                    <input type="text" id="tel" name="tel" lay-verify="phone" autocomplete="off"
+                                           class="layui-input" value=${userInfo.tel}>
                                 </div>
                             </div>
                             <div class="layui-inline">
                                 <label class="layui-form-label">QQ：</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="p[qq]" lay-verify="" autocomplete="off"
-                                           class="layui-input" value="">
+                                    <input type="text" id="qq" name="qq" lay-verify="" autocomplete="off"
+                                           class="layui-input" value=${userInfo.qq}>
                                 </div>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                             <div class="layui-inline">
                                 <label class="layui-form-label">生日：</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" name="p[birthday]" id="date" lay-verify="date" placeholder="YYYY-MM-dd" autocomplete="off" class="layui-input" value="1970-01-01">
+                                    <input type="text" name="birthdate" id="birthdate" lay-verify="date" placeholder="YYYY-MM-dd" autocomplete="off" class="layui-input" value="$!date.format('yyyy-MM-dd',${userInfo.birthdate})">
                                 </div>
                             </div>
                         </div>
@@ -77,17 +77,17 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">性别：</label>
                             <div class="layui-input-block">
-                                <input type="radio" checked name="p[sex]" value="1"
+                                <input type="radio" checked name="sex" value="1"
                                        title="男" checked="">
-                                <input type="radio"  name="p[sex]" value="0"
+                                <input type="radio"  name="sex" value="0"
                                        title="女">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">联系地址：</label>
                             <div class="layui-input-block">
-                                <input type="text" name="p[address]" lay-verify="title" autocomplete="off"
-                                       placeholder="联系地址" class="layui-input" value="">
+                                <input type="text" id="address" name="address" lay-verify="title" autocomplete="off"
+                                       placeholder="联系地址" class="layui-input" value=${userInfo.address}>
                             </div>
                         </div>
                         <div class="layui-form-item">
