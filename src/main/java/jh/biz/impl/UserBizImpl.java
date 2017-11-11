@@ -1,13 +1,19 @@
 package jh.biz.impl;
 
 import jh.biz.UserBiz;
+import jh.biz.service.CacheService;
 import jh.dao.local.UserInfoDao;
 import jh.exceptions.BizException;
+import jh.model.Account;
 import jh.model.UserInfo;
+import jh.model.dto.UserInfoDto;
+import jh.model.dto.UserInfoRequest;
 import jh.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -17,6 +23,8 @@ import java.util.Objects;
 public class UserBizImpl implements UserBiz {
     @Autowired
     private UserInfoDao userInfoDao;
+    @Autowired
+    private CacheService cacheService;
 
     @Override
     public Long register(String username, String password, String subUserId) {
@@ -41,7 +49,7 @@ public class UserBizImpl implements UserBiz {
     @Override
     public void edit(UserInfo userInfo) {
         UserInfo user = userInfoDao.selectByPrimaryKey(userInfo.getId());
-        if(user.getStatus() != UserInfo.STATUS.INIT) {
+        if(user.getStatus() != UserInfo.STATUS.init.getValue()) {
             throw new BizException("用户状态不允许修改");
         }
 
@@ -50,5 +58,38 @@ public class UserBizImpl implements UserBiz {
         if(count <=0) {
             throw new BizException("用户更新失败");
         }
+    }
+
+    @Override
+    public List<UserInfoDto> getUserList(UserInfoRequest request) {
+        List<UserInfo> list = userInfoDao.select(request);
+
+        List<UserInfoDto> result = new ArrayList<>();
+
+        list.stream().forEach(userInfo -> result.add(buildUserDto(userInfo)));
+
+        return result;
+    }
+
+    private UserInfoDto buildUserDto(UserInfo userInfo) {
+        UserInfoDto userInfoDto = new UserInfoDto();
+        userInfoDto.setUserId(userInfo.getId());
+        userInfoDto.setName(userInfo.getName());
+        userInfoDto.setCreateTime(userInfo.getCreateTime());
+        userInfoDto.setStatus(userInfo.getStatus());
+        userInfoDto.setStatusDesc(UserInfo.STATUS.parse(userInfo.getSex()).getDesc());
+
+        UserInfo subUserInfo = cacheService.getUserInfo(userInfo.getSubUserId());
+
+        userInfoDto.setSubUserId(userInfo.getSubUserId());
+        userInfoDto.setSubUserName(subUserInfo.getName());
+
+        Account account = cacheService.getAccount(userInfo.getId());
+        userInfoDto.setAmount(account.getAmount().subtract(account.getLockAmount()));
+        userInfoDto.setLockAmount(account.getLockAmount());
+
+        userInfoDto.setType(UserInfo.TYPE.parse(userInfo.getType()).getDesc());
+
+        return userInfoDto;
     }
 }

@@ -34,6 +34,8 @@ public class UserInfo {
 
     private Long adminId;
 
+    private Date createTime;
+
     public Long getId() {
         return id;
     }
@@ -146,17 +148,71 @@ public class UserInfo {
         this.adminId = adminId;
     }
 
-    public interface STATUS {
-        int INIT = 0;
-        int PROCESSING = 1;
-        int AVAILABLE = 2;
-        int FAILED = 3;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public interface TYPE {
-        int INIT = 0;
-        int ADMIN = 1;
-        int AGENT = 2;
-        int CUSTOMER = 3;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public enum STATUS {
+        init(0,"用户完善资料"),
+        processing(1,"待认证"),
+        available(2,"正常"),
+        failed(3,"禁用");
+
+        private int value;
+        private String desc;
+
+        STATUS(int value,String desc) {
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public static STATUS parse(int value) {
+            for(STATUS status: STATUS.values()) {
+                if(value == status.value) {
+                    return status;
+                }
+            }
+            return null;
+        }
+
+        public String getDesc() {
+            return this.desc;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+    }
+
+    public enum TYPE {
+        INIT(0,"初始"),
+        ADMIN(1,"管理员"),
+        AGENT(2,"代理商"),
+        CUSTOMER(3,"普通商户");
+
+        private int value;
+        private String desc;
+
+        TYPE(int value,String desc) {
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public static TYPE parse(int value) {
+            for(TYPE type:TYPE.values()) {
+                if(type.value == value) {
+                    return type;
+                }
+            }
+            return null;
+        }
+
+        public String getDesc() {
+            return this.desc;
+        }
     }
 }

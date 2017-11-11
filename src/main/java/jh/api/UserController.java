@@ -175,13 +175,13 @@ public class UserController {
     public String getUserAuthStatus (Long userId) {
         UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
         switch (userInfo.getStatus()) {
-            case UserInfo.STATUS.INIT:
+            case 0:
                 return "请补充用户信息";
-            case UserInfo.STATUS.PROCESSING:
+            case 1:
                 return "审核中";
-            case UserInfo.STATUS.AVAILABLE:
+            case 2:
                 return "您已成功认证!";
-            case UserInfo.STATUS.FAILED:
+            case 3:
                 return "请求已被驳回";
             default:
                 return "您已成功认证!";

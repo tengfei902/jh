@@ -1,7 +1,10 @@
 package jh.dao.local;
 
 import jh.model.UserInfo;
+import jh.model.dto.UserInfoRequest;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface UserInfoDao {
     int deleteByPrimaryKey(Long id);
@@ -27,4 +30,6 @@ public interface UserInfoDao {
     int udpate(UserInfo userInfo);
 
     int updatePassword(@Param("id")Long id,@Param("newPassword")String newPassword,@Param("password")String password);
+
+    List<UserInfo> select(UserInfoRequest request);
 }
