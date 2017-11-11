@@ -15,6 +15,9 @@ public class UserInfoDto {
     private BigDecimal amount;
     private BigDecimal lockAmount;
     private Date createTime;
+    private String userNo;
+    private String subUserNo;
+    private Long adminId;
 
     public Long getUserId() {
         return userId;
@@ -94,5 +97,29 @@ public class UserInfoDto {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getUserNo() {
+        return userNo;
+    }
+
+    public void setUserNo(String userNo) {
+        this.userNo = userNo;
+    }
+
+    public String getSubUserNo() {
+        return subUserNo;
+    }
+
+    public void setSubUserNo(String subUserNo) {
+        this.subUserNo = subUserNo;
+    }
+
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 }

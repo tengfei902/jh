@@ -30,7 +30,7 @@ import java.util.Objects;
  * Created by tengfei on 2017/10/28.
  */
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/userInfo")
 public class UserController {
     @Autowired
     private UserInfoDao userInfoDao;
@@ -64,38 +64,38 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/check_user", produces = "application/json;charset=UTF-8")
-    public @ResponseBody String checkUser(@RequestParam String username) {
-        UserInfo userInfo = userInfoDao.selectByLoginId(username);
-        Map<String,Object> result = Utils.buildMap("valid",Objects.isNull(userInfo));
-        return new Gson().toJson(result);
-    }
+//    @RequestMapping(value = "/check_user", produces = "application/json;charset=UTF-8")
+//    public @ResponseBody String checkUser(@RequestParam String username) {
+//        UserInfo userInfo = userInfoDao.selectByLoginId(username);
+//        Map<String,Object> result = Utils.buildMap("valid",Objects.isNull(userInfo));
+//        return new Gson().toJson(result);
+//    }
 
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
-
-        String loginId = request.getParameter("username");
-        String password = request.getParameter("password");
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        if(StringUtils.isEmpty(loginId) || StringUtils.isEmpty(password)) {
-            modelAndView.setViewName("redirect:/shouye.html");
-            return modelAndView;
-        }
-
-        if(!userBiz.login(loginId,password)) {
-            modelAndView.setViewName("redirect:/shouye.html");
-            return modelAndView;
-        }
-
-        UserInfo userInfo = userInfoDao.selectByLoginId(loginId);
-        UserDto userDto = new UserDto(userInfo);
-        request.getSession().setAttribute(Constants.SESSION_USER_INFO,userDto);
-
-        modelAndView.setViewName("redirect:/User_Login_checklogin.html");
-        return modelAndView;
-    }
+//    @RequestMapping(value = "/login",method = RequestMethod.POST)
+//    public ModelAndView login(HttpServletRequest request, HttpServletResponse response) {
+//
+//        String loginId = request.getParameter("username");
+//        String password = request.getParameter("password");
+//
+//        ModelAndView modelAndView = new ModelAndView();
+//
+//        if(StringUtils.isEmpty(loginId) || StringUtils.isEmpty(password)) {
+//            modelAndView.setViewName("redirect:/shouye.html");
+//            return modelAndView;
+//        }
+//
+//        if(!userBiz.login(loginId,password)) {
+//            modelAndView.setViewName("redirect:/shouye.html");
+//            return modelAndView;
+//        }
+//
+//        UserInfo userInfo = userInfoDao.selectByLoginId(loginId);
+//        UserDto userDto = new UserDto(userInfo);
+//        request.getSession().setAttribute(Constants.SESSION_USER_INFO,userDto);
+//
+//        modelAndView.setViewName("redirect:/User_Login_checklogin.html");
+//        return modelAndView;
+//    }
 
     @RequestMapping(value = "/submit",method = RequestMethod.POST)
     public void submit(HttpServletRequest request, HttpServletResponse response) {

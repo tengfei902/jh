@@ -17,10 +17,13 @@
     <result column="sub_user_id" property="subUserId" jdbcType="BIGINT" />
     <result column="admin_id" property="adminId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="sub_user_no" property="subUserNo" jdbcType="VARCHAR" />
+    <result column="user_no" property="userNo" jdbcType="VARCHAR" />
+    <result column="sub_user_name" property="subUserName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, login_id, `password`, `name`, id_card, tel, qq, birthdate, sex, address, `type`, 
-    `status`, sub_user_id, admin_id,create_time
+    `status`, sub_user_id, admin_id,create_time,sub_user_no,user_no,sub_user_name
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -89,6 +92,15 @@
       <if test="adminId != null" >
         admin_id,
       </if>
+      <if test="userNo != null" >
+        user_no,
+      </if>
+      <if test="subUserNo != null" >
+        sub_user_no,
+      </if>
+      <if test="subUserName != null" >
+        sub_user_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -132,6 +144,15 @@
       </if>
       <if test="adminId != null" >
         #{adminId,jdbcType=BIGINT},
+      </if>
+      <if test="userNo != null" >
+        #{userNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserNo != null" >
+        #{subUserNo,jdbcType=VARCHAR},
+      </if>
+      <if test="subUserName != null" >
+        #{subUserName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -216,7 +237,7 @@
     select
     <include refid="Base_Column_List" />
     from user_info
-    where login_id = #{loginId,jdbcType=VARCHAR}
+    where login_id = #{loginId,jdbcType=VARCHAR} and password = #{password,jdbcType=VARCHAR}
   </select>
 
   <select id="select" resultMap="BaseResultMap" parameterType="jh.model.dto.UserInfoRequest" >
@@ -224,19 +245,31 @@
     <include refid="Base_Column_List" />
     from user_info
     where 1=1
-    <if test="userId != null" >
-      and id = #{userId,jdbcType=BIGINT}
-    </if>
-    <if test="name != null" >
-      and name = #{name,jdbcType=VARCHAR}
-    </if>
     <if test="status != null" >
       and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="user != null" >
+      and (user_no like concat(concat('%',#{user,jdbcType=VARCHAR}),'%') or name like concat(concat('%',#{user,jdbcType=VARCHAR}),'%'))
+    </if>
+    <if test="agent != null" >
+      and (sub_user_no like concat(concat('%',#{agent,jdbcType=VARCHAR}),'%') or sub_user_name like concat(concat('%',#{agent,jdbcType=VARCHAR}),'%'))
+    </if>
+    <if test="adminId != null" >
+      and admin_id = #{adminId,jdbcType=BIGINT}
     </if>
     <if test="type != null" >
       and type = #{type,jdbcType=INTEGER}
     </if>
     order by id desc
   </select>
+
+  <update id="resetPassword" parameterType="jh.model.UserInfo" >
+    update user_info
+    set
+      password = #{newpassword,jdbcType=VARCHAR}
+    where id = #{userId,jdbcType=BIGINT}
+    and password = #{ypassword,jdbcType=VARCHAR}
+    and #{newpassword,jdbcType=VARCHAR} = #{newpasswordok,jdbcType=VARCHAR}
+  </update>
 
 </mapper>

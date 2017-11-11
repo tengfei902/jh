@@ -36,6 +36,13 @@ public class UserInfo {
 
     private Date createTime;
 
+    private String userNo;
+    private String subUserNo;
+
+    private String subUserName;
+    private String inviteCode;
+    private Long groupId;
+
     public Long getId() {
         return id;
     }
@@ -156,6 +163,46 @@ public class UserInfo {
         this.createTime = createTime;
     }
 
+    public String getSubUserName() {
+        return subUserName;
+    }
+
+    public void setSubUserName(String subUserName) {
+        this.subUserName = subUserName;
+    }
+
+    public String getUserNo() {
+        return userNo;
+    }
+
+    public void setUserNo(String userNo) {
+        this.userNo = userNo;
+    }
+
+    public String getSubUserNo() {
+        return subUserNo;
+    }
+
+    public void setSubUserNo(String subUserNo) {
+        this.subUserNo = subUserNo;
+    }
+
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
     public enum STATUS {
         init(0,"用户完善资料"),
         processing(1,"待认证"),
@@ -192,7 +239,8 @@ public class UserInfo {
         INIT(0,"初始"),
         ADMIN(1,"管理员"),
         AGENT(2,"代理商"),
-        CUSTOMER(3,"普通商户");
+        CUSTOMER(3,"普通商户"),
+        SUPER_ADMIN(4,"超级管理员");
 
         private int value;
         private String desc;
@@ -213,6 +261,10 @@ public class UserInfo {
 
         public String getDesc() {
             return this.desc;
+        }
+
+        public int getValue() {
+            return this.value;
         }
     }
 }

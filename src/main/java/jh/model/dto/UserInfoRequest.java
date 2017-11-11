@@ -1,25 +1,26 @@
 package jh.model.dto;
 
 public class UserInfoRequest {
-    private Long userId;
-    private String name;
+    private String user;
+    private String agent;
     private Integer status;
+    private String adminId;
     private Integer type;
 
-    public Long getUserId() {
-        return userId;
+    public String getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(String user) {
+        this.user = user;
     }
 
-    public String getName() {
-        return name;
+    public String getAgent() {
+        return agent;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAgent(String agent) {
+        this.agent = agent;
     }
 
     public Integer getStatus() {
@@ -28,6 +29,14 @@ public class UserInfoRequest {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(String adminId) {
+        this.adminId = adminId;
     }
 
     public Integer getType() {

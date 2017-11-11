@@ -62,8 +62,12 @@ public class UserBizImpl implements UserBiz {
 
     @Override
     public List<UserInfoDto> getUserList(UserInfoRequest request) {
-        List<UserInfo> list = userInfoDao.select(request);
+        UserInfo admin = userInfoDao.selectByPrimaryKey(Long.parseLong(request.getAdminId()));
+        if(admin.getType() == UserInfo.TYPE.SUPER_ADMIN.getValue()) {
+            request.setAdminId(null);
+        }
 
+        List<UserInfo> list = userInfoDao.select(request);
         List<UserInfoDto> result = new ArrayList<>();
 
         list.stream().forEach(userInfo -> result.add(buildUserDto(userInfo)));
@@ -81,15 +85,21 @@ public class UserBizImpl implements UserBiz {
 
         UserInfo subUserInfo = cacheService.getUserInfo(userInfo.getSubUserId());
 
-        userInfoDto.setSubUserId(userInfo.getSubUserId());
-        userInfoDto.setSubUserName(subUserInfo.getName());
+        if(!Objects.isNull(subUserInfo)) {
+            userInfoDto.setSubUserId(userInfo.getSubUserId());
+            userInfoDto.setSubUserName(subUserInfo.getName());
+        }
 
         Account account = cacheService.getAccount(userInfo.getId());
-        userInfoDto.setAmount(account.getAmount().subtract(account.getLockAmount()));
-        userInfoDto.setLockAmount(account.getLockAmount());
+        if(!Objects.isNull(account)) {
+            userInfoDto.setAmount(account.getAmount().subtract(account.getLockAmount()));
+            userInfoDto.setLockAmount(account.getLockAmount());
+        }
 
         userInfoDto.setType(UserInfo.TYPE.parse(userInfo.getType()).getDesc());
-
+        userInfoDto.setUserNo(userInfo.getUserNo());
+        userInfoDto.setSubUserNo(userInfo.getSubUserNo());
+        userInfoDto.setAdminId(userInfo.getAdminId());
         return userInfoDto;
     }
 }

@@ -17,12 +17,4 @@
                                 expression="org.springframework.stereotype.Repository" />
     </context:component-scan>
     <mvc:default-servlet-handler/>
-
-    <mvc:interceptors>
-        <mvc:interceptor>
-            <mvc:mapping path="/account/*"/>
-            <mvc:mapping path="/pay/*"/>
-            <beans:bean class="jh.interceptor.UserInterceptor"/>
-        </mvc:interceptor>
-    </mvc:interceptors>
 </beans:beans>

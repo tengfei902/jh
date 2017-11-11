@@ -8,6 +8,7 @@ import jh.model.UserInfo;
 import jh.test.BaseTestCase;
 import jh.utils.Utils;
 import junit.framework.Assert;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -87,5 +88,17 @@ public class UserTest extends BaseTestCase {
         for(PropertyDescriptor propertyDescriptor:propertyDescriptors) {
             
         }
+    }
+
+    @Test
+    public void testMd5() {
+        String md5 = DigestUtils.md5Hex("tengfei");
+        String md5_1 = DigestUtils.md5Hex("tengfei");
+        String md5_2 = DigestUtils.md5Hex("tengfei");
+        String md5_3 = DigestUtils.md5Hex("123456");
+        System.out.println(md5);
+        System.out.println(md5_1);
+        System.out.println(md5_2);
+        System.out.println(md5_3);
     }
 }

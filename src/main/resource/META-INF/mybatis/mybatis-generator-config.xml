@@ -37,7 +37,7 @@
 		</javaClientGenerator>
 
 		<!-- 正式生成之前需要删除 此事例 -->
-		<table tableName="account_opr_log" domainObjectName="AccountOprLog"
+		<table tableName="user_group" domainObjectName="UserGroup"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

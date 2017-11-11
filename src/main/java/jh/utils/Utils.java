@@ -1,5 +1,6 @@
 package jh.utils;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
 import sun.security.provider.MD5;
@@ -82,12 +83,6 @@ public class Utils {
     }
 
     public static String convertPassword(String str) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("md5");
-            return new BigInteger(1, digest.digest()).toString(16);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return DigestUtils.md5Hex(str);
     }
 }

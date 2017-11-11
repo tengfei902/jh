@@ -5,6 +5,7 @@ import jh.model.dto.UserInfoRequest;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserInfoDao {
     int deleteByPrimaryKey(Long id);
@@ -19,7 +20,7 @@ public interface UserInfoDao {
 
     int updateByPrimaryKey(UserInfo record);
 
-    UserInfo selectByLoginId(@Param("loginId")String loginId);
+    UserInfo selectByLoginId(@Param("loginId")String loginId,@Param("password")String password);
 
     UserInfo checkLogin(@Param("loginId")String loginId,@Param("password")String password);
 
@@ -32,4 +33,6 @@ public interface UserInfoDao {
     int updatePassword(@Param("id")Long id,@Param("newPassword")String newPassword,@Param("password")String password);
 
     List<UserInfo> select(UserInfoRequest request);
+
+    int resetPassword(Map<String,Object> params);
 }
