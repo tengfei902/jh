@@ -1,16 +1,14 @@
 package jh.api;
 
-import com.google.gson.Gson;
 import jh.biz.UserBiz;
+import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
+import jh.model.UserGroup;
 import jh.model.UserInfo;
 import jh.model.constant.Constants;
-import jh.model.dto.ResponseResult;
-import jh.model.dto.UserInfoDto;
-import jh.model.dto.UserInfoRequest;
+import jh.model.dto.*;
 import jh.utils.Utils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +25,18 @@ public class UserApi {
     private UserBiz userBiz;
     @Autowired
     private UserInfoDao userInfoDao;
+    @Autowired
+    private UserGroupDao userGroupDao;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
         List<UserInfoDto> list = userBiz.getUserList(request);
+        return ResponseResult.success(list);
+    }
+
+    @RequestMapping(value = "/get_user_group_list",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<UserGroupDto>> getUserGroupList(@RequestBody UserGroupRequest request) {
+        List<UserGroupDto> list = userBiz.getUserGroupList(request);
         return ResponseResult.success(list);
     }
 
@@ -49,8 +55,10 @@ public class UserApi {
             return ResponseResult.failed(Constants.GET_USER_FAILED,"用户不存在",new UserInfo());
         }
 
-        if(userInfo.getType() != userType) {
-            if(userType==1 && userInfo.getType() == 4) {
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(userInfo.getGroupId());
+
+        if(userGroup.getType() != userType) {
+            if(userType==3 && userGroup.getType() == 10) {
                 return ResponseResult.success(userInfo);
             }
             return ResponseResult.failed(Constants.GET_USER_FAILED,"用户类型错误",new UserInfo());

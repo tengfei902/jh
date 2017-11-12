@@ -1,6 +1,10 @@
 package jh.dao.local;
 
 import jh.model.UserGroup;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 public interface UserGroupDao {
     int deleteByPrimaryKey(Long id);
@@ -14,4 +18,12 @@ public interface UserGroupDao {
     int updateByPrimaryKeySelective(UserGroup record);
 
     int updateByPrimaryKey(UserGroup record);
+
+    UserGroup selectByGroupNo(@Param("groupNo")String groupNo);
+
+    List<UserGroup> select(Map<String,Object> map);
+
+    List<UserGroup> selectBySubGroupId(@Param("subGroupId") Long subGroupId);
+
+    List<UserGroup> selectByCompanyId(@Param("companyId")Long companyId);
 }

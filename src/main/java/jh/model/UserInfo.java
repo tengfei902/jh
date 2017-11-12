@@ -236,11 +236,9 @@ public class UserInfo {
     }
 
     public enum TYPE {
-        INIT(0,"初始"),
         ADMIN(1,"管理员"),
-        AGENT(2,"代理商"),
-        CUSTOMER(3,"普通商户"),
-        SUPER_ADMIN(4,"超级管理员");
+        CUSTOMER(3,"普通用户"),
+        SUPER_ADMIN(10,"超级管理员");
 
         private int value;
         private String desc;

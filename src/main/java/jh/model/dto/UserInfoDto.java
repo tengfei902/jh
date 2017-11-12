@@ -1,6 +1,5 @@
 package jh.model.dto;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class UserInfoDto {
@@ -8,16 +7,13 @@ public class UserInfoDto {
     private Long userId;
     private String name;
     private String type;
-    private Long subUserId;
-    private String subUserName;
+    private String group;
     private Integer status;
     private String statusDesc;
-    private BigDecimal amount;
-    private BigDecimal lockAmount;
+    private String inviteCode;
+    private String inviteSite;
+    private String tel;
     private Date createTime;
-    private String userNo;
-    private String subUserNo;
-    private Long adminId;
 
     public Long getUserId() {
         return userId;
@@ -43,20 +39,12 @@ public class UserInfoDto {
         this.type = type;
     }
 
-    public Long getSubUserId() {
-        return subUserId;
+    public String getGroup() {
+        return group;
     }
 
-    public void setSubUserId(Long subUserId) {
-        this.subUserId = subUserId;
-    }
-
-    public String getSubUserName() {
-        return subUserName;
-    }
-
-    public void setSubUserName(String subUserName) {
-        this.subUserName = subUserName;
+    public void setGroup(String group) {
+        this.group = group;
     }
 
     public Integer getStatus() {
@@ -75,20 +63,28 @@ public class UserInfoDto {
         this.statusDesc = statusDesc;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public String getInviteCode() {
+        return inviteCode;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
     }
 
-    public BigDecimal getLockAmount() {
-        return lockAmount;
+    public String getInviteSite() {
+        return inviteSite;
     }
 
-    public void setLockAmount(BigDecimal lockAmount) {
-        this.lockAmount = lockAmount;
+    public void setInviteSite(String inviteSite) {
+        this.inviteSite = inviteSite;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     public Date getCreateTime() {
@@ -97,29 +93,5 @@ public class UserInfoDto {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public String getUserNo() {
-        return userNo;
-    }
-
-    public void setUserNo(String userNo) {
-        this.userNo = userNo;
-    }
-
-    public String getSubUserNo() {
-        return subUserNo;
-    }
-
-    public void setSubUserNo(String subUserNo) {
-        this.subUserNo = subUserNo;
-    }
-
-    public Long getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(Long adminId) {
-        this.adminId = adminId;
     }
 }

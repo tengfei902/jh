@@ -20,10 +20,11 @@
     <result column="sub_user_no" property="subUserNo" jdbcType="VARCHAR" />
     <result column="user_no" property="userNo" jdbcType="VARCHAR" />
     <result column="sub_user_name" property="subUserName" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, login_id, `password`, `name`, id_card, tel, qq, birthdate, sex, address, `type`, 
-    `status`, sub_user_id, admin_id,create_time,sub_user_no,user_no,sub_user_name
+    `status`, sub_user_id, admin_id,create_time,sub_user_no,user_no,sub_user_name,group_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -101,6 +102,9 @@
       <if test="subUserName != null" >
         sub_user_name,
       </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -153,6 +157,9 @@
       </if>
       <if test="subUserName != null" >
         #{subUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -254,11 +261,11 @@
     <if test="agent != null" >
       and (sub_user_no like concat(concat('%',#{agent,jdbcType=VARCHAR}),'%') or sub_user_name like concat(concat('%',#{agent,jdbcType=VARCHAR}),'%'))
     </if>
-    <if test="adminId != null" >
-      and admin_id = #{adminId,jdbcType=BIGINT}
-    </if>
     <if test="type != null" >
       and type = #{type,jdbcType=INTEGER}
+    </if>
+    <if test="groupId != null" >
+      and group_id = #{groupId,jdbcType=BIGINT}
     </if>
     order by id desc
   </select>
@@ -272,4 +279,10 @@
     and #{newpassword,jdbcType=VARCHAR} = #{newpasswordok,jdbcType=VARCHAR}
   </update>
 
+  <select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where group_id = #{groupId,jdbcType=VARCHAR} and status != 3
+  </select>
 </mapper>

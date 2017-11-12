@@ -16,6 +16,8 @@ public interface UserInfoDao {
 
     UserInfo selectByPrimaryKey(Long id);
 
+    List<UserInfo> selectByGroupId(@Param("groupId") Long groupId);
+
     int updateByPrimaryKeySelective(UserInfo record);
 
     int updateByPrimaryKey(UserInfo record);

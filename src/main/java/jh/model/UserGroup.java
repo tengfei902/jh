@@ -1,5 +1,7 @@
 package jh.model;
 
+import java.util.Date;
+
 public class UserGroup {
     private Long id;
 
@@ -22,6 +24,10 @@ public class UserGroup {
     private String subGroupNo;
 
     private String subGroupName;
+
+    private Long companyId;
+
+    private Date createTime;
 
     public Long getId() {
         return id;
@@ -109,5 +115,84 @@ public class UserGroup {
 
     public void setSubGroupName(String subGroupName) {
         this.subGroupName = subGroupName;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public enum Status {
+        NEW(1,"未认证"),
+        VALID(2,"已认证"),
+        INVALID(3,"禁用");
+
+        private int value;
+        private String desc;
+
+        Status(int value,String desc) {
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public static Status parse(int value) {
+            for(Status status:Status.values()) {
+                if(status.value == value) {
+                    return status;
+                }
+            }
+            return null;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
+    public enum GroupType {
+        CUSTOMER(1,"普通商户"),
+        AGENT(2,"代理商"),
+        COMPANY(3,"分公司"),
+        SUPER(10,"总部");
+
+        private int value;
+        private String desc;
+
+        GroupType(int value,String desc) {
+            this.value = value;
+            this.desc = desc;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+
+        public static GroupType parse(int value) {
+            for (GroupType groupType : GroupType.values()) {
+                if (groupType.value == value) {
+                    return groupType;
+                }
+            }
+            return null;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
     }
 }

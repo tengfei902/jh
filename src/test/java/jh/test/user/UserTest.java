@@ -3,8 +3,14 @@ package jh.test.user;
 import com.google.gson.Gson;
 import jh.api.UserController;
 import jh.biz.UserBiz;
+import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
+import jh.model.UserGroup;
 import jh.model.UserInfo;
+import jh.model.dto.UserGroupDto;
+import jh.model.dto.UserGroupRequest;
+import jh.model.dto.UserInfoDto;
+import jh.model.dto.UserInfoRequest;
 import jh.test.BaseTestCase;
 import jh.utils.Utils;
 import junit.framework.Assert;
@@ -22,10 +28,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.security.Principal;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by tengfei on 2017/10/29.
@@ -37,6 +41,8 @@ public class UserTest extends BaseTestCase {
     private UserController userController;
     @Autowired
     private UserBiz userBiz;
+    @Autowired
+    private UserGroupDao userGroupDao;
 
     @Test
     public void register() {
@@ -100,5 +106,46 @@ public class UserTest extends BaseTestCase {
         System.out.println(md5_1);
         System.out.println(md5_2);
         System.out.println(md5_3);
+    }
+
+    @Test
+    public void testGetUserGroupList() {
+        UserGroupRequest request = new UserGroupRequest();
+        request.setCompanyId("2");
+
+        List<UserGroup> list = userGroupDao.select(Utils.bean2Map(request));
+
+        Assert.assertEquals(list.size(),110);
+
+        request.setType(UserGroup.GroupType.AGENT.getValue());
+        list = userGroupDao.select(Utils.bean2Map(request));
+
+        Assert.assertEquals(list.size(),10);
+
+        List<UserGroupDto> userGroupDtos = userBiz.getUserGroupList(request);
+        Assert.assertEquals(userGroupDtos.size(),10);
+
+        request = new UserGroupRequest();
+        request.setCompanyId("1");
+        userGroupDtos = userBiz.getUserGroupList(request);
+        Assert.assertEquals(userGroupDtos.size(),1111);
+    }
+
+    @Test
+    public void testGetUserList() {
+        UserInfoRequest request =new UserInfoRequest();
+        request.setAdminId("2");
+        List<UserInfoDto> list = userBiz.getUserList(request);
+
+        List<UserGroup> userGroups = userGroupDao.selectByCompanyId(2L);
+
+        List<Long> groupIds = userGroups.parallelStream().map(UserGroup::getId).collect(Collectors.toList());
+
+        for(UserInfoDto userInfoDto:list) {
+            Long userId = userInfoDto.getUserId();
+            UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
+            System.out.println(userInfo.getId());
+            Assert.assertTrue(groupIds.contains(userInfo.getGroupId()) || userInfo.getGroupId() == 2L);
+        }
     }
 }

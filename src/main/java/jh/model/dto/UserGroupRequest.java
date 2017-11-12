@@ -1,12 +1,11 @@
 package jh.model.dto;
 
-public class UserInfoRequest {
+public class UserGroupRequest {
     private String user;
     private String agent;
     private Integer status;
-    private String adminId;
+    private String companyId;
     private Integer type;
-    private Long groupId;
 
     public String getUser() {
         return user;
@@ -32,12 +31,12 @@ public class UserInfoRequest {
         this.status = status;
     }
 
-    public String getAdminId() {
-        return adminId;
+    public String getCompanyId() {
+        return companyId;
     }
 
-    public void setAdminId(String adminId) {
-        this.adminId = adminId;
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
     }
 
     public Integer getType() {
@@ -46,13 +45,5 @@ public class UserInfoRequest {
 
     public void setType(Integer type) {
         this.type = type;
-    }
-
-    public Long getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
     }
 }

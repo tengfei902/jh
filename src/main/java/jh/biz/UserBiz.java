@@ -1,6 +1,8 @@
 package jh.biz;
 
 import jh.model.UserInfo;
+import jh.model.dto.UserGroupDto;
+import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
 import jh.model.dto.UserInfoRequest;
 
@@ -18,4 +20,8 @@ public interface UserBiz {
     void edit(UserInfo userInfo);
 
     List<UserInfoDto> getUserList(UserInfoRequest request);
+
+    List<UserGroupDto> getUserGroupList(UserGroupRequest request);
+
+
 }
