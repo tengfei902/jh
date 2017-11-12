@@ -416,7 +416,7 @@
         <configuration>
           <webResources>
             <resource>
-              <directory>src/main/resources</directory>
+              <directory>src/main/resource</directory>
             </resource>
           </webResources>
           <failOnMissingWebXml>false</failOnMissingWebXml>
