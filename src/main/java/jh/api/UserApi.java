@@ -1,8 +1,10 @@
 package jh.api;
 
 import jh.biz.UserBiz;
+import jh.dao.local.ChannelDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
+import jh.model.Channel;
 import jh.model.UserGroup;
 import jh.model.UserInfo;
 import jh.model.constant.Constants;
@@ -27,6 +29,8 @@ public class UserApi {
     private UserInfoDao userInfoDao;
     @Autowired
     private UserGroupDao userGroupDao;
+    @Autowired
+    private ChannelDao channelDao;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
@@ -81,5 +85,21 @@ public class UserApi {
         }
 
         return ResponseResult.failed(Constants.RESET_PASSWORD_FAILED,"update password failed",Boolean.FALSE);
+    }
+
+    @RequestMapping(value = "/get_channel_list",method = RequestMethod.GET ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<List<Channel>> getChannelList() {
+        List<Channel> list = channelDao.selectForList();
+        return ResponseResult.success(list);
+    }
+
+    @RequestMapping(value = "/get_channel_list",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public ResponseResult<Boolean> addChannel(@RequestBody Channel channel) {
+        try {
+            channelDao.insertSelective(channel);
+        } catch (Exception e) {
+            return ResponseResult.success(Boolean.FALSE);
+        }
+        return ResponseResult.success(Boolean.TRUE);
     }
 }

@@ -1,8 +1,10 @@
 package jh.test;
 
 import com.google.gson.Gson;
+import jh.dao.local.ChannelDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
+import jh.model.Channel;
 import jh.model.UserGroup;
 import jh.model.UserInfo;
 import jh.utils.Utils;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.math.BigDecimal;
 
 /**
  * Created by tengfei on 2017/11/6.
@@ -24,6 +28,8 @@ public class BaseCommitTestCase {
     private UserInfoDao userInfoDao;
     @Autowired
     private UserGroupDao userGroupDao;
+    @Autowired
+    private ChannelDao channelDao;
 
     @Test
     public void testSaveUserGroup() {
@@ -236,7 +242,17 @@ public class BaseCommitTestCase {
     }
 
     @Test
-    public void testSaveUser() {
+    public void saveChannel() {
 
+        for(Channel.ChannelType channelType: Channel.ChannelType.values()) {
+            Channel channel = new Channel();
+            channel.setChannelCode(channelType.name());
+            channel.setChannelName(channelType.getDesc());
+            channel.setChannelType(Channel.ChannelType.BAIDU.getValue());
+            channel.setCipherCode("afsghdnjsgfasfDSADF");
+            channel.setFeeRate(new BigDecimal("2.0"));
+            channel.setMchId("1243546ydsa");
+            channelDao.insertSelective(channel);
+        }
     }
 }
