@@ -1,7 +1,7 @@
 package jh.model.dto;
 
-import jh.model.PayProof;
-import jh.model.PayTrdOrder;
+import jh.model.po.PayProof;
+import jh.model.po.PayTrdOrder;
 
 /**
  * Created by tengfei on 2017/10/28.

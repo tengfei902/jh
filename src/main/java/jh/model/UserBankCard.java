@@ -3,25 +3,23 @@ package jh.model;
 public class UserBankCard {
     private Long id;
 
-    private Long userId;
+    private Long groupId;
 
-    private String bankname;
+    private String bankNo;
 
-    private String subbransh;
+    private String bank;
 
-    private String accountname;
+    private String deposit;
 
-    private String cardnumber;
+    private String owner;
 
     private String province;
 
     private String city;
 
-    private Integer isdefault;
-
-    private String memo;
-
     private Integer status;
+
+    private String remark;
 
     public Long getId() {
         return id;
@@ -31,44 +29,44 @@ public class UserBankCard {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
-    public String getBankname() {
-        return bankname;
+    public String getBankNo() {
+        return bankNo;
     }
 
-    public void setBankname(String bankname) {
-        this.bankname = bankname == null ? null : bankname.trim();
+    public void setBankNo(String bankNo) {
+        this.bankNo = bankNo == null ? null : bankNo.trim();
     }
 
-    public String getSubbransh() {
-        return subbransh;
+    public String getBank() {
+        return bank;
     }
 
-    public void setSubbransh(String subbransh) {
-        this.subbransh = subbransh == null ? null : subbransh.trim();
+    public void setBank(String bank) {
+        this.bank = bank == null ? null : bank.trim();
     }
 
-    public String getAccountname() {
-        return accountname;
+    public String getDeposit() {
+        return deposit;
     }
 
-    public void setAccountname(String accountname) {
-        this.accountname = accountname == null ? null : accountname.trim();
+    public void setDeposit(String deposit) {
+        this.deposit = deposit == null ? null : deposit.trim();
     }
 
-    public String getCardnumber() {
-        return cardnumber;
+    public String getOwner() {
+        return owner;
     }
 
-    public void setCardnumber(String cardnumber) {
-        this.cardnumber = cardnumber == null ? null : cardnumber.trim();
+    public void setOwner(String owner) {
+        this.owner = owner == null ? null : owner.trim();
     }
 
     public String getProvince() {
@@ -87,27 +85,19 @@ public class UserBankCard {
         this.city = city == null ? null : city.trim();
     }
 
-    public Integer getIsdefault() {
-        return isdefault;
-    }
-
-    public void setIsdefault(Integer isdefault) {
-        this.isdefault = isdefault;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo == null ? null : memo.trim();
-    }
-
     public Integer getStatus() {
         return status;
     }
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

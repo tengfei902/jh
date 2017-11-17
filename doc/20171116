@@ -1,0 +1,4 @@
+todo :
+1.user_group:企业相关字段：法人，身份证号，备案号，工商号等，待确认;
+
+2.总部与分公司的区别：总部sub_group_id = 0,分公司sub_group_id = 总公司id，两者company_id都为0

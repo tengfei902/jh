@@ -1,6 +1,6 @@
 package jh.biz;
 
-import jh.model.UserInfo;
+import jh.model.po.UserInfo;
 import jh.model.dto.UserGroupDto;
 import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
@@ -12,8 +12,7 @@ import java.util.List;
  * Created by tengfei on 2017/10/29.
  */
 public interface UserBiz {
-
-    Long register(String username,String password,String subUserId);
+    void register(String loginId,String password,String inviteCode);
 
     boolean login(String loginId,String password);
 

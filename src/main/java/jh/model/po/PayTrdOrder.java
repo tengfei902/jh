@@ -1,4 +1,4 @@
-package jh.model;
+package jh.model.po;
 
 import jh.model.dto.PayRequest;
 import org.mybatis.generator.api.dom.java.Interface;

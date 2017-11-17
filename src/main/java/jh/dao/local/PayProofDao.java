@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.PayProof;
+import jh.model.po.PayProof;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.Map;

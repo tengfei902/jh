@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.PayRefundOrder;
+import jh.model.po.PayRefundOrder;
 import org.apache.ibatis.annotations.Param;
 
 public interface PayRefundOrderDao {

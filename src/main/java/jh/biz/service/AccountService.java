@@ -1,6 +1,6 @@
 package jh.biz.service;
 
-import jh.model.PayTrdOrder;
+import jh.model.po.PayTrdOrder;
 import jh.model.dto.RefundResponse;
 import jh.model.dto.ReverseResponse;
 

@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.UserInfo;
+import jh.model.po.UserInfo;
 import jh.model.dto.UserInfoRequest;
 import org.apache.ibatis.annotations.Param;
 
@@ -37,4 +37,6 @@ public interface UserInfoDao {
     List<UserInfo> select(UserInfoRequest request);
 
     int resetPassword(Map<String,Object> params);
+
+    UserInfo selectByInviteCode(@Param("inviteCode")String inviteCode);
 }

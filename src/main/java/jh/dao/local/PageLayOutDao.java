@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.PageLayOut;
+import jh.model.po.PageLayOut;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

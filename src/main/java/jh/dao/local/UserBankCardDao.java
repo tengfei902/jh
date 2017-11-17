@@ -1,7 +1,6 @@
 package jh.dao.local;
 
 import jh.model.UserBankCard;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,5 +17,5 @@ public interface UserBankCardDao {
 
     int updateByPrimaryKey(UserBankCard record);
 
-    List<UserBankCard> selectByUser(@Param("userId") Long userId);
+    List<UserBankCard> selectByUser(Long groupId);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.PayProofDao" >
-  <resultMap id="BaseResultMap" type="jh.model.PayProof" >
+  <resultMap id="BaseResultMap" type="jh.model.po.PayProof" >
     <result column="id" property="id" jdbcType="BIGINT" />
     <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
@@ -22,7 +22,7 @@
     id,merchant_no,status,outlet_no,total,out_trade_no,errcode,message,no,code_url,pay_info,actual_total,transaction_id,paytime
   </sql>
 
-  <insert id="insert" parameterType="jh.model.PayProof" >
+  <insert id="insert" parameterType="jh.model.po.PayProof" >
     insert into pay_proof (id, merchant_no, `status`, 
       outlet_no, total, out_trade_no, 
       errcode, message, `no`, 
@@ -34,7 +34,7 @@
       #{codeUrl,jdbcType=VARCHAR}, #{payInfo,jdbcType=VARCHAR}, #{actualTotal,jdbcType=INTEGER}, 
       #{transactionId,jdbcType=VARCHAR}, #{paytime,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.PayProof" >
+  <insert id="insertSelective" parameterType="jh.model.po.PayProof" >
     insert into pay_proof
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

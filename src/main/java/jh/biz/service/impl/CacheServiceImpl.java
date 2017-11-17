@@ -7,9 +7,9 @@ import jh.biz.service.CacheService;
 import jh.dao.local.AccountDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
-import jh.model.Account;
-import jh.model.UserGroup;
-import jh.model.UserInfo;
+import jh.model.po.Account;
+import jh.model.po.UserGroup;
+import jh.model.po.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

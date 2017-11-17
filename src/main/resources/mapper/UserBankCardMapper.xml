@@ -1,63 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="jh.dao.local.UserBankCardDao" >
+<mapper namespace="jh.dao.local.UserBankCardMapper" >
   <resultMap id="BaseResultMap" type="jh.model.UserBankCard" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="user_id" property="userId" jdbcType="BIGINT" />
-    <result column="bankname" property="bankname" jdbcType="VARCHAR" />
-    <result column="subbransh" property="subbransh" jdbcType="VARCHAR" />
-    <result column="accountname" property="accountname" jdbcType="VARCHAR" />
-    <result column="cardnumber" property="cardnumber" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="BIGINT" />
+    <result column="bank_no" property="bankNo" jdbcType="VARCHAR" />
+    <result column="bank" property="bank" jdbcType="VARCHAR" />
+    <result column="deposit" property="deposit" jdbcType="VARCHAR" />
+    <result column="owner" property="owner" jdbcType="VARCHAR" />
     <result column="province" property="province" jdbcType="VARCHAR" />
     <result column="city" property="city" jdbcType="VARCHAR" />
-    <result column="isdefault" property="isdefault" jdbcType="INTEGER" />
-    <result column="memo" property="memo" jdbcType="VARCHAR" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, user_id, bankname, subbransh, accountname, cardnumber, province, city, isdefault, 
-    memo,status
+    id, group_id, bank_no, bank, deposit, `owner`, province, city, `status`, remark
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from user_bank_cark
+    from user_bank_card
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from user_bank_cark
+    delete from user_bank_card
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="jh.model.UserBankCard" >
-    insert into user_bank_cark (id, user_id, bankname, 
-      subbransh, accountname, cardnumber, 
-      province, city, isdefault, 
-      memo)
-    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{bankname,jdbcType=VARCHAR}, 
-      #{subbransh,jdbcType=VARCHAR}, #{accountname,jdbcType=VARCHAR}, #{cardnumber,jdbcType=VARCHAR}, 
-      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{isdefault,jdbcType=INTEGER}, 
-      #{memo,jdbcType=VARCHAR})
+    insert into user_bank_card (id, group_id, bank_no, 
+      bank, deposit, `owner`, 
+      province, city, `status`, 
+      remark)
+    values (#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{bankNo,jdbcType=VARCHAR}, 
+      #{bank,jdbcType=VARCHAR}, #{deposit,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="jh.model.UserBankCard" >
-    insert into user_bank_cark
+    insert into user_bank_card
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
       </if>
-      <if test="userId != null" >
-        user_id,
+      <if test="groupId != null" >
+        group_id,
       </if>
-      <if test="bankname != null" >
-        bankname,
+      <if test="bankNo != null" >
+        bank_no,
       </if>
-      <if test="subbransh != null" >
-        subbransh,
+      <if test="bank != null" >
+        bank,
       </if>
-      <if test="accountname != null" >
-        accountname,
+      <if test="deposit != null" >
+        deposit,
       </if>
-      <if test="cardnumber != null" >
-        cardnumber,
+      <if test="owner != null" >
+        `owner`,
       </if>
       <if test="province != null" >
         province,
@@ -65,31 +63,31 @@
       <if test="city != null" >
         city,
       </if>
-      <if test="isdefault != null" >
-        isdefault,
+      <if test="status != null" >
+        `status`,
       </if>
-      <if test="memo != null" >
-        memo,
+      <if test="remark != null" >
+        remark,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
       </if>
-      <if test="bankname != null" >
-        #{bankname,jdbcType=VARCHAR},
+      <if test="bankNo != null" >
+        #{bankNo,jdbcType=VARCHAR},
       </if>
-      <if test="subbransh != null" >
-        #{subbransh,jdbcType=VARCHAR},
+      <if test="bank != null" >
+        #{bank,jdbcType=VARCHAR},
       </if>
-      <if test="accountname != null" >
-        #{accountname,jdbcType=VARCHAR},
+      <if test="deposit != null" >
+        #{deposit,jdbcType=VARCHAR},
       </if>
-      <if test="cardnumber != null" >
-        #{cardnumber,jdbcType=VARCHAR},
+      <if test="owner != null" >
+        #{owner,jdbcType=VARCHAR},
       </if>
       <if test="province != null" >
         #{province,jdbcType=VARCHAR},
@@ -97,31 +95,31 @@
       <if test="city != null" >
         #{city,jdbcType=VARCHAR},
       </if>
-      <if test="isdefault != null" >
-        #{isdefault,jdbcType=INTEGER},
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
       </if>
-      <if test="memo != null" >
-        #{memo,jdbcType=VARCHAR},
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="jh.model.UserBankCard" >
-    update user_bank_cark
+    update user_bank_card
     <set >
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=BIGINT},
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=BIGINT},
       </if>
-      <if test="bankname != null" >
-        bankname = #{bankname,jdbcType=VARCHAR},
+      <if test="bankNo != null" >
+        bank_no = #{bankNo,jdbcType=VARCHAR},
       </if>
-      <if test="subbransh != null" >
-        subbransh = #{subbransh,jdbcType=VARCHAR},
+      <if test="bank != null" >
+        bank = #{bank,jdbcType=VARCHAR},
       </if>
-      <if test="accountname != null" >
-        accountname = #{accountname,jdbcType=VARCHAR},
+      <if test="deposit != null" >
+        deposit = #{deposit,jdbcType=VARCHAR},
       </if>
-      <if test="cardnumber != null" >
-        cardnumber = #{cardnumber,jdbcType=VARCHAR},
+      <if test="owner != null" >
+        `owner` = #{owner,jdbcType=VARCHAR},
       </if>
       <if test="province != null" >
         province = #{province,jdbcType=VARCHAR},
@@ -129,26 +127,26 @@
       <if test="city != null" >
         city = #{city,jdbcType=VARCHAR},
       </if>
-      <if test="isdefault != null" >
-        isdefault = #{isdefault,jdbcType=INTEGER},
+      <if test="status != null" >
+        `status` = #{status,jdbcType=INTEGER},
       </if>
-      <if test="memo != null" >
-        memo = #{memo,jdbcType=VARCHAR},
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="jh.model.UserBankCard" >
-    update user_bank_cark
-    set user_id = #{userId,jdbcType=BIGINT},
-      bankname = #{bankname,jdbcType=VARCHAR},
-      subbransh = #{subbransh,jdbcType=VARCHAR},
-      accountname = #{accountname,jdbcType=VARCHAR},
-      cardnumber = #{cardnumber,jdbcType=VARCHAR},
+    update user_bank_card
+    set group_id = #{groupId,jdbcType=BIGINT},
+      bank_no = #{bankNo,jdbcType=VARCHAR},
+      bank = #{bank,jdbcType=VARCHAR},
+      deposit = #{deposit,jdbcType=VARCHAR},
+      `owner` = #{owner,jdbcType=VARCHAR},
       province = #{province,jdbcType=VARCHAR},
       city = #{city,jdbcType=VARCHAR},
-      isdefault = #{isdefault,jdbcType=INTEGER},
-      memo = #{memo,jdbcType=VARCHAR}
+      `status` = #{status,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

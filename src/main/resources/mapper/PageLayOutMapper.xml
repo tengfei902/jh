@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.PageLayOutDao" >
-  <resultMap id="BaseResultMap" type="jh.model.PageLayOut" >
+  <resultMap id="BaseResultMap" type="jh.model.po.PageLayOut" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="path" property="path" jdbcType="VARCHAR" />
@@ -23,7 +23,7 @@
     delete from page_lay_out
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.PageLayOut" >
+  <insert id="insert" parameterType="jh.model.po.PageLayOut" >
     insert into page_lay_out (id, `name`, `path`, 
       `type`, row_index, `level`, 
       superId)
@@ -31,7 +31,7 @@
       #{type,jdbcType=VARCHAR}, #{rowIndex,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, 
       #{superid,jdbcType=BIGINT})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.PageLayOut" >
+  <insert id="insertSelective" parameterType="jh.model.po.PageLayOut" >
     insert into page_lay_out
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -80,7 +80,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.PageLayOut" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.PageLayOut" >
     update page_lay_out
     <set >
       <if test="name != null" >
@@ -104,7 +104,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.PageLayOut" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.PageLayOut" >
     update page_lay_out
     set `name` = #{name,jdbcType=VARCHAR},
       `path` = #{path,jdbcType=VARCHAR},

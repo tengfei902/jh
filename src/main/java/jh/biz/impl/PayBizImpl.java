@@ -5,8 +5,6 @@ import jh.biz.service.PayService;
 import jh.dao.local.PayRefundOrderDao;
 import jh.dao.local.PayReverseOrderDao;
 import jh.dao.remote.FxtClient;
-import jh.model.PayRefundOrder;
-import jh.model.PayReverseOrder;
 import jh.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

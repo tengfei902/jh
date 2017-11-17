@@ -2,18 +2,20 @@ package jh.biz.impl;
 
 import jh.biz.UserBiz;
 import jh.biz.service.CacheService;
+import jh.biz.service.UserService;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
 import jh.exceptions.BizException;
-import jh.model.Account;
-import jh.model.UserGroup;
-import jh.model.UserInfo;
+import jh.model.po.Account;
+import jh.model.po.UserGroup;
+import jh.model.po.UserInfo;
 import jh.model.dto.UserGroupDto;
 import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
 import jh.model.dto.UserInfoRequest;
 import jh.utils.Utils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,18 +34,36 @@ public class UserBizImpl implements UserBiz {
     private CacheService cacheService;
     @Autowired
     private UserGroupDao userGroupDao;
+    @Autowired
+    private UserService userService;
 
     @Override
-    public Long register(String username, String password, String subUserId) {
-        UserInfo subUser = userInfoDao.selectByPrimaryKey(Long.parseLong(subUserId));
+    public void register(String loginId, String password, String inviteCode) {
+        UserGroup subUserGroup;
+        if(StringUtils.isEmpty(inviteCode)) {
+            subUserGroup = userGroupDao.selectDefaultUserGroup();
+        } else {
+            UserInfo subUserInfo = userInfoDao.selectByInviteCode(inviteCode);
+            if(Objects.isNull(subUserInfo)) {
+                subUserGroup = userGroupDao.selectDefaultUserGroup();
+            } else {
+                subUserGroup = userGroupDao.selectByPrimaryKey(subUserInfo.getGroupId());
+            }
+        }
 
         UserInfo userInfo = new UserInfo();
-        userInfo.setLoginId(username);
+        userInfo.setLoginId(loginId);
         userInfo.setPassword(Utils.convertPassword(password));
-        userInfo.setSubUserId(subUser.getId());
+        userInfo.setType(UserInfo.TYPE.ADMIN.getValue());
 
-        userInfoDao.insertSelective(userInfo);
-        return userInfo.getId();
+        UserGroup userGroup = new UserGroup();
+        userGroup.setType(UserGroup.GroupType.CUSTOMER.getValue());
+        userGroup.setSubGroupId(subUserGroup.getId());
+        userGroup.setSubGroupName(subUserGroup.getName());
+        userGroup.setSubGroupNo(subUserGroup.getGroupNo());
+        userGroup.setCompanyId(subUserGroup.getCompanyId());
+
+        userService.register(userGroup,userInfo);
     }
 
     @Override

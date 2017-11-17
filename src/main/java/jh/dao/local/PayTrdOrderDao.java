@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.PayTrdOrder;
+import jh.model.po.PayTrdOrder;
 import org.apache.ibatis.annotations.Param;
 
 public interface PayTrdOrderDao {

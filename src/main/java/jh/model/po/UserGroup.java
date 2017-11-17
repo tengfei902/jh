@@ -1,4 +1,4 @@
-package jh.model;
+package jh.model.po;
 
 import java.util.Date;
 

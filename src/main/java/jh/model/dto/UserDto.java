@@ -1,6 +1,6 @@
 package jh.model.dto;
 
-import jh.model.UserInfo;
+import jh.model.po.UserInfo;
 
 /**
  * Created by tengfei on 2017/10/29.

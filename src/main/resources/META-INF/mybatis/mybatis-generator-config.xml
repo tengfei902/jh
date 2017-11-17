@@ -28,7 +28,7 @@
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 		<!--生成映射文件存放位置 -->
-		<sqlMapGenerator targetPackage="/mapper" targetProject="src/main/resource">
+		<sqlMapGenerator targetPackage="/mapper" targetProject="src/main/resources">
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 		<!--生成Dao类存放位置 targetPackage 需要自定义 目录自动生成 basePackage-->
@@ -37,7 +37,7 @@
 		</javaClientGenerator>
 
 		<!-- 正式生成之前需要删除 此事例 -->
-		<table tableName="channel" domainObjectName="Channel"
+		<table tableName="user_bank_card" domainObjectName="UserBankCard"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

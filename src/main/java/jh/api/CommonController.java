@@ -1,7 +1,7 @@
 package jh.api;
 
 import jh.dao.local.UserInfoDao;
-import jh.model.UserInfo;
+import jh.model.po.UserInfo;
 import jh.model.enums.Auth;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

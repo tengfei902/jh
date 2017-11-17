@@ -1,9 +1,8 @@
 package jh.api;
 
 import jh.dao.local.AccountDao;
-import jh.model.Account;
+import jh.model.po.Account;
 import jh.utils.Utils;
-import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

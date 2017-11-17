@@ -2,7 +2,7 @@ package jh.biz.service.impl;
 
 import jh.biz.service.PageService;
 import jh.dao.local.PageLayOutDao;
-import jh.model.PageLayOut;
+import jh.model.po.PageLayOut;
 import jh.model.dto.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

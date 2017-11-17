@@ -1,12 +1,11 @@
 package jh.test;
 
-import com.google.gson.Gson;
 import jh.dao.local.ChannelDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
-import jh.model.Channel;
-import jh.model.UserGroup;
-import jh.model.UserInfo;
+import jh.model.po.Channel;
+import jh.model.po.UserGroup;
+import jh.model.po.UserInfo;
 import jh.utils.Utils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,7 +69,6 @@ public class BaseCommitTestCase {
             userInfo2.setName("分公司管理员_"+i);
             userInfo2.setPassword(Utils.convertPassword("123456"));
             userInfo2.setTel("12342536768");
-            userInfo2.setIdCard("1233567634");
             userInfo2.setType(UserInfo.TYPE.ADMIN.getValue());
             userInfo2.setQq("321567545412");
 
@@ -82,7 +80,6 @@ public class BaseCommitTestCase {
             userInfo2_1.setName("分公司普通用户_"+i);
             userInfo2_1.setPassword(Utils.convertPassword("123456"));
             userInfo2_1.setTel("12342536768");
-            userInfo2_1.setIdCard("1233567634");
             userInfo2_1.setType(UserInfo.TYPE.CUSTOMER.getValue());
             userInfo2_1.setQq("321567545412");
 
@@ -110,7 +107,6 @@ public class BaseCommitTestCase {
                 userInfo3.setName("代理商管理员_"+i+"_"+index);
                 userInfo3.setPassword(Utils.convertPassword("123456"));
                 userInfo3.setTel("12342536768");
-                userInfo3.setIdCard("1233567634");
                 userInfo3.setType(UserInfo.TYPE.ADMIN.getValue());
                 userInfo3.setQq("321567545412");
 
@@ -122,7 +118,6 @@ public class BaseCommitTestCase {
                 userInfo3_1.setName("分公司普通用户_"+i+"_"+index);
                 userInfo3_1.setPassword(Utils.convertPassword("123456"));
                 userInfo3_1.setTel("12342536768");
-                userInfo3_1.setIdCard("1233567634");
                 userInfo3_1.setType(UserInfo.TYPE.CUSTOMER.getValue());
                 userInfo3_1.setQq("321567545412");
 
@@ -150,7 +145,6 @@ public class BaseCommitTestCase {
                     userInfo4.setName("普通商户管理员_"+i+"_"+index+"_"+index2);
                     userInfo4.setPassword(Utils.convertPassword("123456"));
                     userInfo4.setTel("12342536768");
-                    userInfo4.setIdCard("1233567634");
                     userInfo4.setType(UserInfo.TYPE.ADMIN.getValue());
                     userInfo4.setQq("321567545412");
 
@@ -162,7 +156,6 @@ public class BaseCommitTestCase {
                     userInfo4_1.setName("普通商户普通用户_"+i+"_"+index);
                     userInfo4_1.setPassword(Utils.convertPassword("123456"));
                     userInfo4_1.setTel("12342536768");
-                    userInfo4_1.setIdCard("1233567634");
                     userInfo4_1.setType(UserInfo.TYPE.CUSTOMER.getValue());
                     userInfo4_1.setQq("321567545412");
 
@@ -179,7 +172,6 @@ public class BaseCommitTestCase {
             userInfo.setName("总部管理员_"+i);
             userInfo.setPassword(Utils.convertPassword("123456"));
             userInfo.setTel("12342536768");
-            userInfo.setIdCard("1233567634");
             userInfo.setType(UserInfo.TYPE.ADMIN.getValue());
             userInfo.setQq("321567545412");
 
@@ -193,7 +185,6 @@ public class BaseCommitTestCase {
             userInfo.setName("总部普通用户_"+i);
             userInfo.setPassword(Utils.convertPassword("123456"));
             userInfo.setTel("12342536768");
-            userInfo.setIdCard("1233567634");
             userInfo.setType(UserInfo.TYPE.CUSTOMER.getValue());
             userInfo.setQq("321567545412");
 

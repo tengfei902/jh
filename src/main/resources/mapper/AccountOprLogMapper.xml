@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.AccountOprLogDao" >
-  <resultMap id="BaseResultMap" type="jh.model.AccountOprLog" >
+  <resultMap id="BaseResultMap" type="jh.model.po.AccountOprLog" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="account_id" property="accountId" jdbcType="BIGINT" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
@@ -37,7 +37,7 @@
     delete from account_opr_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.AccountOprLog" >
+  <insert id="insert" parameterType="jh.model.po.AccountOprLog" >
     insert into account_opr_log (id, account_id, user_id, 
       trd_order_id, out_trade_no, `no`, 
       opr_type, remark, price, 
@@ -53,7 +53,7 @@
       #{channel,jdbcType=VARCHAR}, #{userFeeRate,jdbcType=DECIMAL}, #{priceIn,jdbcType=DECIMAL}, 
       #{fee,jdbcType=DECIMAL})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.AccountOprLog" >
+  <insert id="insertSelective" parameterType="jh.model.po.AccountOprLog" >
     insert into account_opr_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -174,7 +174,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.AccountOprLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.AccountOprLog" >
     update account_opr_log
     <set >
       <if test="accountId != null" >
@@ -234,7 +234,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.AccountOprLog" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.AccountOprLog" >
     update account_opr_log
     set account_id = #{accountId,jdbcType=BIGINT},
       user_id = #{userId,jdbcType=BIGINT},

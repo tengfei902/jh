@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.Channel;
+import jh.model.po.Channel;
 
 import java.util.List;
 

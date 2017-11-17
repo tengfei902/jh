@@ -1,45 +1,18 @@
-package jh.model;
-
-import jh.model.annotations.Field;
+package jh.model.po;
 
 import java.util.Date;
 
 public class UserInfo {
-    @Field(required = true,alias = "userId")
     private Long id;
-
     private String loginId;
-
     private String password;
-    @Field(required = true)
     private String name;
-    @Field(required = true)
-    private String idCard;
-    @Field(required = true)
     private String tel;
-    @Field(required = true)
     private String qq;
-    @Field(required = true)
-    private Date birthdate;
-    @Field(required = true)
-    private Integer sex;
-    @Field(required = true)
     private String address;
-
     private Integer type;
-    @Field(required = true)
     private Integer status;
-
-    private Long subUserId;
-
-    private Long adminId;
-
     private Date createTime;
-
-    private String userNo;
-    private String subUserNo;
-
-    private String subUserName;
     private String inviteCode;
     private Long groupId;
 
@@ -56,7 +29,7 @@ public class UserInfo {
     }
 
     public void setLoginId(String loginId) {
-        this.loginId = loginId == null ? null : loginId.trim();
+        this.loginId = loginId;
     }
 
     public String getPassword() {
@@ -64,7 +37,7 @@ public class UserInfo {
     }
 
     public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+        this.password = password;
     }
 
     public String getName() {
@@ -72,15 +45,7 @@ public class UserInfo {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
-    }
-
-    public String getIdCard() {
-        return idCard;
-    }
-
-    public void setIdCard(String idCard) {
-        this.idCard = idCard == null ? null : idCard.trim();
+        this.name = name;
     }
 
     public String getTel() {
@@ -88,7 +53,7 @@ public class UserInfo {
     }
 
     public void setTel(String tel) {
-        this.tel = tel == null ? null : tel.trim();
+        this.tel = tel;
     }
 
     public String getQq() {
@@ -96,23 +61,7 @@ public class UserInfo {
     }
 
     public void setQq(String qq) {
-        this.qq = qq == null ? null : qq.trim();
-    }
-
-    public Date getBirthdate() {
-        return birthdate;
-    }
-
-    public void setBirthdate(Date birthdate) {
-        this.birthdate = birthdate;
-    }
-
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
+        this.qq = qq;
     }
 
     public String getAddress() {
@@ -120,7 +69,7 @@ public class UserInfo {
     }
 
     public void setAddress(String address) {
-        this.address = address == null ? null : address.trim();
+        this.address = address;
     }
 
     public Integer getType() {
@@ -139,52 +88,12 @@ public class UserInfo {
         this.status = status;
     }
 
-    public Long getSubUserId() {
-        return subUserId;
-    }
-
-    public void setSubUserId(Long subUserId) {
-        this.subUserId = subUserId;
-    }
-
-    public Long getAdminId() {
-        return adminId;
-    }
-
-    public void setAdminId(Long adminId) {
-        this.adminId = adminId;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public String getSubUserName() {
-        return subUserName;
-    }
-
-    public void setSubUserName(String subUserName) {
-        this.subUserName = subUserName;
-    }
-
-    public String getUserNo() {
-        return userNo;
-    }
-
-    public void setUserNo(String userNo) {
-        this.userNo = userNo;
-    }
-
-    public String getSubUserNo() {
-        return subUserNo;
-    }
-
-    public void setSubUserNo(String subUserNo) {
-        this.subUserNo = subUserNo;
     }
 
     public String getInviteCode() {
@@ -207,7 +116,7 @@ public class UserInfo {
         init(0,"用户完善资料"),
         processing(1,"待认证"),
         available(2,"正常"),
-        failed(3,"禁用");
+        failed(99,"禁用");
 
         private int value;
         private String desc;

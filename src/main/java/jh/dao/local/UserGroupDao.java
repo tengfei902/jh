@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.UserGroup;
+import jh.model.po.UserGroup;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,4 +26,6 @@ public interface UserGroupDao {
     List<UserGroup> selectBySubGroupId(@Param("subGroupId") Long subGroupId);
 
     List<UserGroup> selectByCompanyId(@Param("companyId")Long companyId);
+
+    UserGroup selectDefaultUserGroup();
 }

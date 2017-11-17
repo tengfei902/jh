@@ -1,7 +1,7 @@
 package jh.api;
 
 import jh.dao.local.UserInfoDao;
-import jh.model.UserInfo;
+import jh.model.po.UserInfo;
 import jh.model.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

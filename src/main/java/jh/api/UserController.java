@@ -1,11 +1,10 @@
 package jh.api;
 
-import com.google.gson.Gson;
 import jh.biz.UserBiz;
 import jh.dao.local.UserBankCardDao;
 import jh.dao.local.UserInfoDao;
 import jh.model.UserBankCard;
-import jh.model.UserInfo;
+import jh.model.po.UserInfo;
 import jh.model.constant.Constants;
 import jh.model.dto.ResponseResult;
 import jh.model.dto.UserDto;
@@ -23,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,31 +36,6 @@ public class UserController {
     private UserBiz userBiz;
     @Autowired
     private UserBankCardDao userBankCardDao;
-
-    @RequestMapping(value = "/register",method = RequestMethod.POST)
-    public @ResponseBody ResponseResult<String> register(HttpServletRequest request, HttpServletResponse response) {
-
-        String username  = request.getParameter("username");
-        String password = request.getParameter("password");
-        String confirmpassword = request.getParameter("confirmpassword");
-        String subUserId = StringUtils.isEmpty(request.getParameter("subUserId")) || !NumberUtils.isNumber(request.getParameter("subUserId")) ? "1" : request.getParameter("subUserId");
-
-        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(password) || StringUtils.isEmpty(confirmpassword) || ! StringUtils.equals(password,confirmpassword)) {
-            return ResponseResult.failed("9999999","注册失败","param failed");
-        }
-
-        try {
-            Long userId = userBiz.register(username,password,subUserId);
-            UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
-
-            UserDto userDto = new UserDto(userInfo);
-            request.getSession().setAttribute(Constants.SESSION_USER_INFO,userDto);
-
-            return null;
-        } catch (Exception e) {
-            return ResponseResult.failed("9999999","注册失败",e.getMessage());
-        }
-    }
 
 //    @RequestMapping(value = "/check_user", produces = "application/json;charset=UTF-8")
 //    public @ResponseBody String checkUser(@RequestParam String username) {

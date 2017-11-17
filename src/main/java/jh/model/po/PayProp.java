@@ -1,4 +1,4 @@
-package jh.model;
+package jh.model.po;
 
 public class PayProp {
     private Long id;

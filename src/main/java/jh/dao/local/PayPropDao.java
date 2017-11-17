@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.PayProp;
+import jh.model.po.PayProp;
 
 public interface PayPropDao {
     int deleteByPrimaryKey(Long id);

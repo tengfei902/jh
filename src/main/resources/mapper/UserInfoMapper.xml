@@ -1,30 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.UserInfoDao" >
-  <resultMap id="BaseResultMap" type="jh.model.UserInfo" >
+  <resultMap id="BaseResultMap" type="jh.model.po.UserInfo" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="login_id" property="loginId" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
     <result column="tel" property="tel" jdbcType="VARCHAR" />
     <result column="qq" property="qq" jdbcType="VARCHAR" />
-    <result column="birthdate" property="birthdate" jdbcType="TIMESTAMP" />
-    <result column="sex" property="sex" jdbcType="INTEGER" />
     <result column="address" property="address" jdbcType="VARCHAR" />
     <result column="type" property="type" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="sub_user_id" property="subUserId" jdbcType="BIGINT" />
-    <result column="admin_id" property="adminId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-    <result column="sub_user_no" property="subUserNo" jdbcType="VARCHAR" />
-    <result column="user_no" property="userNo" jdbcType="VARCHAR" />
-    <result column="sub_user_name" property="subUserName" jdbcType="VARCHAR" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />
   </resultMap>
+
   <sql id="Base_Column_List" >
-    id, login_id, `password`, `name`, id_card, tel, qq, birthdate, sex, address, `type`, 
-    `status`, sub_user_id, admin_id,create_time,sub_user_no,user_no,sub_user_name,group_id
+    id, login_id, `password`, `name`, tel, qq,address, `type`,
+    `status`, create_time,group_id
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -36,19 +29,8 @@
     delete from user_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.UserInfo" >
-    insert into user_info (id, login_id, `password`, 
-      `name`, id_card, tel, 
-      qq, birthdate, sex, 
-      address, `type`, `status`, 
-      sub_user_id, admin_id)
-    values (#{id,jdbcType=BIGINT}, #{loginId,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{idCard,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, 
-      #{qq,jdbcType=VARCHAR}, #{birthdate,jdbcType=TIMESTAMP}, #{sex,jdbcType=INTEGER}, 
-      #{address,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      #{subUserId,jdbcType=BIGINT}, #{adminId,jdbcType=BIGINT})
-  </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.UserInfo" >
+
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.po.UserInfo" >
     insert into user_info
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -63,20 +45,11 @@
       <if test="name != null" >
         `name`,
       </if>
-      <if test="idCard != null" >
-        id_card,
-      </if>
       <if test="tel != null" >
         tel,
       </if>
       <if test="qq != null" >
         qq,
-      </if>
-      <if test="birthdate != null" >
-        birthdate,
-      </if>
-      <if test="sex != null" >
-        sex,
       </if>
       <if test="address != null" >
         address,
@@ -86,21 +59,6 @@
       </if>
       <if test="status != null" >
         `status`,
-      </if>
-      <if test="subUserId != null" >
-        sub_user_id,
-      </if>
-      <if test="adminId != null" >
-        admin_id,
-      </if>
-      <if test="userNo != null" >
-        user_no,
-      </if>
-      <if test="subUserNo != null" >
-        sub_user_no,
-      </if>
-      <if test="subUserName != null" >
-        sub_user_name,
       </if>
       <if test="groupId != null" >
         group_id,
@@ -119,20 +77,11 @@
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="idCard != null" >
-        #{idCard,jdbcType=VARCHAR},
-      </if>
       <if test="tel != null" >
         #{tel,jdbcType=VARCHAR},
       </if>
       <if test="qq != null" >
         #{qq,jdbcType=VARCHAR},
-      </if>
-      <if test="birthdate != null" >
-        #{birthdate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="sex != null" >
-        #{sex,jdbcType=INTEGER},
       </if>
       <if test="address != null" >
         #{address,jdbcType=VARCHAR},
@@ -143,90 +92,13 @@
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
-      <if test="subUserId != null" >
-        #{subUserId,jdbcType=BIGINT},
-      </if>
-      <if test="adminId != null" >
-        #{adminId,jdbcType=BIGINT},
-      </if>
-      <if test="userNo != null" >
-        #{userNo,jdbcType=VARCHAR},
-      </if>
-      <if test="subUserNo != null" >
-        #{subUserNo,jdbcType=VARCHAR},
-      </if>
-      <if test="subUserName != null" >
-        #{subUserName,jdbcType=VARCHAR},
-      </if>
       <if test="groupId != null" >
         #{groupId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.UserInfo" >
-    update user_info
-    <set >
-      <if test="loginId != null" >
-        login_id = #{loginId,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null" >
-        `password` = #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null" >
-        `name` = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="idCard != null" >
-        id_card = #{idCard,jdbcType=VARCHAR},
-      </if>
-      <if test="tel != null" >
-        tel = #{tel,jdbcType=VARCHAR},
-      </if>
-      <if test="qq != null" >
-        qq = #{qq,jdbcType=VARCHAR},
-      </if>
-      <if test="birthdate != null" >
-        birthdate = #{birthdate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="sex != null" >
-        sex = #{sex,jdbcType=INTEGER},
-      </if>
-      <if test="address != null" >
-        address = #{address,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null" >
-        `type` = #{type,jdbcType=INTEGER},
-      </if>
-      <if test="status != null" >
-        `status` = #{status,jdbcType=INTEGER},
-      </if>
-      <if test="subUserId != null" >
-        sub_user_id = #{subUserId,jdbcType=BIGINT},
-      </if>
-      <if test="adminId != null" >
-        admin_id = #{adminId,jdbcType=BIGINT},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT} and status = 0 and type = 0
-  </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.UserInfo" >
-  update user_info
-  set login_id = #{loginId,jdbcType=VARCHAR},
-  `password` = #{password,jdbcType=VARCHAR},
-  `name` = #{name,jdbcType=VARCHAR},
-  id_card = #{idCard,jdbcType=VARCHAR},
-  tel = #{tel,jdbcType=VARCHAR},
-  qq = #{qq,jdbcType=VARCHAR},
-  birthdate = #{birthdate,jdbcType=TIMESTAMP},
-  sex = #{sex,jdbcType=INTEGER},
-  address = #{address,jdbcType=VARCHAR},
-  `type` = #{type,jdbcType=INTEGER},
-  `status` = #{status,jdbcType=INTEGER},
-  sub_user_id = #{subUserId,jdbcType=BIGINT},
-  admin_id = #{adminId,jdbcType=BIGINT}
-  where id = #{id,jdbcType=BIGINT}
-  </update>
 
-  <update id="update" parameterType="jh.model.UserInfo" >
+  <update id="update" parameterType="jh.model.po.UserInfo" >
     update user_info
     set
       `name` = #{name,jdbcType=VARCHAR},
@@ -270,7 +142,7 @@
     order by id desc
   </select>
 
-  <update id="resetPassword" parameterType="jh.model.UserInfo" >
+  <update id="resetPassword" parameterType="jh.model.po.UserInfo" >
     update user_info
     set
       password = #{newpassword,jdbcType=VARCHAR}

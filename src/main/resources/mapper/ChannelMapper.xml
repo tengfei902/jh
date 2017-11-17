@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.ChannelDao" >
-  <resultMap id="BaseResultMap" type="jh.model.Channel" >
+  <resultMap id="BaseResultMap" type="jh.model.po.Channel" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
     <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
@@ -25,7 +25,7 @@
     delete from channel
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.Channel" >
+  <insert id="insert" parameterType="jh.model.po.Channel" >
     insert into channel (id, channel_code, channel_name, 
       channel_type, fee_rate, `status`
       )
@@ -33,7 +33,7 @@
       #{channelType,jdbcType=VARCHAR}, #{feeRate,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.Channel" >
+  <insert id="insertSelective" parameterType="jh.model.po.Channel" >
     insert into channel
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -94,7 +94,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.Channel" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.Channel" >
     update channel
     <set >
       <if test="channelCode != null" >
@@ -115,7 +115,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.Channel" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.Channel" >
     update channel
     set channel_code = #{channelCode,jdbcType=VARCHAR},
       channel_name = #{channelName,jdbcType=VARCHAR},

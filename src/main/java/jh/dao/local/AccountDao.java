@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.Account;
+import jh.model.po.Account;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;

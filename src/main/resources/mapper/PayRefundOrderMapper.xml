@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.PayRefundOrderDao" >
-  <resultMap id="BaseResultMap" type="jh.model.PayRefundOrder" >
+  <resultMap id="BaseResultMap" type="jh.model.po.PayRefundOrder" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
     <result column="refund" property="refund" jdbcType="INTEGER" />
@@ -36,7 +36,7 @@
     delete from pay_refund_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.PayRefundOrder" >
+  <insert id="insert" parameterType="jh.model.po.PayRefundOrder" >
     insert into pay_refund_order (id, merchant_no, refund, 
       ori_no, refund_no, out_notify_url, 
       nonce_str, sign_type, sign, 
@@ -52,7 +52,7 @@
       #{message,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, #{actualRefundFee,jdbcType=INTEGER}
       )
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.PayRefundOrder" >
+  <insert id="insertSelective" parameterType="jh.model.po.PayRefundOrder" >
     insert into pay_refund_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -167,7 +167,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.PayRefundOrder" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.PayRefundOrder" >
     update pay_refund_order
     <set >
       <if test="merchantNo != null" >
@@ -224,7 +224,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.PayRefundOrder" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.PayRefundOrder" >
     update pay_refund_order
     set merchant_no = #{merchantNo,jdbcType=VARCHAR},
       refund = #{refund,jdbcType=INTEGER},

@@ -1,6 +1,6 @@
 package jh.model.dto;
 
-import jh.model.PageLayOut;
+import jh.model.po.PageLayOut;
 
 import java.util.List;
 

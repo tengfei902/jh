@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.PayTrdOrderDao" >
-  <resultMap id="BaseResultMap" type="jh.model.PayTrdOrder" >
+  <resultMap id="BaseResultMap" type="jh.model.po.PayTrdOrder" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="service" property="service" jdbcType="VARCHAR" />
     <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
@@ -38,7 +38,7 @@
     delete from pay_trd_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.PayTrdOrder" >
+  <insert id="insert" parameterType="jh.model.po.PayTrdOrder" >
     insert into pay_trd_order (id, service, merchant_no, 
       outlet_no, total, `name`, 
       remark, out_trade_no, create_ip, 
@@ -54,7 +54,7 @@
       #{sign,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.PayTrdOrder" >
+  <insert id="insertSelective" parameterType="jh.model.po.PayTrdOrder" >
     insert into pay_trd_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -181,7 +181,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.PayTrdOrder" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.PayTrdOrder" >
     update pay_trd_order
     <set >
       <if test="service != null" >
@@ -244,7 +244,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.PayTrdOrder" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.PayTrdOrder" >
     update pay_trd_order
     set service = #{service,jdbcType=VARCHAR},
       merchant_no = #{merchantNo,jdbcType=VARCHAR},

@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.AccountOprLog;
+import jh.model.po.AccountOprLog;
 
 import java.util.List;
 import java.util.Map;

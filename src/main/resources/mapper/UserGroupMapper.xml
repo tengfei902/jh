@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.UserGroupDao" >
-  <resultMap id="BaseResultMap" type="jh.model.UserGroup" >
+  <resultMap id="BaseResultMap" type="jh.model.po.UserGroup" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="id_card" property="idCard" jdbcType="VARCHAR" />
@@ -29,7 +29,7 @@
     delete from user_group
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.UserGroup" >
+  <insert id="insert" parameterType="jh.model.po.UserGroup" >
     insert into user_group (id, `name`, id_card, 
       tel, address, `type`, 
       `status`, group_no)
@@ -37,7 +37,7 @@
       #{tel,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{groupNo,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.UserGroup" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.po.UserGroup" >
     insert into user_group
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -116,7 +116,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.UserGroup" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.UserGroup" >
     update user_group
     <set >
       <if test="name != null" >
@@ -143,7 +143,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.UserGroup" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.UserGroup" >
     update user_group
     set `name` = #{name,jdbcType=VARCHAR},
       id_card = #{idCard,jdbcType=VARCHAR},
@@ -197,5 +197,12 @@
     <include refid="Base_Column_List" />
     from user_group
     where company_id = #{companyId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectDefaultUserGroup" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_group
+    where sub_group_id = 0 limit 1
   </select>
 </mapper>

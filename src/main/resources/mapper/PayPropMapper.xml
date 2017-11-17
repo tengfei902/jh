@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.PayPropDao" >
-  <resultMap id="BaseResultMap" type="jh.model.PayProp" >
+  <resultMap id="BaseResultMap" type="jh.model.po.PayProp" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="prop_name" property="propName" jdbcType="VARCHAR" />
     <result column="prop_value" property="propValue" jdbcType="VARCHAR" />
@@ -19,13 +19,13 @@
     delete from pay_prop
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.PayProp" >
+  <insert id="insert" parameterType="jh.model.po.PayProp" >
     insert into pay_prop (id, prop_name, prop_value
       )
     values (#{id,jdbcType=BIGINT}, #{propName,jdbcType=VARCHAR}, #{propValue,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.PayProp" >
+  <insert id="insertSelective" parameterType="jh.model.po.PayProp" >
     insert into pay_prop
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -50,7 +50,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.PayProp" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.PayProp" >
     update pay_prop
     <set >
       <if test="propName != null" >
@@ -62,7 +62,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.PayProp" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.PayProp" >
     update pay_prop
     set prop_name = #{propName,jdbcType=VARCHAR},
       prop_value = #{propValue,jdbcType=VARCHAR}

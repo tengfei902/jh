@@ -1,8 +1,8 @@
 package jh.biz.service;
 
-import jh.model.Account;
-import jh.model.UserGroup;
-import jh.model.UserInfo;
+import jh.model.po.Account;
+import jh.model.po.UserGroup;
+import jh.model.po.UserInfo;
 
 public interface CacheService {
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="jh.dao.local.PayReverseOrderDao" >
-  <resultMap id="BaseResultMap" type="jh.model.PayReverseOrder" >
+  <resultMap id="BaseResultMap" type="jh.model.po.PayReverseOrder" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="ext_id" property="extId" jdbcType="BIGINT" />
     <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR" />
@@ -29,7 +29,7 @@
     delete from pay_reverse_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.PayReverseOrder" >
+  <insert id="insert" parameterType="jh.model.po.PayReverseOrder" >
     insert into pay_reverse_order (id, ext_id, merchant_no, 
       `no`, out_trade_no, nonce_str, 
       sign_type, sign, `status`, 
@@ -41,7 +41,7 @@
       #{version,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.PayReverseOrder" >
+  <insert id="insertSelective" parameterType="jh.model.po.PayReverseOrder" >
     insert into pay_reverse_order
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -120,7 +120,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.PayReverseOrder" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.PayReverseOrder" >
     update pay_reverse_order
     <set >
       <if test="extId != null" >
@@ -159,7 +159,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.PayReverseOrder" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.PayReverseOrder" >
     update pay_reverse_order
     set ext_id = #{extId,jdbcType=BIGINT},
       merchant_no = #{merchantNo,jdbcType=VARCHAR},

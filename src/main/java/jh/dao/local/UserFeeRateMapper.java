@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.UserFeeRate;
+import jh.model.po.UserFeeRate;
 
 public interface UserFeeRateMapper {
     int deleteByPrimaryKey(Long id);
