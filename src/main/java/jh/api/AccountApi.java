@@ -1,5 +1,6 @@
 package jh.api;
 
+import hf.base.utils.MapUtils;
 import jh.dao.local.AccountDao;
 import jh.model.po.Account;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class AccountApi {
     @RequestMapping(value = "/get_account_info",method = RequestMethod.GET)
     public ModelAndView getAccountInfo(Long userId) {
         Account account = accountDao.selectByUserId(userId);
-        Map<String,Object> resultMap = Utils.buildMap("amount",account.getAmount(),"lockAmount",account.getLockAmount(),"paidAmount",account.getPaidAmount());
+        Map<String,Object> resultMap = MapUtils.buildMap("amount",account.getAmount(),"lockAmount",account.getLockAmount(),"paidAmount",account.getPaidAmount());
         return null;
     }
 

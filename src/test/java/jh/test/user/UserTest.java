@@ -1,6 +1,7 @@
 package jh.test.user;
 
 import com.google.gson.Gson;
+import hf.base.utils.Utils;
 import jh.biz.UserBiz;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;

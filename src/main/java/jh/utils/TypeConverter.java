@@ -9,6 +9,7 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,9 +52,9 @@ public class TypeConverter {
             if(fieldValue.required() && org.apache.commons.lang3.StringUtils.isEmpty(value)) {
                 throw new BizException(String.format("%s cannot be empty",field.getName()));
             } else if(Long.class.isAssignableFrom(field.getType())) {
-                beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,Long.parseLong(value));
+                beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,new BigDecimal(value).longValue());
             }else if(Integer.class.isAssignableFrom(field.getType())) {
-                beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,Integer.parseInt(value));
+                beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,new BigDecimal(value).intValue());
             }else if(Date.class.isAssignableFrom(field.getType())) {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date date = sdf.parse(value);

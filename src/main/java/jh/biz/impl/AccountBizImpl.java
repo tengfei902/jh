@@ -1,5 +1,6 @@
 package jh.biz.impl;
 
+import hf.base.utils.Utils;
 import jh.biz.AccountBiz;
 import jh.dao.local.AccountOprLogDao;
 import jh.dao.local.UserInfoDao;

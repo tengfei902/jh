@@ -1,5 +1,6 @@
 package jh.test;
 
+import hf.base.utils.Utils;
 import jh.dao.local.ChannelDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;

@@ -51,6 +51,13 @@ public class UserApi {
         return ResponseResult.success(list);
     }
 
+    @RequestMapping(value = "/get_user_info_by_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<UserInfo> getUserInfoById(@RequestBody Map<String,Object> data) {
+        Long id = new BigDecimal(data.get("id").toString()).longValue();
+        UserInfo userInfo = userInfoDao.selectByPrimaryKey(id);
+        return ResponseResult.success(userInfo);
+    }
+
     @RequestMapping(value = "/get_user_info",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody ResponseResult<UserInfo> getUserInfo(@RequestBody Map<String,Object> params) {
         if(MapUtils.isEmpty(params) || Objects.isNull(params.get("loginId")) || Objects.isNull(params.get("password")) || Objects.isNull(params.get("userType"))) {
@@ -78,6 +85,13 @@ public class UserApi {
         return ResponseResult.success(userInfo);
     }
 
+    @RequestMapping(value = "/get_user_group_by_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<UserGroup> getUserGroupById(@RequestBody Map<String,Object> data) {
+        Long groupId = new BigDecimal(data.get("id").toString()).longValue();
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(groupId);
+        return ResponseResult.success(userGroup);
+    }
+
     @RequestMapping(value = "/edit_password",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody ResponseResult<Boolean> editPassword(@RequestBody Map<String,Object> params) {
         Map<String,Object> map = Utils.buildMap("userId",params.get("userId"),
@@ -100,7 +114,7 @@ public class UserApi {
         return ResponseResult.success(list);
     }
 
-    @RequestMapping(value = "/get_channel_list",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/add_channel",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public ResponseResult<Boolean> addChannel(@RequestBody Channel channel) {
         try {
             channelDao.insertSelective(channel);
@@ -130,7 +144,7 @@ public class UserApi {
     }
 
     @RequestMapping(value = "/edit_user_info",method = RequestMethod.POST)
-    public ResponseResult<UserInfo> editUserInfo(@RequestBody Map<String,Object> data) {
+    public @ResponseBody ResponseResult<UserInfo> editUserInfo(@RequestBody Map<String,Object> data) {
         try {
             UserInfo userInfo = TypeConverter.convert(data,UserInfo.class);
             userBiz.edit(userInfo);

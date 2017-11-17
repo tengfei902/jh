@@ -13,11 +13,12 @@
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />
+    <result column="id_card" property="idCard" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     id, login_id, `password`, `name`, tel, qq,address, `type`,
-    `status`, create_time,group_id
+    `status`, create_time,group_id,id_card
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -63,6 +64,9 @@
       <if test="groupId != null" >
         group_id,
       </if>
+      <if test="idCard != null" >
+        id_card,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -94,6 +98,9 @@
       </if>
       <if test="groupId != null" >
         #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="idCard != null" >
+        #{idCard,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -163,5 +170,27 @@
     set
     status = #{targetStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.UserInfo" >
+    update user_info
+    <set >
+      <if test="name != null" >
+        `name` = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="qq != null" >
+        qq = #{qq,jdbcType=VARCHAR},
+      </if>
+      <if test="idCard != null" >
+        `id_card` = #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        `address` = #{address,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
