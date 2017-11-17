@@ -1,14 +1,20 @@
 package jh.model.po;
 
+import jh.model.annotations.Field;
+
 import java.util.Date;
 
 public class UserInfo {
+    @Field(required = true,alias = "userId",type = Field.Type.number)
     private Long id;
     private String loginId;
     private String password;
+    @Field(required = true)
     private String name;
     private String tel;
+    @Field(required = true)
     private String qq;
+    @Field(required = true)
     private String address;
     private Integer type;
     private Integer status;

@@ -157,4 +157,11 @@
     from user_info
     where group_id = #{groupId,jdbcType=VARCHAR} and status != 3
   </select>
+
+  <update id="updateStatusById">
+    update user_info
+    set
+    status = #{targetStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
+  </update>
 </mapper>

@@ -28,4 +28,6 @@ public interface UserGroupDao {
     List<UserGroup> selectByCompanyId(@Param("companyId")Long companyId);
 
     UserGroup selectDefaultUserGroup();
+
+    int updateStatusById(@Param("id")Long id,@Param("fromStatus")int fromStatus,@Param("targetStatus") int targetStatus);
 }

@@ -9,7 +9,6 @@ import jh.model.dto.AccountOprQueryRequest;
 import jh.model.dto.AccountOprQueryResponse;
 import jh.model.enums.Channel;
 import jh.model.enums.OprType;
-import jh.utils.Utils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -7,7 +7,6 @@ import jh.dao.local.UserInfoDao;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
 import jh.test.BaseTestCase;
-import jh.utils.Utils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

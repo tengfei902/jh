@@ -39,4 +39,6 @@ public interface UserInfoDao {
     int resetPassword(Map<String,Object> params);
 
     UserInfo selectByInviteCode(@Param("inviteCode")String inviteCode);
+
+    int updateStatusById(@Param("id")Long id,@Param("fromStatus")int fromStatus,@Param("targetStatus")int targetStatus);
 }

@@ -6,7 +6,6 @@ import jh.dao.local.UserInfoDao;
 import jh.model.po.Channel;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
-import jh.utils.Utils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

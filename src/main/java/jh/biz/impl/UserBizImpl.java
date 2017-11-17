@@ -1,5 +1,9 @@
 package jh.biz.impl;
 
+import hf.base.enums.GroupStatus;
+import hf.base.enums.UserStatus;
+import hf.base.exceptions.BizFailException;
+import hf.base.utils.Utils;
 import jh.biz.UserBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
@@ -13,7 +17,6 @@ import jh.model.dto.UserGroupDto;
 import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
 import jh.model.dto.UserInfoRequest;
-import jh.utils.Utils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,5 +172,22 @@ public class UserBizImpl implements UserBiz {
         userGroupDto.setSubGroupNo(userGroup.getSubGroupNo());
         userGroupDto.setType(UserGroup.GroupType.parse(userGroup.getType()).getDesc());
         return userGroupDto;
+    }
+
+    @Override
+    public void edit(UserGroup userGroup) {
+
+    }
+
+    @Override
+    public void submit(Long userId, Long groupId) {
+        int count = userInfoDao.updateStatusById(userId, UserStatus.NEW.getValue(),UserStatus.SUBMITED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update userinfo failed");
+        }
+        count = userGroupDao.updateStatusById(groupId, GroupStatus.NEW.getValue(),GroupStatus.SUBMITED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update user group failed");
+        }
     }
 }

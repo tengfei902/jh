@@ -22,7 +22,7 @@ public class TypeConverter {
 
     private static Map<Class,Map<String,PropertyDescriptor>> beanCache = new ConcurrentHashMap<>();
 
-    public static <T> T convert(ParameterRequestWrapper request,Class<T> dataType) throws Exception {
+    public static <T> T convert(Map<String,Object> request,Class<T> dataType) throws Exception {
         T data = dataType.newInstance();
         BeanInfo beanInfo = Introspector.getBeanInfo(dataType);
 
@@ -45,7 +45,7 @@ public class TypeConverter {
 
             jh.model.annotations.Field fieldValue = field.getDeclaredAnnotation(jh.model.annotations.Field.class);
 
-            String fieldStr = request.getParameter( StringUtils.isEmpty(fieldValue.alias())?field.getName():fieldValue.alias());
+            String fieldStr = String.valueOf(request.get(StringUtils.isEmpty(fieldValue.alias())?field.getName():fieldValue.alias()));
             String value = StringUtils.isEmpty(fieldStr)?fieldValue.defaults():fieldStr;
 
             if(fieldValue.required() && org.apache.commons.lang3.StringUtils.isEmpty(value)) {

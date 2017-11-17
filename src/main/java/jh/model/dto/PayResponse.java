@@ -1,7 +1,5 @@
 package jh.model.dto;
 
-import jh.utils.Utils;
-
 import java.util.HashMap;
 import java.util.Map;
 

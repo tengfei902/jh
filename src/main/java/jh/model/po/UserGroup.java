@@ -1,8 +1,11 @@
 package jh.model.po;
 
+import jh.model.annotations.Field;
+
 import java.util.Date;
 
 public class UserGroup {
+
     private Long id;
 
     private String name;

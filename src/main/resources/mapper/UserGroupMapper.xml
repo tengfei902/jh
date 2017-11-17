@@ -205,4 +205,11 @@
     from user_group
     where sub_group_id = 0 limit 1
   </select>
+
+  <update id="updateStatusById" parameterType="jh.model.po.UserGroup" >
+    update user_group
+    set
+    status = #{targetStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
+  </update>
 </mapper>

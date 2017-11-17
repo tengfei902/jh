@@ -149,4 +149,12 @@
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from user_bank_card
+    where group_id = #{id,jdbcType=BIGINT} and status != 99
+    order by status desc,id desc
+  </select>
 </mapper>
