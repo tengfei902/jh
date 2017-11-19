@@ -1,20 +1,25 @@
-package jh.model;
+package jh.model.po;
 
-public class UserBankCard {
+import jh.model.annotations.Field;
+
+public class AdminBankCard {
+    @Field
     private Long id;
-
+    @Field(required = true)
+    private Long companyId;
+    @Field(required = true)
     private Long groupId;
-
+    @Field(required = true)
     private String bankNo;
-
+    @Field(required = true)
     private String bank;
-
+    @Field(required = true)
     private String deposit;
-
+    @Field(required = true)
     private String owner;
-
+    @Field(required = true)
     private String province;
-
+    @Field(required = true)
     private String city;
 
     private Integer status;
@@ -27,6 +32,14 @@ public class UserBankCard {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 
     public Long getGroupId() {

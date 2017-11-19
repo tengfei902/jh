@@ -5,15 +5,15 @@ import jh.model.annotations.Field;
 import java.util.Date;
 
 public class UserGroup {
-
+    @Field(required = true,alias = "groupId")
     private Long id;
-
+    @Field(required = true)
     private String name;
-
+    @Field(required = true)
     private String idCard;
-
+    @Field(required = true)
     private String tel;
-
+    @Field(required = true)
     private String address;
 
     private Integer type;
@@ -31,6 +31,8 @@ public class UserGroup {
     private Long companyId;
 
     private Date createTime;
+    @Field(required = true)
+    private String ownerName;
 
     public Long getId() {
         return id;
@@ -134,6 +136,14 @@ public class UserGroup {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public enum Status {

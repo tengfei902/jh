@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="jh.dao.local.UserBankCardMapper" >
-  <resultMap id="BaseResultMap" type="jh.model.UserBankCard" >
+<mapper namespace="jh.dao.local.UserBankCardDao" >
+  <resultMap id="BaseResultMap" type="jh.model.po.UserBankCard" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />
     <result column="bank_no" property="bankNo" jdbcType="VARCHAR" />
@@ -26,7 +26,7 @@
     delete from user_bank_card
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.UserBankCard" >
+  <insert id="insert" parameterType="jh.model.po.UserBankCard" >
     insert into user_bank_card (id, group_id, bank_no, 
       bank, deposit, `owner`, 
       province, city, `status`, 
@@ -36,7 +36,7 @@
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
       #{remark,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.UserBankCard" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.po.UserBankCard" >
     insert into user_bank_card
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -103,7 +103,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.UserBankCard" >
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.UserBankCard" >
     update user_bank_card
     <set >
       <if test="groupId != null" >
@@ -136,7 +136,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.UserBankCard" >
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.UserBankCard" >
     update user_bank_card
     set group_id = #{groupId,jdbcType=BIGINT},
       bank_no = #{bankNo,jdbcType=VARCHAR},

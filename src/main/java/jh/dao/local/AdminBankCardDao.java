@@ -1,0 +1,24 @@
+package jh.dao.local;
+
+import jh.model.po.AdminBankCard;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface AdminBankCardDao {
+    int deleteByPrimaryKey(Long id);
+
+    int insert(AdminBankCard record);
+
+    int insertSelective(AdminBankCard record);
+
+    AdminBankCard selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(AdminBankCard record);
+
+    int updateByPrimaryKey(AdminBankCard record);
+
+    AdminBankCard selectByCompanyId(@Param("companyId")Long companyId,@Param("groupId")Long groupId);
+
+    List<AdminBankCard> selectByGroupId(@Param("groupId")Long groupId);
+}

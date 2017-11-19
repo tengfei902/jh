@@ -1,5 +1,7 @@
 package jh.biz;
 
+import jh.model.po.AdminBankCard;
+import jh.model.po.UserBankCard;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
 import jh.model.dto.UserGroupDto;
@@ -27,5 +29,11 @@ public interface UserBiz {
 
     void submit(Long userId,Long groupId);
 
+    void saveBankCard(UserBankCard userBankCard);
 
+    void saveAdminBankCard(AdminBankCard adminBankCard);
+
+    void userTurnBack(Long groupId,String remark);
+
+    void userPass(Long groupId);
 }

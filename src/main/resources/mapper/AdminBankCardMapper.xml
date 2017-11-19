@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="jh.dao.local.AdminBankCardDao">
+  <resultMap id="BaseResultMap" type="jh.model.po.AdminBankCard">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="bank_no" jdbcType="VARCHAR" property="bankNo" />
+    <result column="bank" jdbcType="VARCHAR" property="bank" />
+    <result column="deposit" jdbcType="VARCHAR" property="deposit" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, company_id, group_id, bank_no, bank, deposit, `owner`, province, city, `status`, 
+    remark
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from admin_bank_card
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from admin_bank_card
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="jh.model.po.AdminBankCard">
+    insert into admin_bank_card (id, company_id, group_id, 
+      bank_no, bank, deposit, 
+      `owner`, province, city, 
+      `status`, remark)
+    values (#{id,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, 
+      #{bankNo,jdbcType=VARCHAR}, #{bank,jdbcType=VARCHAR}, #{deposit,jdbcType=VARCHAR}, 
+      #{owner,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="jh.model.po.AdminBankCard">
+    insert into admin_bank_card
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="bankNo != null">
+        bank_no,
+      </if>
+      <if test="bank != null">
+        bank,
+      </if>
+      <if test="deposit != null">
+        deposit,
+      </if>
+      <if test="owner != null">
+        `owner`,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="bankNo != null">
+        #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bank != null">
+        #{bank,jdbcType=VARCHAR},
+      </if>
+      <if test="deposit != null">
+        #{deposit,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null">
+        #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.AdminBankCard">
+    update admin_bank_card
+    <set>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="bankNo != null">
+        bank_no = #{bankNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bank != null">
+        bank = #{bank,jdbcType=VARCHAR},
+      </if>
+      <if test="deposit != null">
+        deposit = #{deposit,jdbcType=VARCHAR},
+      </if>
+      <if test="owner != null">
+        `owner` = #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.AdminBankCard">
+    update admin_bank_card
+    set company_id = #{companyId,jdbcType=BIGINT},
+      group_id = #{groupId,jdbcType=BIGINT},
+      bank_no = #{bankNo,jdbcType=VARCHAR},
+      bank = #{bank,jdbcType=VARCHAR},
+      deposit = #{deposit,jdbcType=VARCHAR},
+      `owner` = #{owner,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByCompanyId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin_bank_card
+    where company_id = #{companyId,jdbcType=BIGINT} and group_id = #{groupId,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectByGroupId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin_bank_card
+    where group_id = #{groupId,jdbcType=BIGINT}
+  </select>
+</mapper>

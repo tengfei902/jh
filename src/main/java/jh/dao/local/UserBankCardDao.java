@@ -1,6 +1,6 @@
 package jh.dao.local;
 
-import jh.model.UserBankCard;
+import jh.model.po.UserBankCard;
 
 import java.util.List;
 

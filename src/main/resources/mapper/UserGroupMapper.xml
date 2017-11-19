@@ -15,9 +15,10 @@
     <result column="sub_group_name" property="subGroupName" jdbcType="VARCHAR" />
     <result column="company_id" property="companyId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, `name`, id_card, tel, address, `type`, `status`, group_no,sub_group_id,sub_group_no,sub_group_name,company_id,create_time
+    id, `name`, id_card, tel, address, `type`, `status`, group_no,sub_group_id,sub_group_no,sub_group_name,company_id,create_time,owner_name
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -76,6 +77,9 @@
       <if test="companyId != null" >
         company_id,
       </if>
+      <if test="ownerName != null" >
+        owner_name,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -114,6 +118,9 @@
       <if test="companyId != null" >
         #{companyId,jdbcType=BIGINT},
       </if>
+      <if test="ownerName != null" >
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.UserGroup" >
@@ -139,6 +146,9 @@
       </if>
       <if test="groupNo != null" >
         group_no = #{groupNo,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null" >
+        owner_name = #{ownerName,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}

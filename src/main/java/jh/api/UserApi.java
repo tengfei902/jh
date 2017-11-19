@@ -3,15 +3,10 @@ package jh.api;
 import hf.base.contants.CodeManager;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
+import jh.biz.ChannelBiz;
 import jh.biz.UserBiz;
-import jh.dao.local.ChannelDao;
-import jh.dao.local.UserBankCardDao;
-import jh.dao.local.UserGroupDao;
-import jh.dao.local.UserInfoDao;
-import jh.model.UserBankCard;
-import jh.model.po.Channel;
-import jh.model.po.UserGroup;
-import jh.model.po.UserInfo;
+import jh.dao.local.*;
+import jh.model.po.*;
 import jh.model.dto.*;
 import jh.utils.TypeConverter;
 import org.apache.commons.collections.MapUtils;
@@ -38,6 +33,12 @@ public class UserApi {
     private ChannelDao channelDao;
     @Autowired
     private UserBankCardDao userBankCardDao;
+    @Autowired
+    private UserChannelDao userChannelDao;
+    @Autowired
+    private ChannelBiz channelBiz;
+    @Autowired
+    private AdminBankCardDao adminBankCardDao;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
@@ -114,6 +115,12 @@ public class UserApi {
         return ResponseResult.success(list);
     }
 
+    @RequestMapping(value = "/get_ava_channel_list",method = RequestMethod.GET ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<List<Channel>> getAvaChannelList() {
+        List<Channel> list = channelDao.selectForAvaList();
+        return ResponseResult.success(list);
+    }
+
     @RequestMapping(value = "/add_channel",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public ResponseResult<Boolean> addChannel(@RequestBody Channel channel) {
         try {
@@ -160,7 +167,7 @@ public class UserApi {
     }
 
     @RequestMapping(value = "/edit_user_group",method = RequestMethod.POST)
-    public ResponseResult<UserGroup> editUserGroup(@RequestBody Map<String,Object> data) {
+    public @ResponseBody ResponseResult<UserGroup> editUserGroup(@RequestBody Map<String,Object> data) {
         try {
             UserGroup userGroup = TypeConverter.convert(data, UserGroup.class);
             userBiz.edit(userGroup);
@@ -176,30 +183,28 @@ public class UserApi {
     }
 
     @RequestMapping(value = "/get_user_bank_card",method = RequestMethod.POST)
-    public ResponseResult<List<UserBankCard>> getUserBankCards(Long groupId) {
+    public @ResponseBody ResponseResult<List<UserBankCard>> getUserBankCards(@RequestBody Map<String,String> params) {
+        Long groupId = new BigDecimal(params.get("groupId")).longValue();
         List<UserBankCard> list = userBankCardDao.selectByUser(groupId);
         return ResponseResult.success(list);
     }
 
     @RequestMapping(value = "/save_user_card",method = RequestMethod.POST)
-    public ResponseResult<List<UserBankCard>> saveBankCard(@RequestBody Map<String,Object> data) {
+    public @ResponseBody ResponseResult<Boolean> saveBankCard(@RequestBody Map<String,Object> data) {
         UserBankCard userBankCard ;
         try {
             userBankCard = TypeConverter.convert(data, UserBankCard.class);
+            userBiz.saveBankCard(userBankCard);
         }catch (Exception e) {
             throw new BizFailException("解析参数失败");
         }
-        userBankCardDao.insertSelective(userBankCard);
-
-        Long groupId = userBankCard.getGroupId();
-        List<UserBankCard> list = userBankCardDao.selectByUser(groupId);
-        return ResponseResult.success(list);
+        return ResponseResult.success(Boolean.TRUE);
     }
 
     @RequestMapping(value = "/submit_user_to_admin",method = RequestMethod.POST)
-    public ResponseResult<String> submitUserToAdmin(@RequestBody Map<String,Long> ids) {
-        Long userId = ids.get("userId");
-        Long groupId = ids.get("groupId");
+    public @ResponseBody ResponseResult<Boolean> submitUserToAdmin(@RequestBody Map<String,String> ids) {
+        Long userId = new BigDecimal(ids.get("userId")).longValue();
+        Long groupId = new BigDecimal(ids.get("groupId")).longValue();
 
         if(Objects.isNull(userId) || Objects.isNull(groupId)) {
             throw new BizFailException("userId or groupId cannot be null");
@@ -207,7 +212,7 @@ public class UserApi {
 
         userBiz.submit(userId,groupId);
 
-        return ResponseResult.success("SUCCESS");
+        return ResponseResult.success(Boolean.TRUE);
     }
 
     @RequestMapping(value = "/get_user_auth_status",method = RequestMethod.GET)
@@ -225,5 +230,81 @@ public class UserApi {
             default:
                 return "您已成功认证!";
         }
+    }
+
+    @RequestMapping(value = "/get_user_list_by_groupId",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<UserInfo>> getUserListByGroupId(@RequestBody Map<String,Object> params) {
+        Long groupId = Long.parseLong(params.get("groupId").toString());
+        List<UserInfo> list = userInfoDao.selectByGroupId(groupId);
+        return ResponseResult.success(list);
+    }
+
+
+
+    @RequestMapping(value = "/get_user_channel_list",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<UserChannel>> getUserChannelList(@RequestBody Map<String,String> params) {
+        Long groupId = new BigDecimal(params.get("groupId")).longValue();
+        List<UserChannel> userChannels = userChannelDao.selectByGroupId(groupId);
+        return ResponseResult.success(userChannels);
+    }
+
+    @RequestMapping(value = "/save_channel",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveChannel(@RequestBody Map<String,Object> data) {
+        try {
+            Channel channel = TypeConverter.convert(data, Channel.class);
+            channelDao.insertSelective(channel);
+            return ResponseResult.success(true);
+        } catch (Exception e) {
+            throw new BizFailException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/save_user_channel",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveUserChannel(@RequestBody Map<String,Object> data) {
+        try {
+            UserChannel userChannel = TypeConverter.convert(data,UserChannel.class);
+            channelBiz.saveUserChannel(userChannel);
+            return ResponseResult.success(Boolean.TRUE);
+        } catch (Exception e) {
+            throw new BizFailException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/get_admin_bank_card",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<AdminBankCard> getAdminBankCard(@RequestBody Map<String,String> data) {
+        Long groupId = new BigDecimal(data.get("groupId")).longValue();
+        Long companyId = new BigDecimal(data.get("companyId")).longValue();
+        AdminBankCard adminBankCard = adminBankCardDao.selectByCompanyId(companyId,groupId);
+        return ResponseResult.success(adminBankCard);
+    }
+
+    @RequestMapping(value = "/save_admin_bank_card",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveAdminBankCard(@RequestBody Map<String,Object> data) {
+        try {
+            AdminBankCard adminBankCard = TypeConverter.convert(data,AdminBankCard.class);
+            userBiz.saveAdminBankCard(adminBankCard);
+            return ResponseResult.success(Boolean.TRUE);
+        } catch (Exception e) {
+            throw new BizFailException(e.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/user_turn_back",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> userTurnBack(@RequestBody Map<String,Object> data) {
+        Long groupId = Long.parseLong(data.get("id").toString());
+        userBiz.userTurnBack(groupId,String.format("%s,%s turn back",data.get("groupId"),data.get("userId")));
+        return ResponseResult.success(Boolean.TRUE);
+    }
+
+    @RequestMapping(value = "/user_pass",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> userPass(@RequestBody Map<String,String> data) {
+        Long groupId = new BigDecimal(data.get("id")).longValue();
+        try {
+            userBiz.userPass(groupId);
+            return ResponseResult.success(Boolean.TRUE);
+        } catch (BizFailException e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),Boolean.FALSE);
+        }
+
     }
 }

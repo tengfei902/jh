@@ -1,30 +1,34 @@
 package jh.biz.impl;
 
+import hf.base.enums.CardStatus;
 import hf.base.enums.GroupStatus;
 import hf.base.enums.UserStatus;
+import hf.base.enums.UserType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
 import jh.biz.UserBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
-import jh.dao.local.UserGroupDao;
-import jh.dao.local.UserInfoDao;
+import jh.dao.local.*;
 import jh.exceptions.BizException;
-import jh.model.po.Account;
-import jh.model.po.UserGroup;
-import jh.model.po.UserInfo;
+import jh.model.po.*;
 import jh.model.dto.UserGroupDto;
 import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
 import jh.model.dto.UserInfoRequest;
+import jh.utils.SegmentLock;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * Created by tengfei on 2017/10/29.
@@ -39,6 +43,12 @@ public class UserBizImpl implements UserBiz {
     private UserGroupDao userGroupDao;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserBankCardDao userBankCardDao;
+    @Autowired
+    private AdminBankCardDao adminBankCardDao;
+    @Autowired
+    private UserChannelDao userChannelDao;
 
     @Override
     public void register(String loginId, String password, String inviteCode) {
@@ -176,18 +186,97 @@ public class UserBizImpl implements UserBiz {
 
     @Override
     public void edit(UserGroup userGroup) {
+        int count = userGroupDao.updateByPrimaryKeySelective(userGroup);
+        if(count<=0) {
+            throw new BizFailException("update group failed");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void submit(Long userId, Long groupId) {
+        UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
+
+        if(userInfo.getStatus() == UserStatus.NEW.getValue()) {
+            int count = userInfoDao.updateStatusById(userId, UserStatus.NEW.getValue(),UserStatus.SUBMITED.getValue());
+            if(count<=0) {
+                throw new BizFailException("update userinfo failed");
+            }
+        }
+
+        int count = userGroupDao.updateStatusById(groupId, GroupStatus.NEW.getValue(),GroupStatus.SUBMITED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update user group failed");
+        }
+    }
+
+    @Override
+    public void saveBankCard(UserBankCard userBankCard) {
+        SegmentLock<Long> lock = new SegmentLock<>();
+        lock.lock(userBankCard.getGroupId());
+
+        try {
+            List<UserBankCard> list = userBankCardDao.selectByUser(userBankCard.getGroupId());
+            list = list.stream().filter(card -> card.getStatus()== CardStatus.IN_USE.getValue()).collect(Collectors.toList());
+            if(CollectionUtils.isEmpty(list)) {
+                userBankCard.setStatus(10);
+            }
+
+            userBankCardDao.insertSelective(userBankCard);
+        } finally {
+            lock.unlock(userBankCard.getGroupId());
+        }
 
     }
 
     @Override
-    public void submit(Long userId, Long groupId) {
-        int count = userInfoDao.updateStatusById(userId, UserStatus.NEW.getValue(),UserStatus.SUBMITED.getValue());
-        if(count<=0) {
-            throw new BizFailException("update userinfo failed");
+    public void saveAdminBankCard(AdminBankCard adminBankCard) {
+        if(adminBankCard.getId()!= null) {
+            int count = adminBankCardDao.updateByPrimaryKeySelective(adminBankCard);
+            if(count<=0) {
+                throw new BizFailException("update admin card failed");
+            }
+        } else {
+            adminBankCardDao.insertSelective(adminBankCard);
         }
-        count = userGroupDao.updateStatusById(groupId, GroupStatus.NEW.getValue(),GroupStatus.SUBMITED.getValue());
-        if(count<=0) {
+    }
+
+    @Override
+    public void userTurnBack(Long groupId, String remark) {
+        int count = userGroupDao.updateStatusById(groupId,GroupStatus.SUBMITED.getValue(),GroupStatus.NEW.getValue());
+        if(count <= 0) {
             throw new BizFailException("update user group failed");
+        }
+    }
+
+    @Transactional
+    @Override
+    public void userPass(Long groupId) {
+        //admin bank
+        List<AdminBankCard> cards = adminBankCardDao.selectByGroupId(groupId);
+        if(CollectionUtils.isEmpty(cards)) {
+            throw new BizFailException("结算账号未设置");
+        }
+
+        List<UserChannel> channels = userChannelDao.selectByGroupId(groupId);
+        if(CollectionUtils.isEmpty(channels)) {
+            throw new BizFailException("用户渠道未设置");
+        }
+
+        int count = userGroupDao.updateStatusById(groupId,GroupStatus.SUBMITED.getValue(),GroupStatus.AVAILABLE.getValue());
+        if(count<=0) {
+            throw new BizFailException("update user group status failed");
+        }
+        UserInfoRequest request = new UserInfoRequest();
+        request.setGroupId(groupId);
+        request.setType(UserType.ADMIN.getValue());
+        request.setStatus(UserStatus.SUBMITED.getValue());
+        List<UserInfo> list =  userInfoDao.select(request);
+        for(UserInfo userInfo:list) {
+            count = userInfoDao.updateStatusById(userInfo.getId(),UserStatus.SUBMITED.getValue(),UserStatus.AVAILABLE.getValue());
+            if(count<=0) {
+                throw new BizFailException("update userInfo status failed");
+            }
         }
     }
 }

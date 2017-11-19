@@ -18,4 +18,6 @@ public interface ChannelDao {
     int updateByPrimaryKey(Channel record);
 
     List<Channel> selectForList();
+
+    List<Channel> selectForAvaList();
 }

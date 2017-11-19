@@ -1,5 +1,6 @@
 package jh.utils;
 
+import hf.base.exceptions.BizFailException;
 import jh.exceptions.BizException;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.util.StringUtils;
@@ -49,6 +50,13 @@ public class TypeConverter {
             String fieldStr = String.valueOf(request.get(StringUtils.isEmpty(fieldValue.alias())?field.getName():fieldValue.alias()));
             String value = StringUtils.isEmpty(fieldStr)?fieldValue.defaults():fieldStr;
 
+            if(org.apache.commons.lang3.StringUtils.isEmpty(value)) {
+                if(fieldValue.required()) {
+                    throw new BizFailException("field empty");
+                }
+                continue;
+            }
+
             if(fieldValue.required() && org.apache.commons.lang3.StringUtils.isEmpty(value)) {
                 throw new BizException(String.format("%s cannot be empty",field.getName()));
             } else if(Long.class.isAssignableFrom(field.getType())) {
@@ -59,7 +67,9 @@ public class TypeConverter {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 Date date = sdf.parse(value);
                 beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,date);
-            }else {
+            } else if(BigDecimal.class.isAssignableFrom(field.getType())){
+                beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,new BigDecimal(value));
+            } else {
                 beanCache.get(dataType).get(field.getName()).getWriteMethod().invoke(data,value);
             }
         }

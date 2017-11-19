@@ -162,7 +162,7 @@
     select
     <include refid="Base_Column_List" />
     from user_info
-    where group_id = #{groupId,jdbcType=VARCHAR} and status != 3
+    where group_id = #{groupId,jdbcType=VARCHAR} and status != 99 order by id
   </select>
 
   <update id="updateStatusById">

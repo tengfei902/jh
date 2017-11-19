@@ -5,15 +5,12 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
     <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
-    <result column="channel_type" property="channelType" jdbcType="VARCHAR" />
     <result column="fee_rate" property="feeRate" jdbcType="DECIMAL" />
     <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="mch_id" property="mchId" jdbcType="VARCHAR" />
-    <result column="cipher_code" property="cipherCode" jdbcType="VARCHAR" />
     <result column="url" property="url" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, channel_code, channel_name, channel_type, fee_rate, `status`,mch_id,cipher_code,url
+    id, channel_code, channel_name, fee_rate, `status`,url
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -25,14 +22,7 @@
     delete from channel
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.po.Channel" >
-    insert into channel (id, channel_code, channel_name, 
-      channel_type, fee_rate, `status`
-      )
-    values (#{id,jdbcType=BIGINT}, #{channelCode,jdbcType=VARCHAR}, #{channelName,jdbcType=VARCHAR}, 
-      #{channelType,jdbcType=VARCHAR}, #{feeRate,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}
-      )
-  </insert>
+
   <insert id="insertSelective" parameterType="jh.model.po.Channel" >
     insert into channel
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -45,20 +35,11 @@
       <if test="channelName != null" >
         channel_name,
       </if>
-      <if test="channelType != null" >
-        channel_type,
-      </if>
       <if test="feeRate != null" >
         fee_rate,
       </if>
       <if test="status != null" >
         `status`,
-      </if>
-      <if test="mchId != null" >
-        `mch_id`,
-      </if>
-      <if test="cipherCode != null" >
-        `cipher_code`,
       </if>
       <if test="url != null" >
         url,
@@ -74,20 +55,11 @@
       <if test="channelName != null" >
         #{channelName,jdbcType=VARCHAR},
       </if>
-      <if test="channelType != null" >
-        #{channelType,jdbcType=VARCHAR},
-      </if>
       <if test="feeRate != null" >
         #{feeRate,jdbcType=DECIMAL},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
-      </if>
-      <if test="mchId != null" >
-        #{mchId,jdbcType=VARCHAR},
-      </if>
-      <if test="cipherCode != null" >
-        #{cipherCode,jdbcType=VARCHAR},
       </if>
       <if test="url != null" >
         #{url,jdbcType=VARCHAR},
@@ -103,9 +75,6 @@
       <if test="channelName != null" >
         channel_name = #{channelName,jdbcType=VARCHAR},
       </if>
-      <if test="channelType != null" >
-        channel_type = #{channelType,jdbcType=VARCHAR},
-      </if>
       <if test="feeRate != null" >
         fee_rate = #{feeRate,jdbcType=DECIMAL},
       </if>
@@ -115,20 +84,16 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.po.Channel" >
-    update channel
-    set channel_code = #{channelCode,jdbcType=VARCHAR},
-      channel_name = #{channelName,jdbcType=VARCHAR},
-      channel_type = #{channelType,jdbcType=VARCHAR},
-      fee_rate = #{feeRate,jdbcType=DECIMAL},
-      `status` = #{status,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 
   <select id="selectForList" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select
     <include refid="Base_Column_List" />
-    from channel
-    where status != 99
+    from channel order by status asc, id desc
+  </select>
+
+  <select id="selectForAvaList" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from channel where status !=99 order by status asc, id desc
   </select>
 </mapper>

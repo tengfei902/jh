@@ -1,5 +1,6 @@
 package jh.test;
 
+import hf.base.enums.ChannelCode;
 import hf.base.utils.Utils;
 import jh.dao.local.ChannelDao;
 import jh.dao.local.UserGroupDao;
@@ -234,16 +235,12 @@ public class BaseCommitTestCase {
 
     @Test
     public void saveChannel() {
+        Channel channel = new Channel();
+        channel.setChannelName("阿是大富大贵");
+        channel.setChannelCode(ChannelCode.QQ.getService());
+        channel.setFeeRate(new BigDecimal("10"));
+        channel.setUrl("");
 
-        for(Channel.ChannelType channelType: Channel.ChannelType.values()) {
-            Channel channel = new Channel();
-            channel.setChannelCode(channelType.name());
-            channel.setChannelName(channelType.getDesc());
-            channel.setChannelType(Channel.ChannelType.BAIDU.getValue());
-            channel.setCipherCode("afsghdnjsgfasfDSADF");
-            channel.setFeeRate(new BigDecimal("2.0"));
-            channel.setMchId("1243546ydsa");
-            channelDao.insertSelective(channel);
-        }
+        channelDao.insertSelective(channel);
     }
 }
