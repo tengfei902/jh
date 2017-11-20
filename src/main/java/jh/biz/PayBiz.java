@@ -7,7 +7,7 @@ import jh.model.dto.*;
  */
 public interface PayBiz {
 
-    PayResponse pay(PayRequest request);
+    PayResponse pay(PayRequestDto request);
     RefundResponse refund(RefundRequest refundRequest);
     ReverseResponse reverse(ReverseRequest reverseRequest);
 }

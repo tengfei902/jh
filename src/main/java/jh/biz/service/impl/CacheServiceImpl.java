@@ -35,16 +35,16 @@ public class CacheServiceImpl implements CacheService {
                 }
             });
 
-    private LoadingCache<Long,Account> accountCache = CacheBuilder.newBuilder()
-            .expireAfterAccess(10,TimeUnit.MINUTES)
-            .maximumSize(1000)
-            .refreshAfterWrite(10,TimeUnit.MINUTES)
-            .build(new CacheLoader<Long, Account>() {
-                @Override
-                public Account load(Long userId) throws Exception {
-                    return accountDao.selectByUserId(userId);
-                }
-            });
+//    private LoadingCache<Long,Account> accountCache = CacheBuilder.newBuilder()
+//            .expireAfterAccess(10,TimeUnit.MINUTES)
+//            .maximumSize(1000)
+//            .refreshAfterWrite(10,TimeUnit.MINUTES)
+//            .build(new CacheLoader<Long, Account>() {
+//                @Override
+//                public Account load(Long userId) throws Exception {
+//                    return accountDao.selectByUserId(userId);
+//                }
+//            });
 
     private LoadingCache<Long,UserGroup> groupCache = CacheBuilder.newBuilder()
             .expireAfterAccess(10,TimeUnit.MINUTES)
@@ -69,10 +69,11 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public Account getAccount(Long userId) {
         try {
-            return accountCache.get(userId);
+//            return accountCache.get(userId);
         } catch (Exception e) {
             return null;
         }
+        return null;
     }
 
     @Override

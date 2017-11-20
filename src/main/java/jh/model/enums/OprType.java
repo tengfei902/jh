@@ -4,7 +4,8 @@ package jh.model.enums;
  * Created by tengfei on 2017/11/5.
  */
 public enum OprType {
-    UNIFIED(0,"付款"),
+    PAY(0,"付款"),
+    TAX(1,"税费"),
     REFUND(1,"退款"),
     REVERSE(2,"撤销交易"),
     WITHDRAW(3,"结算"),
@@ -29,5 +30,9 @@ public enum OprType {
 
     public String getDesc() {
         return this.desc;
+    }
+
+    public int getValue() {
+        return this.value;
     }
 }

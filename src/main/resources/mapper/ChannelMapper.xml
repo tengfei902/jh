@@ -23,7 +23,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
-  <insert id="insertSelective" parameterType="jh.model.po.Channel" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.po.Channel" >
     insert into channel
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -95,5 +95,11 @@
     select
     <include refid="Base_Column_List" />
     from channel where status !=99 order by status asc, id desc
+  </select>
+
+  <select id="selectByCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from channel where channel_code = #{channelCode,jdbcType=VARCHAR}
   </select>
 </mapper>

@@ -1,48 +1,30 @@
 package jh.model.po;
 
-import jh.model.enums.OprType;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class AccountOprLog {
     private Long id;
 
+    private Long groupId;
+
     private Long accountId;
-
-    private Long userId;
-
-    private Long trdOrderId;
 
     private String outTradeNo;
 
-    private String no;
+    private BigDecimal amount;
 
-    private Integer oprType;
-
-    private String remark;
-
-    private BigDecimal price;
+    private Integer type;
 
     private Integer status;
 
-    private Integer version;
+    private String remark;
 
     private Date createTime;
 
     private Date updateTime;
 
-    private Long channelId;
-
-    private Integer channelType;
-
-    private String channel;
-
-    private BigDecimal userFeeRate;
-
-    private BigDecimal priceIn;
-
-    private BigDecimal fee;
+    private Integer version;
 
     public Long getId() {
         return id;
@@ -50,6 +32,14 @@ public class AccountOprLog {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public Long getAccountId() {
@@ -60,22 +50,6 @@ public class AccountOprLog {
         this.accountId = accountId;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getTrdOrderId() {
-        return trdOrderId;
-    }
-
-    public void setTrdOrderId(Long trdOrderId) {
-        this.trdOrderId = trdOrderId;
-    }
-
     public String getOutTradeNo() {
         return outTradeNo;
     }
@@ -84,36 +58,20 @@ public class AccountOprLog {
         this.outTradeNo = outTradeNo == null ? null : outTradeNo.trim();
     }
 
-    public String getNo() {
-        return no;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setNo(String no) {
-        this.no = no == null ? null : no.trim();
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
-    public Integer getOprType() {
-        return oprType;
+    public Integer getType() {
+        return type;
     }
 
-    public void setOprType(Integer oprType) {
-        this.oprType = oprType;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Integer getStatus() {
@@ -124,12 +82,12 @@ public class AccountOprLog {
         this.status = status;
     }
 
-    public Integer getVersion() {
-        return version;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setVersion(Integer version) {
-        this.version = version;
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 
     public Date getCreateTime() {
@@ -148,82 +106,11 @@ public class AccountOprLog {
         this.updateTime = updateTime;
     }
 
-    public Long getChannelId() {
-        return channelId;
+    public Integer getVersion() {
+        return version;
     }
 
-    public void setChannelId(Long channelId) {
-        this.channelId = channelId;
-    }
-
-    public Integer getChannelType() {
-        return channelType;
-    }
-
-    public void setChannelType(Integer channelType) {
-        this.channelType = channelType;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel == null ? null : channel.trim();
-    }
-
-    public BigDecimal getUserFeeRate() {
-        return userFeeRate;
-    }
-
-    public void setUserFeeRate(BigDecimal userFeeRate) {
-        this.userFeeRate = userFeeRate;
-    }
-
-    public BigDecimal getPriceIn() {
-        return priceIn;
-    }
-
-    public void setPriceIn(BigDecimal priceIn) {
-        this.priceIn = priceIn;
-    }
-
-    public BigDecimal getFee() {
-        return fee;
-    }
-
-    public void setFee(BigDecimal fee) {
-        this.fee = fee;
-    }
-
-    public enum OprStatus {
-        INIT(0,"待付款"),
-        PAID(1,"已付款"),
-        REVERSE(2,"已撤销交易"),
-        REFUND(3,"已退款"),
-        CLOSE(4,"已结算"),
-        CLOSING(10,"结算中"),
-        FAILED(99,"结算失败");
-
-        private int value;
-        private String desc;
-
-        OprStatus(int value,String desc) {
-            this.value = value;
-            this.desc = desc;
-        }
-
-        public static OprStatus parse(int value) {
-            for(OprStatus oprStatus:OprStatus.values()) {
-                if(value == oprStatus.value) {
-                    return oprStatus;
-                }
-            }
-            return null;
-        }
-
-        public String getDesc() {
-            return this.desc;
-        }
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

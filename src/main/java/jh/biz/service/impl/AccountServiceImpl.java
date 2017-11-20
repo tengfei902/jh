@@ -4,7 +4,6 @@ import jh.biz.service.AccountService;
 import jh.dao.local.*;
 import jh.model.dto.RefundResponse;
 import jh.model.dto.ReverseResponse;
-import jh.model.po.PayTrdOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +26,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private PayReverseOrderDao payReverseOrderDao;
 
-    @Transactional
-    @Override
-    public void pay(PayTrdOrder payTrdOrder) {
+//    @Transactional
+//    @Override
+//    public void pay(PayTrdOrder payTrdOrder) {
 //        AccountOprLog oprLog = accountOprLogDao.selectByTrdOrderId(payTrdOrder.getId(),AccountOprLog.OPR_TYPE.UNIFIED);
 //
 //        PayProof payProof = payProofDao.selectByTrdNo(payTrdOrder.getOutTradeNo());
@@ -45,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
 //        if(count<=0) {
 //            throw new BizException("更新账户日志失败");
 //        }
-    }
+//    }
 
     @Transactional
     @Override

@@ -1,18 +1,23 @@
 package jh.biz.service.impl;
 
-import jh.biz.service.AccountService;
+import com.google.gson.Gson;
+import hf.base.exceptions.BizFailException;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
-import jh.exceptions.BizException;
 import jh.model.dto.*;
+import jh.model.enums.OprType;
 import jh.model.po.*;
+import jh.utils.BdUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Map;
-import java.util.Objects;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by tengfei on 2017/10/28.
@@ -20,169 +25,103 @@ import java.util.Objects;
 @Service
 public class PayServiceImpl implements PayService {
     @Autowired
-    private PayProofDao payProofDao;
+    private UserChannelDao userChannelDao;
     @Autowired
-    private PayTrdOrderDao payTrdOrderDao;
-    @Autowired
-    private AccountService accountService;
-    @Autowired
-    private PayRefundOrderDao payRefundOrderDao;
-    @Autowired
-    private PayReverseOrderDao payReverseOrderDao;
-    @Autowired
-    private AccountOprLogDao accountOprLogDao;
-    @Autowired
-    private UserInfoDao userInfoDao;
+    private UserGroupDao userGroupDao;
     @Autowired
     private AccountDao accountDao;
+    @Autowired
+    private ChannelDao channelDao;
+    @Autowired
+    private AccountOprLogDao accountOprLogDao;
 
-    @Transactional
     @Override
-    public String savePayInfo(PayRequest request) {
-        PayTrdOrder payTrdOrder = new PayTrdOrder(request);
-        payTrdOrderDao.insertSelective(payTrdOrder);
+    @Transactional
+    public void saveOprLog(PayRequest payRequest) {
+        Channel channel = channelDao.selectByCode(payRequest.getService());
+        UserGroup userGroup = userGroupDao.selectByGroupNo(payRequest.getMchId());
+        UserChannel userChannel = userChannelDao.selectByGroupChannel(userGroup.getId(),channel.getId());
 
-        PayProof proof = new PayProof();
-        proof.setMerchantNo(payTrdOrder.getMerchantNo());
-        proof.setOutletNo(payTrdOrder.getOutletNo());
-        proof.setOutTradeNo(payTrdOrder.getOutTradeNo());
-        proof.setTotal(payTrdOrder.getTotal());
+        List<UserGroup> groups = getGroupChain(userGroup);
+        Collections.reverse(groups);
 
-        payProofDao.insertSelective(proof);
+        List<Long> groupIds = groups.parallelStream().map(UserGroup::getId).collect(Collectors.toList());
+        List<Account> accounts = accountDao.selectByGroupIds(groupIds);
 
-        UserInfo userInfo = userInfoDao.selectByMerchantNo(payTrdOrder.getMerchantNo());
-        Account account = accountDao.selectByUserId(userInfo.getId());
+        if(accounts.size() != groups.size()) {
+            throw new BizFailException(String.format("account group not match,%s",new Gson().toJson(groupIds)));
+        }
 
-        AccountOprLog accountOprLog = new AccountOprLog();
-        accountOprLog.setAccountId(account.getId());
-        accountOprLog.setOutTradeNo(payTrdOrder.getOutTradeNo());
-//        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.UNIFIED);
-        //total与actualTotal是否一致
-        accountOprLog.setPrice(new BigDecimal(payTrdOrder.getTotal()));
-        accountOprLog.setRemark(payTrdOrder.getRemark());
-        accountOprLog.setTrdOrderId(payTrdOrder.getId());
-        accountOprLog.setUserId(userInfo.getId());
+        Map<Long,Account> groupAccountMap = accounts.parallelStream().collect(Collectors.toMap(Account::getGroupId, Function.identity()));
 
-        accountOprLogDao.insertSelective(accountOprLog);
+        List<UserChannel> userChannels = userChannelDao.selectByGroupIdList(channel.getId(),groupIds);
+        if(userChannels.size() != groups.size()) {
+            throw new BizFailException(String.format("userChannel group not match,%s",new Gson().toJson(groupIds)));
+        }
+        Map<Long,UserChannel> userChannelMap = userChannels.parallelStream().collect(Collectors.toMap(UserChannel::getGroupId,Function.identity()));
 
-        return payTrdOrder.getOutTradeNo();
+        //金额
+        BigDecimal amount = new BigDecimal(payRequest.getTotalFee());
+        BigDecimal totalFee = userChannel.getFeeRate().multiply(amount).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP);
+        BigDecimal tempFee = channel.getFeeRate().multiply(amount).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP);
+
+        Map<Long,BigDecimal> feeMap = new HashMap<>();
+
+        for(int i=0;i<groups.size();i++) {
+            UserGroup group = groups.get(i);
+
+            if(i==groups.size()-1) {
+                feeMap.put(group.getId(),totalFee.subtract(tempFee));
+                continue;
+            }
+
+            UserChannel groupChannel = userChannelMap.get(group.getId());
+
+            BigDecimal groupTotalFee = groupChannel.getFeeRate().multiply(amount).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal groupFee = groupTotalFee.subtract(tempFee);
+            groupFee = BdUtils.max(groupFee,new BigDecimal("0"));
+            feeMap.put(group.getId(),groupFee);
+
+            tempFee = BdUtils.max(tempFee,groupTotalFee);
+        }
+
+        List<AccountOprLog> logs = new ArrayList<>();
+        for(UserGroup group:groups) {
+            AccountOprLog accountOprLog = new AccountOprLog();
+            logs.add(accountOprLog);
+            accountOprLog.setRemark(String.format("支付金额:%s,费率:%s",payRequest.getTotalFee(),userChannelMap.get(group.getId()).getFeeRate()));
+            accountOprLog.setType(OprType.PAY.getValue());
+            accountOprLog.setGroupId(group.getId());
+            accountOprLog.setAmount(feeMap.get(group.getId()));
+            accountOprLog.setOutTradeNo(payRequest.getOutTradeNo());
+            Account account = groupAccountMap.get(group.getId());
+            accountOprLog.setAccountId(account.getId());
+        }
+
+        int count = accountOprLogDao.batchInsert(logs);
+        if(count != logs.size()){
+            throw new BizFailException("batch insert logs failed");
+        }
     }
 
-    @Transactional
-    @Override
-    public String saveRefund(RefundRequest refundRequest) {
-        PayRefundOrder payRefundOrder = new PayRefundOrder(refundRequest);
-        payRefundOrderDao.insertSelective(payRefundOrder);
-
-        UserInfo userInfo = userInfoDao.selectByMerchantNo(payRefundOrder.getMerchantNo());
-        Account account = accountDao.selectByUserId(userInfo.getId());
-
-        AccountOprLog accountOprLog = new AccountOprLog();
-        accountOprLog.setAccountId(account.getId());
-        accountOprLog.setOutTradeNo(payRefundOrder.getOriNo());
-//        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.REFUND);
-        //total与actualTotal是否一致
-        accountOprLog.setPrice(new BigDecimal(refundRequest.getRefund_fee()));
-        accountOprLog.setRemark(payRefundOrder.getMessage());
-        accountOprLog.setTrdOrderId(payRefundOrder.getId());
-        accountOprLog.setUserId(userInfo.getId());
-
-        accountOprLogDao.insertSelective(accountOprLog);
-        return payRefundOrder.getRefundNo();
-    }
-
-    @Transactional
-    @Override
-    public void saveReverse(ReverseRequest reverseRequest) {
-        PayReverseOrder payReverseOrder = new PayReverseOrder(reverseRequest);
-        payReverseOrderDao.insertSelective(payReverseOrder);
-
-        UserInfo userInfo = userInfoDao.selectByMerchantNo(reverseRequest.getMerchant_no());
-        Account account = accountDao.selectByUserId(userInfo.getId());
-        PayTrdOrder payTrdOrder = payTrdOrderDao.selectByOrderNo(reverseRequest.getOut_trade_no());
-
-        AccountOprLog accountOprLog = new AccountOprLog();
-        accountOprLog.setAccountId(account.getId());
-        accountOprLog.setOutTradeNo(reverseRequest.getOut_trade_no());
-//        accountOprLog.setOprType(AccountOprLog.OPR_TYPE.REVERSE);
-        //total与actualTotal是否一致
-        accountOprLog.setPrice(new BigDecimal(payTrdOrder.getTotal()));
-        accountOprLog.setRemark("交易撤销");
-        accountOprLog.setTrdOrderId(payTrdOrder.getId());
-        accountOprLog.setUserId(userInfo.getId());
-
-        accountOprLogDao.insertSelective(accountOprLog);
-    }
-
-    @Transactional
-    @Override
-    public void pay(PayResponse response) {
-        String trdNo = response.getOut_trade_no();
-        PayProof payProof = payProofDao.selectByTrdNo(trdNo);
-        Map<String,Object> params = response.getParams();
-        params.put("id",payProof.getId());
-        params.put("fromStatus",10);
-        params.put("targetStatus",response.getErrcode());
-        int count = payProofDao.update(params);
-        if(count <=0 ) {
-            throw new BizException("更新交易单状态失败");
+    public List<UserGroup> getGroupChain(UserGroup leafGroup) {
+        List<UserGroup> list = new ArrayList<>();
+        list.add(leafGroup);
+        if(leafGroup.getId().compareTo(leafGroup.getSubGroupId())==0) {
+            return list;
         }
-
-        PayTrdOrder payTrdOrder = payTrdOrderDao.selectByOrderNo(response.getOut_trade_no());
-        count = payTrdOrderDao.updateStatusById(payTrdOrder.getId(),10,response.getErrcode());
-
-        if(count<=0) {
-            throw new BizException("更新交易单状态失败");
+        Long tempGroupId = leafGroup.getSubGroupId();
+        while(tempGroupId!=0L) {
+            UserGroup userGroup = userGroupDao.selectByPrimaryKey(tempGroupId);
+            if(Objects.isNull(userGroup)) {
+                break;
+            }
+            list.add(userGroup);
+            if(userGroup.getId().compareTo(userGroup.getSubGroupId()) == 0) {
+                break;
+            }
+            tempGroupId = userGroup.getSubGroupId();
         }
-
-        accountService.pay(payTrdOrder);
-    }
-
-    @Transactional
-    @Override
-    public void refund(RefundResponse refundResponse) {
-        PayRefundOrder payRefundOrder = payRefundOrderDao.selectByRefundNo(refundResponse.getOut_trade_no(),0);
-
-        int count = payRefundOrderDao.updateStatus(payRefundOrder.getId(),10,refundResponse.getErrcode());
-        if(count<=0) {
-            throw new BizException("更新退款单失败");
-        }
-
-        PayTrdOrder payTrdOrder = payTrdOrderDao.selectByOrderNo(payRefundOrder.getOriNo());
-        count = payTrdOrderDao.updateStatusById(payTrdOrder.getId(),PayTrdOrder.STATUS.SUCCESS,PayTrdOrder.STATUS.REFUND);
-        if(count<=0) {
-            throw new BizException("更新交易单失败");
-        }
-
-        accountService.refund(refundResponse);
-    }
-
-    @Transactional
-    @Override
-    public void reverse(ReverseResponse reverseResponse) {
-        PayReverseOrder payReverseOrder = payReverseOrderDao.selectByTrdOrder(reverseResponse.getOut_trade_no());
-        if(Objects.isNull(payReverseOrder)) {
-            throw new BizException("未查到取消记录");
-        }
-
-        int count = payReverseOrderDao.updateStatus(payReverseOrder.getId(),PayReverseOrder.STATUS.INIT,reverseResponse.getErrcode());
-        if(count<=0) {
-            throw new BizException("更新交易单失败");
-        }
-
-        if(reverseResponse.getErrcode() != 0) {
-            return;
-        }
-
-        PayTrdOrder payTrdOrder = payTrdOrderDao.selectByOrderNo(payReverseOrder.getOutTradeNo());
-        if(payTrdOrder.getStatus()!=10 && payTrdOrder.getStatus() != 4) {
-            throw new BizException("交易单状态异常");
-        }
-        count = payTrdOrderDao.updateStatusById(payTrdOrder.getId(),payTrdOrder.getStatus(),PayTrdOrder.STATUS.REVERSE);
-        if(count<=0) {
-            throw new BizException("更新交易单失败");
-        }
-
-        accountService.reverse(reverseResponse);
+        return list;
     }
 }

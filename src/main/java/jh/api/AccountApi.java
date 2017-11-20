@@ -29,8 +29,8 @@ public class AccountApi {
      */
     @RequestMapping(value = "/get_account_info",method = RequestMethod.GET)
     public ModelAndView getAccountInfo(Long userId) {
-        Account account = accountDao.selectByUserId(userId);
-        Map<String,Object> resultMap = MapUtils.buildMap("amount",account.getAmount(),"lockAmount",account.getLockAmount(),"paidAmount",account.getPaidAmount());
+//        Account account = accountDao.selectByUserId(userId);
+//        Map<String,Object> resultMap = MapUtils.buildMap("amount",account.getAmount(),"lockAmount",account.getLockAmount(),"paidAmount",account.getPaidAmount());
         return null;
     }
 

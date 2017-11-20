@@ -23,7 +23,7 @@
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 		<!--生成Model类存放位置 targetPackage 需要自定义 目录自动生成 basePackage -->
-		<javaModelGenerator targetPackage="jh.model" targetProject="src/main/java">
+		<javaModelGenerator targetPackage="jh.model.po" targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
@@ -37,7 +37,7 @@
 		</javaClientGenerator>
 
 		<!-- 正式生成之前需要删除 此事例 -->
-		<table tableName="admin_bank_card" domainObjectName="AdminBankCard"
+		<table tableName="account_opr_log" domainObjectName="AccountOprLog"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

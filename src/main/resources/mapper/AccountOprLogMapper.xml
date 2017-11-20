@@ -3,29 +3,20 @@
 <mapper namespace="jh.dao.local.AccountOprLogDao" >
   <resultMap id="BaseResultMap" type="jh.model.po.AccountOprLog" >
     <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="group_id" property="groupId" jdbcType="BIGINT" />
     <result column="account_id" property="accountId" jdbcType="BIGINT" />
-    <result column="user_id" property="userId" jdbcType="BIGINT" />
-    <result column="trd_order_id" property="trdOrderId" jdbcType="BIGINT" />
     <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
-    <result column="no" property="no" jdbcType="VARCHAR" />
-    <result column="opr_type" property="oprType" jdbcType="INTEGER" />
-    <result column="remark" property="remark" jdbcType="VARCHAR" />
-    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="type" property="type" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
-    <result column="version" property="version" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
-    <result column="channel_id" property="channelId" jdbcType="BIGINT" />
-    <result column="channel_type" property="channelType" jdbcType="INTEGER" />
-    <result column="channel" property="channel" jdbcType="VARCHAR" />
-    <result column="user_fee_rate" property="userFeeRate" jdbcType="DECIMAL" />
-    <result column="price_in" property="priceIn" jdbcType="DECIMAL" />
-    <result column="fee" property="fee" jdbcType="DECIMAL" />
+    <result column="version" property="version" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, account_id, user_id, trd_order_id, out_trade_no, `no`, opr_type, remark, price, 
-    `status`, version, create_time, update_time, channel_id, channel_type, channel, user_fee_rate, 
-    price_in, fee
+    id, group_id, account_id, out_trade_no, amount, `type`, `status`, remark, create_time, 
+    update_time, version
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -38,20 +29,14 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="jh.model.po.AccountOprLog" >
-    insert into account_opr_log (id, account_id, user_id, 
-      trd_order_id, out_trade_no, `no`, 
-      opr_type, remark, price, 
-      `status`, version, create_time, 
-      update_time, channel_id, channel_type, 
-      channel, user_fee_rate, price_in, 
-      fee)
-    values (#{id,jdbcType=BIGINT}, #{accountId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
-      #{trdOrderId,jdbcType=BIGINT}, #{outTradeNo,jdbcType=VARCHAR}, #{no,jdbcType=VARCHAR}, 
-      #{oprType,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
-      #{status,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{channelId,jdbcType=BIGINT}, #{channelType,jdbcType=INTEGER}, 
-      #{channel,jdbcType=VARCHAR}, #{userFeeRate,jdbcType=DECIMAL}, #{priceIn,jdbcType=DECIMAL}, 
-      #{fee,jdbcType=DECIMAL})
+    insert into account_opr_log (id, group_id, account_id, 
+      out_trade_no, amount, `type`, 
+      `status`, remark, create_time, 
+      update_time, version)
+    values (#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{accountId,jdbcType=BIGINT}, 
+      #{outTradeNo,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{type,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="jh.model.po.AccountOprLog" >
     insert into account_opr_log
@@ -59,35 +44,26 @@
       <if test="id != null" >
         id,
       </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
       <if test="accountId != null" >
         account_id,
-      </if>
-      <if test="userId != null" >
-        user_id,
-      </if>
-      <if test="trdOrderId != null" >
-        trd_order_id,
       </if>
       <if test="outTradeNo != null" >
         out_trade_no,
       </if>
-      <if test="no != null" >
-        `no`,
+      <if test="amount != null" >
+        amount,
       </if>
-      <if test="oprType != null" >
-        opr_type,
-      </if>
-      <if test="remark != null" >
-        remark,
-      </if>
-      <if test="price != null" >
-        price,
+      <if test="type != null" >
+        `type`,
       </if>
       <if test="status != null" >
         `status`,
       </if>
-      <if test="version != null" >
-        version,
+      <if test="remark != null" >
+        remark,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -95,58 +71,34 @@
       <if test="updateTime != null" >
         update_time,
       </if>
-      <if test="channelId != null" >
-        channel_id,
-      </if>
-      <if test="channelType != null" >
-        channel_type,
-      </if>
-      <if test="channel != null" >
-        channel,
-      </if>
-      <if test="userFeeRate != null" >
-        user_fee_rate,
-      </if>
-      <if test="priceIn != null" >
-        price_in,
-      </if>
-      <if test="fee != null" >
-        fee,
+      <if test="version != null" >
+        version,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         #{id,jdbcType=BIGINT},
       </if>
+      <if test="groupId != null" >
+        #{groupId,jdbcType=BIGINT},
+      </if>
       <if test="accountId != null" >
         #{accountId,jdbcType=BIGINT},
-      </if>
-      <if test="userId != null" >
-        #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="trdOrderId != null" >
-        #{trdOrderId,jdbcType=BIGINT},
       </if>
       <if test="outTradeNo != null" >
         #{outTradeNo,jdbcType=VARCHAR},
       </if>
-      <if test="no != null" >
-        #{no,jdbcType=VARCHAR},
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
       </if>
-      <if test="oprType != null" >
-        #{oprType,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null" >
-        #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="price != null" >
-        #{price,jdbcType=DECIMAL},
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         #{status,jdbcType=INTEGER},
       </if>
-      <if test="version != null" >
-        #{version,jdbcType=INTEGER},
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -154,58 +106,34 @@
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="channelId != null" >
-        #{channelId,jdbcType=BIGINT},
-      </if>
-      <if test="channelType != null" >
-        #{channelType,jdbcType=INTEGER},
-      </if>
-      <if test="channel != null" >
-        #{channel,jdbcType=VARCHAR},
-      </if>
-      <if test="userFeeRate != null" >
-        #{userFeeRate,jdbcType=DECIMAL},
-      </if>
-      <if test="priceIn != null" >
-        #{priceIn,jdbcType=DECIMAL},
-      </if>
-      <if test="fee != null" >
-        #{fee,jdbcType=DECIMAL},
+      <if test="version != null" >
+        #{version,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.AccountOprLog" >
     update account_opr_log
     <set >
+      <if test="groupId != null" >
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
       <if test="accountId != null" >
         account_id = #{accountId,jdbcType=BIGINT},
-      </if>
-      <if test="userId != null" >
-        user_id = #{userId,jdbcType=BIGINT},
-      </if>
-      <if test="trdOrderId != null" >
-        trd_order_id = #{trdOrderId,jdbcType=BIGINT},
       </if>
       <if test="outTradeNo != null" >
         out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
       </if>
-      <if test="no != null" >
-        `no` = #{no,jdbcType=VARCHAR},
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
       </if>
-      <if test="oprType != null" >
-        opr_type = #{oprType,jdbcType=INTEGER},
-      </if>
-      <if test="remark != null" >
-        remark = #{remark,jdbcType=VARCHAR},
-      </if>
-      <if test="price != null" >
-        price = #{price,jdbcType=DECIMAL},
+      <if test="type != null" >
+        `type` = #{type,jdbcType=INTEGER},
       </if>
       <if test="status != null" >
         `status` = #{status,jdbcType=INTEGER},
       </if>
-      <if test="version != null" >
-        version = #{version,jdbcType=INTEGER},
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -213,47 +141,52 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="channelId != null" >
-        channel_id = #{channelId,jdbcType=BIGINT},
-      </if>
-      <if test="channelType != null" >
-        channel_type = #{channelType,jdbcType=INTEGER},
-      </if>
-      <if test="channel != null" >
-        channel = #{channel,jdbcType=VARCHAR},
-      </if>
-      <if test="userFeeRate != null" >
-        user_fee_rate = #{userFeeRate,jdbcType=DECIMAL},
-      </if>
-      <if test="priceIn != null" >
-        price_in = #{priceIn,jdbcType=DECIMAL},
-      </if>
-      <if test="fee != null" >
-        fee = #{fee,jdbcType=DECIMAL},
+      <if test="version != null" >
+        version = #{version,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="jh.model.po.AccountOprLog" >
     update account_opr_log
-    set account_id = #{accountId,jdbcType=BIGINT},
-      user_id = #{userId,jdbcType=BIGINT},
-      trd_order_id = #{trdOrderId,jdbcType=BIGINT},
+    set group_id = #{groupId,jdbcType=BIGINT},
+      account_id = #{accountId,jdbcType=BIGINT},
       out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
-      `no` = #{no,jdbcType=VARCHAR},
-      opr_type = #{oprType,jdbcType=INTEGER},
-      remark = #{remark,jdbcType=VARCHAR},
-      price = #{price,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=DECIMAL},
+      `type` = #{type,jdbcType=INTEGER},
       `status` = #{status,jdbcType=INTEGER},
-      version = #{version,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      channel_id = #{channelId,jdbcType=BIGINT},
-      channel_type = #{channelType,jdbcType=INTEGER},
-      channel = #{channel,jdbcType=VARCHAR},
-      user_fee_rate = #{userFeeRate,jdbcType=DECIMAL},
-      price_in = #{priceIn,jdbcType=DECIMAL},
-      fee = #{fee,jdbcType=DECIMAL}
+      version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <insert id="batchInsert" parameterType="java.util.List" >
+    insert into account_opr_log (
+    group_id,
+    account_id,
+    out_trade_no,
+    amount,
+    `type`,
+    remark)
+    values
+    <foreach collection ="list" item="log" index= "index" separator =",">
+      (
+      #{log.groupId},
+      #{log.accountId},
+      #{log.outTradeNo},
+      #{log.amount},
+      #{log.type},
+      #{log.remark}
+      )
+    </foreach >
+  </insert>
+
+  <select id="selectByTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from account_opr_log
+    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR} order by group_id
+  </select>
 </mapper>

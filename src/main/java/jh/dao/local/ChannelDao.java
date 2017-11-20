@@ -1,6 +1,7 @@
 package jh.dao.local;
 
 import jh.model.po.Channel;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,4 +21,6 @@ public interface ChannelDao {
     List<Channel> selectForList();
 
     List<Channel> selectForAvaList();
+
+    Channel selectByCode(@Param("channelCode") String channelCode);
 }

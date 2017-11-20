@@ -18,8 +18,8 @@ public class FxtClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    public PayResponse unifiedorder(PayRequest payRequest) {
-        ResponseEntity<PayResponse> response = restTemplate.postForEntity(URL+UNIFIEDORDER,payRequest, PayResponse.class, Collections.EMPTY_MAP);
+    public PayResponse unifiedorder(PayRequestDto payRequestDto) {
+        ResponseEntity<PayResponse> response = restTemplate.postForEntity(URL+UNIFIEDORDER, payRequestDto, PayResponse.class, Collections.EMPTY_MAP);
         return response.getBody();
     }
 

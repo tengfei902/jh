@@ -30,4 +30,6 @@ public interface UserGroupDao {
     UserGroup selectDefaultUserGroup();
 
     int updateStatusById(@Param("id")Long id,@Param("fromStatus")int fromStatus,@Param("targetStatus") int targetStatus);
+
+    UserGroup selectByNo(@Param("groupNo")String groupNo);
 }

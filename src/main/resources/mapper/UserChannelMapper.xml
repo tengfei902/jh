@@ -240,5 +240,23 @@
     where group_id = #{groupId,jdbcType=BIGINT} and channel_id = #{channelId,jdbcType=BIGINT}
   </select>
 
+  <select id="selectByMchId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_channel
+    where mch_id = #{mchId,jdbcType=VARCHAR}
+    and channel_code = #{channelCode,jdbcType=VARCHAR}
+    and channel_name = #{channelName,jdbcType=VARCHAR}
+  </select>
 
+  <select id="selectByGroupIdList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_channel
+    where channel_id = #{channelId,jdbcType=BIGINT}
+    and group_id in
+    <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
+      #{groupId}
+    </foreach>
+  </select>
 </mapper>

@@ -6,17 +6,15 @@ import java.util.Date;
 public class Account {
     private Long id;
 
-    private Long userId;
-
-    private String merchantNo;
-
-    private String outletNo;
+    private Long groupId;
 
     private BigDecimal amount;
 
     private BigDecimal lockAmount;
 
     private BigDecimal paidAmount;
+
+    private BigDecimal totalAmount;
 
     private BigDecimal fee;
 
@@ -36,28 +34,12 @@ public class Account {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getGroupId() {
+        return groupId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getMerchantNo() {
-        return merchantNo;
-    }
-
-    public void setMerchantNo(String merchantNo) {
-        this.merchantNo = merchantNo == null ? null : merchantNo.trim();
-    }
-
-    public String getOutletNo() {
-        return outletNo;
-    }
-
-    public void setOutletNo(String outletNo) {
-        this.outletNo = outletNo == null ? null : outletNo.trim();
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public BigDecimal getAmount() {
@@ -74,6 +56,30 @@ public class Account {
 
     public void setLockAmount(BigDecimal lockAmount) {
         this.lockAmount = lockAmount;
+    }
+
+    public BigDecimal getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(BigDecimal paidAmount) {
+        this.paidAmount = paidAmount;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
     }
 
     public Integer getStatus() {
@@ -106,21 +112,5 @@ public class Account {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public BigDecimal getPaidAmount() {
-        return paidAmount;
-    }
-
-    public void setPaidAmount(BigDecimal paidAmount) {
-        this.paidAmount = paidAmount;
-    }
-
-    public BigDecimal getFee() {
-        return fee;
-    }
-
-    public void setFee(BigDecimal fee) {
-        this.fee = fee;
     }
 }

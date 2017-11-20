@@ -1,9 +1,9 @@
 package jh.dao.local;
 
 import jh.model.po.AccountOprLog;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface AccountOprLogDao {
     int deleteByPrimaryKey(Long id);
@@ -18,5 +18,7 @@ public interface AccountOprLogDao {
 
     int updateByPrimaryKey(AccountOprLog record);
 
-    List<AccountOprLog> select(Map<String,Object> conditions);
+    int batchInsert(List<AccountOprLog> logs);
+
+    List<AccountOprLog> selectByTradeNo(@Param("outTradeNo") String outTradeNo);
 }

@@ -222,4 +222,11 @@
     status = #{targetStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_group
+    where group_no = #{groupNo,jdbcType=VARCHAR}
+  </select>
 </mapper>
