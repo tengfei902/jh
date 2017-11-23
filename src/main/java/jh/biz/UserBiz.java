@@ -25,7 +25,7 @@ public interface UserBiz {
 
     List<UserInfoDto> getUserList(UserInfoRequest request);
 
-    List<UserGroupDto> getUserGroupList(UserGroupRequest request);
+    List<UserGroup> getUserGroupList(UserGroupRequest request);
 
     void submit(Long userId,Long groupId);
 
@@ -36,4 +36,6 @@ public interface UserBiz {
     void userTurnBack(Long groupId,String remark);
 
     void userPass(Long groupId);
+
+    void saveAminGroup(UserGroup userGroup);
 }

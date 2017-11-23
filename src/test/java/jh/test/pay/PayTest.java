@@ -2,14 +2,18 @@ package jh.test.pay;
 
 import com.google.gson.Gson;
 import hf.base.enums.ChannelCode;
+import hf.base.utils.MapUtils;
 import jh.biz.PayBiz;
 import jh.biz.service.PageService;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
 import jh.model.dto.PayRequestDto;
+import jh.model.enums.OprStatus;
+import jh.model.enums.PayRequestStatus;
 import jh.model.po.*;
 import jh.test.BaseTestCase;
 import org.apache.commons.lang.math.RandomUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by tengfei on 2017/10/29.
@@ -39,6 +45,10 @@ public class PayTest extends BaseTestCase {
     private PayService payService;
     @Autowired
     private AccountOprLogDao accountOprLogDao;
+    @Autowired
+    private AdminAccountDao adminAccountDao;
+    @Autowired
+    private AdminAccountOprLogDao adminAccountOprLogDao;
 
     @Test
     public void testPay() {
@@ -80,6 +90,45 @@ public class PayTest extends BaseTestCase {
         for(AccountOprLog log:logs) {
             System.out.println(new Gson().toJson(log));
         }
+
+        request = payRequestDao.selectByPrimaryKey(request.getId());
+        Assert.assertEquals(request.getStatus().intValue(), PayRequestStatus.OPR_GENERATED.getValue());
+
+        payRequestDao.updateStatusById(request.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
+        request = payRequestDao.selectByPrimaryKey(request.getId());
+        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
+
+        payBiz.finishPay();
+
+        request = payRequestDao.selectByPrimaryKey(request.getId());
+        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.PAY_SUCCESS.getValue());
+        AdminAccountOprLog adminAccountOprLog =adminAccountOprLogDao.selectByNo(request.getOutTradeNo());
+
+        Assert.assertEquals(adminAccountOprLog.getStatus().intValue(), OprStatus.PAY_SUCCESS.getValue());
+        List<AccountOprLog> oprLogs = accountOprLogDao.selectByTradeNo(request.getOutTradeNo());
+
+        for(AccountOprLog log:oprLogs) {
+            Assert.assertEquals(log.getStatus().intValue(),OprStatus.PAY_SUCCESS.getValue());
+        }
+
+        payBiz.promote();
+
+        request = payRequestDao.selectByPrimaryKey(request.getId());
+        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.OPR_SUCCESS.getValue());
+        adminAccountOprLog = adminAccountOprLogDao.selectByNo(request.getOutTradeNo());
+
+        Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.FINISHED.getValue());
+        AdminAccount adminAccount = adminAccountDao.selectByPrimaryKey(adminAccountOprLog.getAdminAccountId());
+        Assert.assertTrue(adminAccount.getAmount().compareTo(adminAccountOprLog.getAmount())== 0);
+
+        logs = accountOprLogDao.selectByTradeNo(request.getOutTradeNo());
+        for(AccountOprLog log:logs) {
+            Assert.assertEquals(log.getStatus().intValue(),OprStatus.FINISHED.getValue());
+            Account account = accountDao.selectByPrimaryKey(log.getAccountId());
+            Assert.assertTrue(account.getAmount().compareTo(log.getAmount())== 0);
+        }
+
+
     }
 
     public Long prepareData() {
@@ -110,6 +159,10 @@ public class PayTest extends BaseTestCase {
         Account superAccount = new Account();
         superAccount.setGroupId(superUserGroup.getId());
         accountDao.insertSelective(superAccount);
+
+        AdminAccount adminAccount = new AdminAccount();
+        adminAccount.setGroupId(superUserGroup.getId());
+        adminAccountDao.insertSelective(adminAccount);
 
         UserChannel userChannel = new UserChannel();
         userChannel.setGroupId(superUserGroup.getId());
@@ -165,6 +218,8 @@ public class PayTest extends BaseTestCase {
              userChannel1.setCipherCode("123456786");
 
              userChannelDao.insertSelective(userChannel1);
+
+
          }
 
          //customer
@@ -206,4 +261,20 @@ public class PayTest extends BaseTestCase {
         return userGroup.getId();
     }
 
+    @Test
+    public void testBeanToMap() {
+        PayRequestDto payRequest = new PayRequestDto();
+        payRequest.setAppid(String.valueOf(RandomUtils.nextLong()));
+        payRequest.setBody("345676qwewe");
+        payRequest.setBuyer_id(String.valueOf(RandomUtils.nextLong()));
+        payRequest.setMch_id(null);
+        payRequest.setOut_trade_no(String.valueOf(RandomUtils.nextLong()));
+        payRequest.setService(ChannelCode.QQ.getService());
+        payRequest.setAppid(String.valueOf(RandomUtils.nextLong()));
+        payRequest.setSign(String.valueOf(RandomUtils.nextLong()));
+        payRequest.setTotal_fee(10000);
+
+        Map<String,Object> map = MapUtils.beanToMap(payRequest);
+        System.out.println(new Gson().toJson(map));
+    }
 }

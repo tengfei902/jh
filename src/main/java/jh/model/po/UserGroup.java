@@ -5,7 +5,7 @@ import jh.model.annotations.Field;
 import java.util.Date;
 
 public class UserGroup {
-    @Field(required = true,alias = "groupId")
+    @Field(alias = "groupId")
     private Long id;
     @Field(required = true)
     private String name;
@@ -19,9 +19,9 @@ public class UserGroup {
     private Integer type;
 
     private Integer status;
-
+    @Field
     private String groupNo;
-
+    @Field
     private Long subGroupId;
 
     private String subGroupNo;

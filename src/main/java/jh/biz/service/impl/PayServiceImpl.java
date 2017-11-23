@@ -2,10 +2,13 @@ package jh.biz.service.impl;
 
 import com.google.gson.Gson;
 import hf.base.exceptions.BizFailException;
+import jh.biz.service.AccountService;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
 import jh.model.dto.*;
+import jh.model.enums.OprStatus;
 import jh.model.enums.OprType;
+import jh.model.enums.PayRequestStatus;
 import jh.model.po.*;
 import jh.utils.BdUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,6 +37,14 @@ public class PayServiceImpl implements PayService {
     private ChannelDao channelDao;
     @Autowired
     private AccountOprLogDao accountOprLogDao;
+    @Autowired
+    private PayRequestDao payRequestDao;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private AdminAccountOprLogDao adminAccountOprLogDao;
+    @Autowired
+    private AdminAccountDao adminAccountDao;
 
     @Override
     @Transactional
@@ -62,6 +73,22 @@ public class PayServiceImpl implements PayService {
 
         //金额
         BigDecimal amount = new BigDecimal(payRequest.getTotalFee());
+        BigDecimal standardFee = amount.multiply(channel.getFeeRate()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
+
+        UserGroup adminGroup = groups.get(0);
+
+        AdminAccount adminAccount = adminAccountDao.selectByGroupId(adminGroup.getId());
+
+        AdminAccountOprLog adminAccountOprLog = new AdminAccountOprLog();
+        adminAccountOprLog.setAdminAccountId(adminAccount.getId());
+        adminAccountOprLog.setAmount(amount.subtract(standardFee));
+        adminAccountOprLog.setGroupId(adminGroup.getId());
+        adminAccountOprLog.setOutTradeNo(payRequest.getOutTradeNo());
+        adminAccountOprLog.setRemark(String.format("管理员入账:%s,费率:%s",payRequest.getTotalFee(),channel.getFeeRate()));
+        adminAccountOprLog.setType(OprType.PAY.getValue());
+
+        adminAccountOprLogDao.insertSelective(adminAccountOprLog);
+
         BigDecimal totalFee = userChannel.getFeeRate().multiply(amount).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP);
         BigDecimal tempFee = channel.getFeeRate().multiply(amount).divide(new BigDecimal(100),2,BigDecimal.ROUND_HALF_UP);
 
@@ -102,6 +129,11 @@ public class PayServiceImpl implements PayService {
         if(count != logs.size()){
             throw new BizFailException("batch insert logs failed");
         }
+
+        count = payRequestDao.updateStatusById(payRequest.getId(), PayRequestStatus.NEW.getValue(),PayRequestStatus.OPR_GENERATED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update pay request status failed");
+        }
     }
 
     public List<UserGroup> getGroupChain(UserGroup leafGroup) {
@@ -123,5 +155,54 @@ public class PayServiceImpl implements PayService {
             tempGroupId = userGroup.getSubGroupId();
         }
         return list;
+    }
+
+    @Transactional
+    @Override
+    public void paySuccess(String outTradeNo) {
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue(),PayRequestStatus.PAY_SUCCESS.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update pay request status from 2 to 5 failed,%s",outTradeNo));
+        }
+
+        AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
+        count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(),OprStatus.NEW.getValue(),OprStatus.PAY_SUCCESS.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update admin opr log status from 0 to 1 failed,log id:%s",adminAccountOprLog.getId()));
+        }
+
+        List<AccountOprLog> accountOprLogs = accountOprLogDao.selectByTradeNo(outTradeNo);
+        for(AccountOprLog log:accountOprLogs) {
+            count = accountOprLogDao.updateStatusById(log.getId(), OprStatus.NEW.getValue(),OprStatus.PAY_SUCCESS.getValue());
+            if(count<=0) {
+                throw new BizFailException(String.format("update opr log status from 0 to 1 failed,logid:%s",log.getId()));
+            }
+        }
+    }
+
+    @Transactional
+    @Override
+    public void payPromote(String outTradeNo) {
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.PAY_SUCCESS.getValue(),PayRequestStatus.OPR_SUCCESS.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update payrequest status from 5 to 10 failed,tradeNo:%s",outTradeNo));
+        }
+
+        AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
+        count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(),OprStatus.PAY_SUCCESS.getValue(),OprStatus.FINISHED.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update account opr status failed,adminLogId:%s",adminAccountOprLog.getId()));
+        }
+
+        AdminAccount adminAccount = adminAccountDao.selectByPrimaryKey(adminAccountOprLog.getAdminAccountId());
+        count = adminAccountDao.addAmount(adminAccount.getId(),adminAccountOprLog.getAmount(),adminAccount.getVersion());
+        if(count<=0) {
+            throw new BizFailException(String.format("update admin Account amount failed,id:%s,amount:%s",adminAccount.getId(),adminAccountOprLog.getAmount()));
+        }
+
+        List<AccountOprLog> logs = accountOprLogDao.selectByTradeNo(outTradeNo);
+        logs.stream().forEach(log -> accountService.promote(log));
     }
 }

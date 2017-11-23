@@ -21,4 +21,6 @@ public interface AccountOprLogDao {
     int batchInsert(List<AccountOprLog> logs);
 
     List<AccountOprLog> selectByTradeNo(@Param("outTradeNo") String outTradeNo);
+
+    int updateStatusById(@Param("id") Long id,@Param("fromStatus") Integer fromStatus,@Param("toStatus") Integer toStatus);
 }

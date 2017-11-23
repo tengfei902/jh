@@ -1,7 +1,9 @@
 package jh.api;
 
 import hf.base.contants.CodeManager;
+import hf.base.contants.Constants;
 import hf.base.exceptions.BizFailException;
+import hf.base.utils.Pagenation;
 import hf.base.utils.Utils;
 import jh.biz.ChannelBiz;
 import jh.biz.UserBiz;
@@ -47,9 +49,12 @@ public class UserApi {
     }
 
     @RequestMapping(value = "/get_user_group_list",method = RequestMethod.POST)
-    public @ResponseBody ResponseResult<List<UserGroupDto>> getUserGroupList(@RequestBody UserGroupRequest request) {
-        List<UserGroupDto> list = userBiz.getUserGroupList(request);
-        return ResponseResult.success(list);
+    public @ResponseBody ResponseResult<Pagenation<UserGroup>> getUserGroupList(@RequestBody UserGroupRequest request) {
+        List<UserGroup> list = userBiz.getUserGroupList(request);
+        int currentPage = null == request.getPageIndex()?1:request.getPageIndex();
+        int pageSize = null==request.getPageSize()?Constants.pageSize:request.getPageSize();
+        Pagenation<UserGroup> pagenation = new Pagenation<UserGroup>(list,currentPage,pageSize);
+        return ResponseResult.success(pagenation);
     }
 
     @RequestMapping(value = "/get_user_info_by_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
@@ -189,6 +194,16 @@ public class UserApi {
         return ResponseResult.success(list);
     }
 
+    @RequestMapping(value = "/get_user_bank_card_detail",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<UserBankCard> getUserBankCardDetail(@RequestBody Map<String,String> params) {
+        if(Objects.isNull(params.get("id"))) {
+            return ResponseResult.success(new UserBankCard());
+        }
+        Long id = Long.parseLong(params.get("id"));
+        UserBankCard userBankCard = userBankCardDao.selectByPrimaryKey(id);
+        return ResponseResult.success(userBankCard);
+    }
+
     @RequestMapping(value = "/save_user_card",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<Boolean> saveBankCard(@RequestBody Map<String,Object> data) {
         UserBankCard userBankCard ;
@@ -306,5 +321,39 @@ public class UserApi {
             return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),Boolean.FALSE);
         }
 
+    }
+
+    @RequestMapping(value = "/save_user_info",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Boolean> saveUserInfo(@RequestBody Map<String,String> params) {
+        String loginId = params.get("loginId");
+        String password = params.get("password");
+        String name = params.get("name");
+        String idCard = params.get("idCard");
+        String tel = params.get("tel");
+        String qq = params.get("qq");
+        String address = params.get("address");
+        String groupId = params.get("groupId");
+        String id = params.get("id");
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setLoginId(loginId);
+        userInfo.setPassword(Utils.convertPassword(password));
+        userInfo.setName(name);
+        userInfo.setIdCard(idCard);
+        userInfo.setTel(tel);
+        userInfo.setQq(qq);
+        userInfo.setAddress(address);
+        userInfo.setGroupId(Long.parseLong(groupId));
+        userInfo.setId(Long.parseLong(id));
+
+        if(StringUtils.isEmpty(id)) {
+            userInfoDao.insertSelective(userInfo);
+        } else {
+            int count = userInfoDao.updateByPrimaryKeySelective(userInfo);
+            if(count<=0) {
+                throw new BizFailException(String.format("update user info failed,%s",id));
+            }
+        }
+        return ResponseResult.success(Boolean.TRUE);
     }
 }

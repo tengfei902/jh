@@ -49,6 +49,10 @@ public class UserBizImpl implements UserBiz {
     private AdminBankCardDao adminBankCardDao;
     @Autowired
     private UserChannelDao userChannelDao;
+    @Autowired
+    private AdminAccountDao adminAccountDao;
+    @Autowired
+    private AccountDao accountDao;
 
     @Override
     public void register(String loginId, String password, String inviteCode) {
@@ -148,18 +152,14 @@ public class UserBizImpl implements UserBiz {
     }
 
     @Override
-    public List<UserGroupDto> getUserGroupList(UserGroupRequest request) {
+    public List<UserGroup> getUserGroupList(UserGroupRequest request) {
         UserGroup userGroup = userGroupDao.selectByPrimaryKey(Long.parseLong(request.getCompanyId()));
         if(userGroup.getType() == UserGroup.GroupType.SUPER.getValue()) {
             request.setCompanyId(null);
         }
 
         List<UserGroup> list = userGroupDao.select(Utils.bean2Map(request));
-
-        List<UserGroupDto> result = new ArrayList<>();
-
-        list.stream().forEach(group -> result.add(buildGroup(group)));
-        return result;
+        return list;
     }
 
     private UserGroupDto buildGroup(UserGroup userGroup) {
@@ -278,5 +278,19 @@ public class UserBizImpl implements UserBiz {
                 throw new BizFailException("update userInfo status failed");
             }
         }
+
+        Account account = new Account();
+        account.setGroupId(groupId);
+        accountDao.insertSelective(account);
+    }
+
+    @Transactional
+    @Override
+    public void saveAminGroup(UserGroup userGroup) {
+        userGroup.setType(hf.base.model.UserGroup.GroupType.COMPANY.getValue());
+        userGroupDao.insertSelective(userGroup);
+        AdminAccount adminAccount = new AdminAccount();
+        adminAccount.setGroupId(userGroup.getId());
+        adminAccountDao.insertSelective(adminAccount);
     }
 }

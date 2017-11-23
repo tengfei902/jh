@@ -6,6 +6,8 @@ public class UserGroupRequest {
     private Integer status;
     private String companyId;
     private Integer type;
+    private Integer pageSize;
+    private Integer pageIndex;
 
     public String getUser() {
         return user;
@@ -45,5 +47,21 @@ public class UserGroupRequest {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public Integer getPageIndex() {
+        return pageIndex;
+    }
+
+    public void setPageIndex(Integer pageIndex) {
+        this.pageIndex = pageIndex;
     }
 }

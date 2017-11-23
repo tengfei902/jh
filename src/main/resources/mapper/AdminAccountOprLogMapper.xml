@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="jh.dao.local.AccountOprLogDao" >
-  <resultMap id="BaseResultMap" type="jh.model.po.AccountOprLog" >
+<mapper namespace="jh.dao.local.AdminAccountOprLogDao" >
+  <resultMap id="BaseResultMap" type="jh.model.po.AdminAccountOprLog" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />
-    <result column="account_id" property="accountId" jdbcType="BIGINT" />
+    <result column="admin_account_id" property="adminAccountId" jdbcType="BIGINT" />
     <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
     <result column="amount" property="amount" jdbcType="DECIMAL" />
     <result column="type" property="type" jdbcType="INTEGER" />
@@ -15,31 +15,31 @@
     <result column="version" property="version" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, group_id, account_id, out_trade_no, amount, `type`, `status`, remark, create_time, 
+    id, group_id, admin_account_id, out_trade_no, amount, `type`, `status`, remark, create_time, 
     update_time, version
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from account_opr_log
+    from admin_account_opr_log
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from account_opr_log
+    delete from admin_account_opr_log
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="jh.model.po.AccountOprLog" >
-    insert into account_opr_log (id, group_id, account_id, 
+  <insert id="insert" parameterType="jh.model.po.AdminAccountOprLog" >
+    insert into admin_account_opr_log (id, group_id, admin_account_id, 
       out_trade_no, amount, `type`, 
       `status`, remark, create_time, 
       update_time, version)
-    values (#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{accountId,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=BIGINT}, #{groupId,jdbcType=BIGINT}, #{adminAccountId,jdbcType=BIGINT}, 
       #{outTradeNo,jdbcType=VARCHAR}, #{amount,jdbcType=DECIMAL}, #{type,jdbcType=INTEGER}, 
       #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.po.AccountOprLog" >
-    insert into account_opr_log
+  <insert id="insertSelective" parameterType="jh.model.po.AdminAccountOprLog" >
+    insert into admin_account_opr_log
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -47,8 +47,8 @@
       <if test="groupId != null" >
         group_id,
       </if>
-      <if test="accountId != null" >
-        account_id,
+      <if test="adminAccountId != null" >
+        admin_account_id,
       </if>
       <if test="outTradeNo != null" >
         out_trade_no,
@@ -82,8 +82,8 @@
       <if test="groupId != null" >
         #{groupId,jdbcType=BIGINT},
       </if>
-      <if test="accountId != null" >
-        #{accountId,jdbcType=BIGINT},
+      <if test="adminAccountId != null" >
+        #{adminAccountId,jdbcType=BIGINT},
       </if>
       <if test="outTradeNo != null" >
         #{outTradeNo,jdbcType=VARCHAR},
@@ -111,14 +111,14 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.AccountOprLog" >
-    update account_opr_log
+  <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.AdminAccountOprLog" >
+    update admin_account_opr_log
     <set >
       <if test="groupId != null" >
         group_id = #{groupId,jdbcType=BIGINT},
       </if>
-      <if test="accountId != null" >
-        account_id = #{accountId,jdbcType=BIGINT},
+      <if test="adminAccountId != null" >
+        admin_account_id = #{adminAccountId,jdbcType=BIGINT},
       </if>
       <if test="outTradeNo != null" >
         out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
@@ -147,10 +147,10 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="jh.model.po.AccountOprLog" >
-    update account_opr_log
+  <update id="updateByPrimaryKey" parameterType="jh.model.po.AdminAccountOprLog" >
+    update admin_account_opr_log
     set group_id = #{groupId,jdbcType=BIGINT},
-      account_id = #{accountId,jdbcType=BIGINT},
+      admin_account_id = #{adminAccountId,jdbcType=BIGINT},
       out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
       amount = #{amount,jdbcType=DECIMAL},
       `type` = #{type,jdbcType=INTEGER},
@@ -162,36 +162,15 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <insert id="batchInsert" parameterType="java.util.List" >
-    insert into account_opr_log (
-    group_id,
-    account_id,
-    out_trade_no,
-    amount,
-    `type`,
-    remark)
-    values
-    <foreach collection ="list" item="log" index= "index" separator =",">
-      (
-      #{log.groupId},
-      #{log.accountId},
-      #{log.outTradeNo},
-      #{log.amount},
-      #{log.type},
-      #{log.remark}
-      )
-    </foreach >
-  </insert>
-
-  <select id="selectByTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+  <select id="selectByNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
-    from account_opr_log
-    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR} order by group_id
+    from admin_account_opr_log
+    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
   </select>
 
-  <update id="updateStatusById">
-    update account_opr_log
+  <update id="updateStatusById" >
+    update admin_account_opr_log
     set
     status = #{toStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}

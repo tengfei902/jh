@@ -42,7 +42,7 @@
       #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{version,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="jh.model.po.PayRequest" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="jh.model.po.PayRequest" >
     insert into pay_request
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -186,11 +186,31 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <select id="selectByTradeNo" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+  <select id="selectByTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="Base_Column_List" />
     from pay_request
     where out_trade_no = #{tradeNo,jdbcType=VARCHAR}
   </select>
 
+  <update id="updateStatusById">
+    update pay_request
+    set status = #{toStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectUnfinishedList" resultMap="BaseResultMap" parameterType="java.util.Date" >
+    select
+    <include refid="Base_Column_List" />
+    from pay_request
+    where status = 2 and <![CDATA[ create_time < #{createTime,jdbcType=TIMESTAMP} ]]> order by id
+  </select>
+
+  <select id="selectWaitingPromote" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pay_request
+    where status = 5
+--     and <![CDATA[ DATE_FORMAT(update_time,'yyyy-MM-dd') < CURRENT_DATE ]]> order by id
+  </select>
 </mapper>

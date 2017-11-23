@@ -33,6 +33,10 @@ public class PayRequest {
 
     private Integer version;
 
+    public PayRequest() {
+
+    }
+
     public PayRequest(PayRequestDto request) {
         this.outTradeNo = request.getOut_trade_no();
         this.body = request.getBody();

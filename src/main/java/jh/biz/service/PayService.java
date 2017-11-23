@@ -7,4 +7,6 @@ import jh.model.po.PayRequest;
  */
 public interface PayService {
     void saveOprLog(PayRequest payRequest);
+    void paySuccess(String outTradeNo);
+    void payPromote(String outTradeNo);
 }

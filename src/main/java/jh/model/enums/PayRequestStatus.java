@@ -3,7 +3,8 @@ package jh.model.enums;
 public enum PayRequestStatus {
     NEW(0),
     OPR_GENERATED(1),
-    PAY_SUCCESS(2),
+    REMOTE_CALL_FINISHED(2),
+    PAY_SUCCESS(5),
     OPR_SUCCESS(10),
     PAY_FAILED(98),
     OPR_FINISHED(99);
