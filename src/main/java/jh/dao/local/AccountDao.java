@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface AccountDao {
     int deleteByPrimaryKey(Long id);
@@ -24,4 +25,14 @@ public interface AccountDao {
     int addAmount(@Param("id") Long id, @Param("amount")BigDecimal amount,@Param("version") Integer version);
 
     List<Account> selectByGroupIds(@Param("groupIds") List<Long> groupIds);
+
+    List<Account> select(Map<String,Object> params);
+
+    int count(Map<String,Object> params);
+
+    int lockAmount(@Param("id")Long id, @Param("lockAmount") BigDecimal lockAmount,@Param("version") Integer version);
+
+    int finishWithDraw(@Param("id")Long id,@Param("lockAmount") BigDecimal lockAmount,@Param("version") Integer version);
+
+    int finishTax(@Param("id")Long id,@Param("lockAmount") BigDecimal lockAmount,@Param("version") Integer version);
 }

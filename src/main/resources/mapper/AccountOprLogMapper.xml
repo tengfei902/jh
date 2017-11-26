@@ -190,10 +190,98 @@
     where out_trade_no = #{outTradeNo,jdbcType=VARCHAR} order by group_id
   </select>
 
+  <select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from account_opr_log
+    where account_id = #{accountId,jdbcType=BIGINT}
+    <if test="types != null and types.size()>0" >
+      and type in
+      <foreach collection="types" index="index" item="type" open="(" separator="," close=")">
+        #{type}
+      </foreach>
+    </if>
+    <if test="statusList != null and statusList.size()>0" >
+      and status in
+      <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")">
+        #{status}
+      </foreach>
+    </if>
+  </select>
+
   <update id="updateStatusById">
     update account_opr_log
     set
     status = #{toStatus,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
   </update>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from account_opr_log where 1=1
+    <if test="accountId != null" >
+      and account_id = #{accountId,jdbcType=BIGINT}
+    </if>
+    <if test="oprType != null" >
+      and type = #{oprType,jdbcType=INTEGER}
+    </if>
+    <if test="outTradeNo != null" >
+      and out_trade_no like concat(concat(#{outTradeNo,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="status != null" >
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="groupIds != null and groupIds.size()>0" >
+      and group_id in
+      <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
+        #{groupId}
+      </foreach>
+    </if>
+    <if test="statusList != null and statusList.size()>0" >
+      and status in
+      <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")">
+        #{status}
+      </foreach>
+    </if>
+    order by out_trade_no desc,id desc
+    limit #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+  </select>
+
+  <select id="count" resultType="java.lang.Integer">
+    select count(1) from account_opr_log where 1=1
+    <if test="accountId != null" >
+      and account_id = #{accountId,jdbcType=BIGINT}
+    </if>
+    <if test="oprType != null" >
+      and type = #{oprType,jdbcType=INTEGER}
+    </if>
+    <if test="outTradeNo != null" >
+      and out_trade_no like concat(concat(#{outTradeNo,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="status != null" >
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="groupIds != null and groupIds.size()>0" >
+      and group_id in
+      <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
+        #{groupId}
+      </foreach>
+    </if>
+    <if test="statusList != null and statusList.size()>0" >
+      and status in
+      <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")">
+        #{status}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectByUnq" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from account_opr_log
+    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
+    and group_id = #{groupId,jdbcType=BIGINT}
+    and `type` = #{type,jdbcType=INTEGER}
+  </select>
 </mapper>

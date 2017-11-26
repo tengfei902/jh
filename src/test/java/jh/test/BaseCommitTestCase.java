@@ -1,13 +1,11 @@
 package jh.test;
 
-import hf.base.enums.ChannelCode;
+import hf.base.enums.*;
+import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
-import jh.dao.local.ChannelDao;
-import jh.dao.local.UserGroupDao;
-import jh.dao.local.UserInfoDao;
-import jh.model.po.Channel;
-import jh.model.po.UserGroup;
-import jh.model.po.UserInfo;
+import jh.dao.local.*;
+import jh.model.po.*;
+import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by tengfei on 2017/11/6.
@@ -30,6 +30,18 @@ public class BaseCommitTestCase {
     private UserGroupDao userGroupDao;
     @Autowired
     private ChannelDao channelDao;
+    @Autowired
+    private AccountDao accountDao;
+    @Autowired
+    private AdminAccountDao adminAccountDao;
+    @Autowired
+    private PayRequestDao payRequestDao;
+    @Autowired
+    private AccountOprLogDao accountOprLogDao;
+    @Autowired
+    private UserBankCardDao userBankCardDao;
+    @Autowired
+    private AdminBankCardDao adminBankCardDao;
 
     @Test
     public void testSaveUserGroup() {
@@ -242,5 +254,129 @@ public class BaseCommitTestCase {
         channel.setUrl("");
 
         channelDao.insertSelective(channel);
+    }
+
+    @Test
+    public void testBuildAdmin() {
+        UserGroup userGroup = new UserGroup();
+        userGroup.setType(UserGroup.GroupType.SUPER.getValue());
+        userGroup.setOwnerName("test");
+        userGroup.setTel("15920530607");
+        userGroup.setName("慧富");
+        userGroup.setIdCard("");
+        userGroup.setGroupNo("");
+        userGroup.setSubGroupId(0L);
+        userGroup.setSubGroupName("");
+        userGroup.setCompanyId(0L);
+        userGroup.setAddress("湖南省长沙市");
+        userGroup.setSubGroupNo("");
+        userGroup.setStatus(GroupStatus.AVAILABLE.getValue());
+
+        userGroupDao.insertSelective(userGroup);
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setGroupId(userGroup.getId());
+        userInfo.setAddress("湖南省长沙市");
+        userInfo.setQq("3396665157");
+        userInfo.setTel("15920530607");
+        userInfo.setLoginId("admin");
+        userInfo.setPassword(Utils.convertPassword("123456"));
+        userInfo.setName("管理员");
+        userInfo.setType(UserType.ADMIN.getValue());
+        userInfoDao.insertSelective(userInfo);
+
+        Account account = new Account();
+        account.setGroupId(userGroup.getId());
+        accountDao.insertSelective(account);
+
+        AdminAccount adminAccount = new AdminAccount();
+        adminAccount.setGroupId(userGroup.getId());
+        adminAccountDao.insertSelective(adminAccount);
+    }
+
+    @Test
+    public void testSavePay() {
+        List<UserGroup> userGroups = userGroupDao.select(MapUtils.buildMap("status",10));
+
+        for(UserGroup userGroup:userGroups) {
+
+            for(int i=0;i<100;i++) {
+                PayRequest payRequest = new PayRequest();
+                payRequest.setService(ChannelCode.QQ.getService());
+                payRequest.setActualAmount(new BigDecimal(i+100));
+                payRequest.setFee(new BigDecimal(i));
+                payRequest.setMchId(userGroup.getGroupNo());
+                payRequest.setOutTradeNo(String.valueOf(RandomUtils.nextLong()));
+                payRequest.setTotalFee(payRequest.getFee().add(payRequest.getActualAmount()).intValue());
+                payRequest.setBody("test trd body");
+                payRequest.setSign("test Sig");
+                payRequest.setAppid("123456");
+                payRequest.setBuyerId("1234");
+                payRequest.setSubOpenid("12364567");
+                payRequestDao.insertSelective(payRequest);
+            }
+
+        }
+    }
+
+    @Test
+    public void prepareAccountData() {
+        List<UserGroup> userGroups = userGroupDao.select(MapUtils.buildMap("status",10));
+        int i=0;
+        for(UserGroup userGroup:userGroups) {
+            Account account2 = accountDao.selectByGroupId(userGroup.getId());
+            if(Objects.isNull(account2)) {
+                Account account = new Account();
+                account.setGroupId(userGroup.getId());
+                account.setAmount(new BigDecimal(1000+100*i));
+                account.setLockAmount(new BigDecimal(RandomUtils.nextInt(1000)));
+                account.setFee(new BigDecimal(RandomUtils.nextInt(100)));
+                account.setTotalAmount(new BigDecimal(RandomUtils.nextInt(10000)));
+                account.setPaidAmount(new BigDecimal(RandomUtils.nextInt(10000)));
+                accountDao.insertSelective(account);
+            }
+            account2 = accountDao.selectByGroupId(userGroup.getId());
+
+            i++;
+
+            for(int index=0;index<10;index++) {
+                AccountOprLog accountOprLog = new AccountOprLog();
+                accountOprLog.setGroupId(account2.getGroupId());
+                accountOprLog.setAccountId(account2.getId());
+                accountOprLog.setOutTradeNo(String.valueOf(RandomUtils.nextLong()));
+                accountOprLog.setAmount(new BigDecimal(100+10*index));
+                accountOprLog.setType(OprType.PAY.getValue());
+                accountOprLog.setStatus(OprStatus.PAY_SUCCESS.getValue());
+                accountOprLog.setRemark("");
+                accountOprLogDao.insertSelective(accountOprLog);
+            }
+        }
+    }
+
+    @Test
+    public void testSaveBankCard() {
+        UserBankCard userBankCard = new UserBankCard();
+        userBankCard.setBank("中国建设银行");
+        userBankCard.setBankNo("622345672234532");
+        userBankCard.setCity("上海");
+        userBankCard.setDeposit("上海支行");
+        userBankCard.setGroupId(8L);
+        userBankCard.setOwner("test");
+        userBankCard.setProvince("上海");
+        userBankCardDao.insertSelective(userBankCard);
+    }
+
+    @Test
+    public void testSaveAdminBankCard() {
+        AdminBankCard userBankCard = new AdminBankCard();
+        userBankCard.setBank("中国建设银行");
+        userBankCard.setBankNo("622345672234532");
+        userBankCard.setCity("上海");
+        userBankCard.setDeposit("上海支行");
+        userBankCard.setGroupId(8L);
+        userBankCard.setCompanyId(1L);
+        userBankCard.setOwner("test");
+        userBankCard.setProvince("上海");
+        adminBankCardDao.insertSelective(userBankCard);
     }
 }

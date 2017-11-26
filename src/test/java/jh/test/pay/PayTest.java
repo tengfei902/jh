@@ -2,19 +2,17 @@ package jh.test.pay;
 
 import com.google.gson.Gson;
 import hf.base.enums.ChannelCode;
+import hf.base.enums.OprStatus;
+import hf.base.enums.PayRequestStatus;
 import hf.base.utils.MapUtils;
 import jh.biz.PayBiz;
-import jh.biz.service.PageService;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
 import jh.model.dto.PayRequestDto;
-import jh.model.enums.OprStatus;
-import jh.model.enums.PayRequestStatus;
 import jh.model.po.*;
 import jh.test.BaseTestCase;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +20,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created by tengfei on 2017/10/29.

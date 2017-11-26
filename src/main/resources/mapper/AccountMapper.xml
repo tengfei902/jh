@@ -59,6 +59,12 @@
       <if test="updateTime != null" >
         update_time,
       </if>
+      <if test="fee != null" >
+        fee,
+      </if>
+      <if test="paidAmount != null" >
+        paidAmount,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -87,6 +93,12 @@
       </if>
       <if test="updateTime != null" >
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fee != null" >
+        #{fee,jdbcType=DECIMAL},
+      </if>
+      <if test="paidAmount != null" >
+        #{paidAmount,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -162,4 +174,70 @@
         #{groupId}
     </foreach>
   </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from account where 1=1
+    <if test="status != null and status != ''" >
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="groupIds != null and groupIds.size() > 0" >
+      and group_id in
+      <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
+      #{groupId}
+      </foreach>
+    </if>
+    order by id desc
+    limit #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+  </select>
+
+  <select id="count" resultType="java.lang.Integer">
+    select count(1) from account where 1=1
+    <if test="status != null and status != ''" >
+      and status = #{status,jdbcType=INTEGER}
+    </if>
+    <if test="groupIds != null and groupIds.size() > 0" >
+      and group_id in
+      <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
+        #{groupId}
+      </foreach>
+    </if>
+  </select>
+
+  <update id="lockAmount" >
+    update account
+    set
+    lock_amount = lock_amount+#{lockAmount,jdbcType=DECIMAL},
+    version = version+1
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+    and <![CDATA[ amount >= lock_amount+#{lockAmount,jdbcType=DECIMAL} ]]>
+    and status = 0
+  </update>
+
+  <update id="finishWithDraw" >
+    update account
+    set
+    lock_amount = lock_amount-#{lockAmount,jdbcType=DECIMAL},
+    amount = amount - #{lockAmount,jdbcType=DECIMAL},
+    paid_amount = paid_amount+#{lockAmount,jdbcType=DECIMAL},
+    version = version+1
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+    and <![CDATA[ amount - #{lockAmount,jdbcType=DECIMAL} >=0 ]]>
+    and <![CDATA[ lock_amount - #{lockAmount,jdbcType=DECIMAL} >=0 ]]>
+    and status = 0
+  </update>
+
+  <update id="finishTax" >
+    update account
+    set
+    lock_amount = lock_amount-#{lockAmount,jdbcType=DECIMAL},
+    amount = amount - #{lockAmount,jdbcType=DECIMAL},
+    fee = fee+#{lockAmount,jdbcType=DECIMAL},
+    version = version+1
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+    and <![CDATA[ amount - #{lockAmount,jdbcType=DECIMAL} >=0 ]]>
+    and <![CDATA[ lock_amount - #{lockAmount,jdbcType=DECIMAL} >=0 ]]>
+    and status = 0
+  </update>
 </mapper>

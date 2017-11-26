@@ -11,4 +11,6 @@ public interface CacheService {
     Account getAccount(Long userId);
 
     UserGroup getGroup(Long groupId);
+
+    String getProp(String key,String defaultValue);
 }

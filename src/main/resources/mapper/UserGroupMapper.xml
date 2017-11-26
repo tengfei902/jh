@@ -172,6 +172,26 @@
     where group_no = #{groupNo,jdbcType=VARCHAR}
   </select>
 
+  <select id="selectByGroupNos" resultMap="BaseResultMap" parameterType="java.util.Set" >
+    select
+    <include refid="Base_Column_List" />
+    from user_group
+    where group_no in
+    <foreach item="item" index="index" collection="groupNos" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="selectByIds" resultMap="BaseResultMap" parameterType="java.util.Set" >
+    select
+    <include refid="Base_Column_List" />
+    from user_group
+    where id in
+    <foreach item="id" index="index" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
   <select id="select" resultMap="BaseResultMap" parameterType="java.util.HashMap" >
     select
     <include refid="Base_Column_List" />
@@ -191,6 +211,15 @@
     </if>
     <if test="type != null and type!=''" >
       and type = #{type,jdbcType=INTEGER}
+    </if>
+    <if test="exceptGroupId != null" >
+      and id != #{exceptGroupId,jdbcType=BIGINT}
+    </if>
+    <if test="mchId != null" >
+      and group_no like concat(concat('%',#{mchId,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="name != null" >
+      and name like concat(concat('%',#{name,jdbcType=VARCHAR}),'%')
     </if>
     order by id desc
   </select>
@@ -228,5 +257,13 @@
     <include refid="Base_Column_List" />
     from user_group
     where group_no = #{groupNo,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectAdminBySubGroupId" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from user_group
+    where sub_group_id = #{subGroupId,jdbcType=BIGINT}
+    and type in (3,10)
   </select>
 </mapper>

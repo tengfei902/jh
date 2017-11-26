@@ -1,6 +1,6 @@
 package jh.model.po;
 
-import jh.model.annotations.Field;
+import hf.base.annotations.Field;
 
 import java.math.BigDecimal;
 import java.util.Date;

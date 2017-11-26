@@ -37,7 +37,7 @@
 		</javaClientGenerator>
 
 		<!-- 正式生成之前需要删除 此事例 -->
-		<table tableName="admin_account_opr_log" domainObjectName="AdminAccountOprLog"
+		<table tableName="hf_properties" domainObjectName="HfProperties"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

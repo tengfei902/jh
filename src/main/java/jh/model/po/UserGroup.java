@@ -1,6 +1,6 @@
 package jh.model.po;
 
-import jh.model.annotations.Field;
+import hf.base.annotations.Field;
 
 import java.util.Date;
 
@@ -15,13 +15,13 @@ public class UserGroup {
     private String tel;
     @Field(required = true)
     private String address;
-
+    @Field(required = true,type = Field.Type.number)
     private Integer type;
 
     private Integer status;
     @Field
     private String groupNo;
-    @Field
+    @Field(type = Field.Type.number)
     private Long subGroupId;
 
     private String subGroupNo;

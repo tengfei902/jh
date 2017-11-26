@@ -1,6 +1,6 @@
 package jh.model.po;
 
-import jh.model.annotations.Field;
+import hf.base.annotations.Field;
 
 public class AdminBankCard {
     @Field

@@ -1,6 +1,6 @@
 package jh.model.po;
 
-import jh.model.annotations.Field;
+import hf.base.annotations.Field;
 
 import java.util.Date;
 
@@ -11,6 +11,7 @@ public class UserInfo {
     private String password;
     @Field(required = true)
     private String name;
+    @Field
     private String tel;
     @Field(required = true)
     private String qq;

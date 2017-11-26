@@ -177,4 +177,37 @@
     version = version+1
     where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByGroupIds" resultMap="BaseResultMap" parameterType="java.util.List" >
+    select
+    <include refid="Base_Column_List" />
+    from admin_account
+    where group_id in
+    <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
+      #{groupId}
+    </foreach>
+  </select>
+
+  <update id="lockAmount" >
+    update admin_account
+    set
+    lock_amount = lock_amount+#{lockAmount,jdbcType=DECIMAL},
+    version = version+1
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+    and <![CDATA[ amount >= lock_amount+#{lockAmount,jdbcType=DECIMAL} ]]>
+    and status = 0
+  </update>
+
+  <update id="finishPay" >
+    update admin_account
+    set
+    lock_amount = lock_amount-#{lockAmount,jdbcType=DECIMAL},
+    amount = amount - #{lockAmount,jdbcType=DECIMAL},
+    paid_amount = paid_amount+ #{lockAmount,jdbcType=DECIMAL},
+    version = version+1
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+    and <![CDATA[ lock_amount-#{lockAmount,jdbcType=DECIMAL}>=0 ]]>
+    and <![CDATA[ amount - #{lockAmount,jdbcType=DECIMAL}>=0 ]]>
+    and status = 0
+  </update>
 </mapper>

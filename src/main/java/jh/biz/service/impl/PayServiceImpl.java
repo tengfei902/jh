@@ -1,23 +1,20 @@
 package jh.biz.service.impl;
 
 import com.google.gson.Gson;
+import hf.base.enums.OprStatus;
+import hf.base.enums.OprType;
+import hf.base.enums.PayRequestStatus;
 import hf.base.exceptions.BizFailException;
+import hf.base.utils.BdUtils;
 import jh.biz.service.AccountService;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
-import jh.model.dto.*;
-import jh.model.enums.OprStatus;
-import jh.model.enums.OprType;
-import jh.model.enums.PayRequestStatus;
 import jh.model.po.*;
-import jh.utils.BdUtils;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -167,7 +164,7 @@ public class PayServiceImpl implements PayService {
         }
 
         AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
-        count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(),OprStatus.NEW.getValue(),OprStatus.PAY_SUCCESS.getValue());
+        count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(), OprStatus.NEW.getValue(),OprStatus.PAY_SUCCESS.getValue());
         if(count<=0) {
             throw new BizFailException(String.format("update admin opr log status from 0 to 1 failed,log id:%s",adminAccountOprLog.getId()));
         }

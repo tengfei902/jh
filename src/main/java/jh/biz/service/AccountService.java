@@ -12,4 +12,5 @@ public interface AccountService {
     void refund(RefundResponse refundResponse);
     void reverse(ReverseResponse reverseResponse);
     void promote(AccountOprLog log);
+    void settle(Long settleId);
 }

@@ -1,6 +1,6 @@
 package jh.model.po;
 
-import jh.model.annotations.Field;
+import hf.base.annotations.Field;
 
 import java.math.BigDecimal;
 
@@ -8,6 +8,8 @@ public class Channel {
     private Long id;
     @Field(required = true)
     private String channelCode;
+    @Field(required = true)
+    private String codeDesc;
     @Field(required = true)
     private String channelName;
     @Field(required = true,type = Field.Type.number)
@@ -63,5 +65,13 @@ public class Channel {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getCodeDesc() {
+        return codeDesc;
+    }
+
+    public void setCodeDesc(String codeDesc) {
+        this.codeDesc = codeDesc;
     }
 }

@@ -1,5 +1,6 @@
 package jh.biz.impl;
 
+import hf.base.enums.PayRequestStatus;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.MapUtils;
 import jh.biz.PayBiz;
@@ -7,7 +8,6 @@ import jh.biz.service.PayService;
 import jh.dao.local.PayRequestDao;
 import jh.dao.remote.YsClient;
 import jh.model.dto.*;
-import jh.model.enums.PayRequestStatus;
 import jh.model.po.PayRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;

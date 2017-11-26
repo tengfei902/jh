@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface UserGroupDao {
     int deleteByPrimaryKey(Long id);
@@ -21,9 +22,13 @@ public interface UserGroupDao {
 
     UserGroup selectByGroupNo(@Param("groupNo")String groupNo);
 
+    List<UserGroup> selectByGroupNos(@Param("groupNos")Set<String> groupNos);
+
     List<UserGroup> select(Map<String,Object> map);
 
     List<UserGroup> selectBySubGroupId(@Param("subGroupId") Long subGroupId);
+
+    List<UserGroup> selectAdminBySubGroupId(@Param("subGroupId") Long subGroupId);
 
     List<UserGroup> selectByCompanyId(@Param("companyId")Long companyId);
 
@@ -32,4 +37,6 @@ public interface UserGroupDao {
     int updateStatusById(@Param("id")Long id,@Param("fromStatus")int fromStatus,@Param("targetStatus") int targetStatus);
 
     UserGroup selectByNo(@Param("groupNo")String groupNo);
+
+    List<UserGroup> selectByIds(@Param("ids") Set<Long> ids);
 }

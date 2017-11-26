@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import jh.biz.service.CacheService;
 import jh.dao.local.AccountDao;
+import jh.dao.local.HfPropertiesDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
 import jh.model.po.Account;
@@ -23,6 +24,8 @@ public class CacheServiceImpl implements CacheService {
     private AccountDao accountDao;
     @Autowired
     private UserGroupDao userGroupDao;
+    @Autowired
+    private HfPropertiesDao hfPropertiesDao;
 
     private LoadingCache<Long,UserInfo> userCache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -57,6 +60,15 @@ public class CacheServiceImpl implements CacheService {
                 }
             });
 
+    private LoadingCache<String,String> propCache = CacheBuilder.newBuilder().expireAfterAccess(10,TimeUnit.MINUTES)
+            .maximumSize(1000).refreshAfterWrite(10,TimeUnit.MINUTES)
+            .build(new CacheLoader<String, String>() {
+                @Override
+                public String load(String s) throws Exception {
+                    return hfPropertiesDao.selectByKey(s);
+                }
+            });
+
     @Override
     public UserInfo getUserInfo(Long userId) {
         try {
@@ -83,5 +95,15 @@ public class CacheServiceImpl implements CacheService {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public String getProp(String key,String defaultValue) {
+        try {
+            return propCache.get(key);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+
     }
 }

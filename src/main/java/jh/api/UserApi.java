@@ -2,25 +2,32 @@ package jh.api;
 
 import hf.base.contants.CodeManager;
 import hf.base.contants.Constants;
+import hf.base.enums.GroupStatus;
 import hf.base.exceptions.BizFailException;
+import hf.base.model.*;
 import hf.base.utils.Pagenation;
+import hf.base.utils.TypeConverter;
 import hf.base.utils.Utils;
+import jh.biz.AccountBiz;
 import jh.biz.ChannelBiz;
+import jh.biz.TrdBiz;
 import jh.biz.UserBiz;
 import jh.dao.local.*;
 import jh.model.po.*;
 import jh.model.dto.*;
-import jh.utils.TypeConverter;
+import jh.model.po.AdminBankCard;
+import jh.model.po.Channel;
+import jh.model.po.UserBankCard;
+import jh.model.po.UserChannel;
+import jh.model.po.UserGroup;
+import jh.model.po.UserInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
@@ -41,6 +48,10 @@ public class UserApi {
     private ChannelBiz channelBiz;
     @Autowired
     private AdminBankCardDao adminBankCardDao;
+    @Autowired
+    private TrdBiz trdBiz;
+    @Autowired
+    private AccountBiz accountBiz;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
@@ -137,7 +148,7 @@ public class UserApi {
     }
 
     @RequestMapping(value = "/customer_register",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
-    public ResponseResult<String> customerRegister(@RequestBody HashMap<String,String> datas) {
+    public @ResponseBody ResponseResult<String> customerRegister(@RequestBody HashMap<String,String> datas) {
         String loginId = datas.get("loginId");
         String password = datas.get("password");
         String inviteCode = datas.get("inviteCode");
@@ -355,5 +366,78 @@ public class UserApi {
             }
         }
         return ResponseResult.success(Boolean.TRUE);
+    }
+
+    @RequestMapping(value = "/get_sub_user_group",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<List<Map<String,Object>>> getSubUserGroup(@RequestBody Map<String,String> params) {
+        List<UserGroup> list = userGroupDao.select(hf.base.utils.MapUtils.buildMap("exceptGroupId",params.get("groupId"),"status", GroupStatus.AVAILABLE.getValue()));
+        List<Map<String,Object>> result = new ArrayList<>();
+        list.stream().forEach(userGroup -> {
+            result.add(hf.base.utils.MapUtils.buildMap("id",String.valueOf(userGroup.getId()),"name",userGroup.getName()));
+        });
+        return ResponseResult.success(result);
+    }
+
+    @RequestMapping(value = "/save_user_group",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Boolean> saveUserGroup(@RequestBody Map<String,Object> params) {
+        try {
+            UserGroup userGroup = TypeConverter.convert(params,UserGroup.class);
+            userBiz.saveUserGroup(userGroup);
+        } catch (Exception e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD, e.getMessage(),Boolean.FALSE);
+        }
+
+        return ResponseResult.success(Boolean.TRUE);
+    }
+
+    @RequestMapping(value = "/get_channel_by_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Channel> getChannelById(@RequestBody Map<String,String> params) {
+        Long id = Long.parseLong(params.get("id"));
+        Channel channel = channelDao.selectByPrimaryKey(id);
+        return ResponseResult.success(channel);
+    }
+
+    @RequestMapping(value = "/get_trade_request_list",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Pagenation<TradeRequestDto>> getTradeRequestList(@RequestBody Map<String,Object> params) {
+        try {
+            TradeRequest tradeRequest = TypeConverter.convert(params, TradeRequest.class);
+            Pagenation<TradeRequestDto> page = trdBiz.getTradeList(tradeRequest);
+            return ResponseResult.success(page);
+        }catch (Exception e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),new Pagenation<TradeRequestDto>(Collections.EMPTY_LIST));
+        }
+    }
+
+    @RequestMapping(value = "/get_account_list",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Pagenation<AccountPageInfo>> getAccountList(@RequestBody Map<String,Object> params) {
+        try {
+            AccountRequest accountRequest = TypeConverter.convert(params, AccountRequest.class);
+            Pagenation<AccountPageInfo> page = accountBiz.getAccountPage(accountRequest);
+            return ResponseResult.success(page);
+        }catch (Exception e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),new Pagenation<AccountPageInfo>(Collections.EMPTY_LIST));
+        }
+    }
+
+    @RequestMapping(value = "/get_admin_account_list",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Pagenation<AdminAccountPageInfo>> getAdminAccountList(@RequestBody Map<String,Object> params) {
+        try {
+            AccountRequest accountRequest = TypeConverter.convert(params, AccountRequest.class);
+            Pagenation<AdminAccountPageInfo> page = accountBiz.getAdminAccountPage(accountRequest);
+            return ResponseResult.success(page);
+        }catch (Exception e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),new Pagenation<AdminAccountPageInfo>(Collections.EMPTY_LIST));
+        }
+    }
+
+    @RequestMapping(value = "/get_account_opr_log_list",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Pagenation<AccountOprInfo>> getAccountOprLogList(@RequestBody Map<String,Object> params) {
+        try {
+            AccountOprRequest accountOprRequest = TypeConverter.convert(params, AccountOprRequest.class);
+            Pagenation<AccountOprInfo> pagenation = accountBiz.getAccountOprPage(accountOprRequest);
+            return ResponseResult.success(pagenation);
+        } catch (Exception e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD, e.getMessage(), new Pagenation<AccountOprInfo>(Collections.EMPTY_LIST));
+        }
     }
 }

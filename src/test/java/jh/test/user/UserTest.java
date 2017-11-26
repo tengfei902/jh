@@ -1,22 +1,24 @@
 package jh.test.user;
 
 import com.google.gson.Gson;
-import hf.base.enums.ChannelCode;
+import hf.base.enums.GroupType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.MapUtils;
+import hf.base.utils.SegmentLock;
+import hf.base.utils.TypeConverter;
 import hf.base.utils.Utils;
 import jh.biz.ChannelBiz;
 import jh.biz.UserBiz;
 import jh.dao.local.*;
 import jh.model.po.*;
 import jh.test.BaseTestCase;
-import jh.utils.SegmentLock;
-import jh.utils.TypeConverter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -166,5 +168,48 @@ public class UserTest extends BaseTestCase {
     @Test
     public void testUserPass() {
         userBiz.userPass(10L);
+    }
+
+    @Test
+    public void testGetUserGroup() {
+        Map<String,String> params = new HashMap<>();
+        params.put("groupId","1");
+        List<UserGroup> list = userGroupDao.select(hf.base.utils.MapUtils.buildMap("exceptGroupId",params.get("groupId")));
+        List<Map<String,Object>> result = new ArrayList<>();
+        list.stream().forEach(userGroup -> {
+            result.add(hf.base.utils.MapUtils.buildMap("id",userGroup.getId(),"name",userGroup.getName()));
+        });
+    }
+
+    @Test
+    public void testSaveUserGroup() {
+        Map<String,Object> map = new HashMap<>();
+        map.put("name","test代理");
+        map.put("ownerName","滕飞");
+        map.put("idCard","3712361988222345");
+        map.put("tel","13611681327");
+        map.put("address","我当时的地方");
+        map.put("type", GroupType.AGENT.getValue());
+        map.put("subGroupId","1");
+
+        try {
+            UserGroup userGroup = TypeConverter.convert(map,UserGroup.class);
+            userBiz.saveUserGroup(userGroup);
+
+            UserGroup userGroup1 = userGroupDao.selectByPrimaryKey(userGroup.getId());
+            System.out.println(new Gson().toJson(userGroup1));
+
+            map.put("name","test代理1");
+            map.put("groupId",userGroup1.getId());
+
+            userGroup = TypeConverter.convert(map,UserGroup.class);
+            userBiz.saveUserGroup(userGroup);
+
+            userGroup = userGroupDao.selectByPrimaryKey(userGroup.getId());
+            System.out.println(new Gson().toJson(userGroup));
+            Assert.assertEquals(userGroup.getName(),"test代理1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

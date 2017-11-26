@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface PayRequestDao {
     int deleteByPrimaryKey(Long id);
@@ -26,4 +27,8 @@ public interface PayRequestDao {
     List<PayRequest> selectUnfinishedList(@Param("createTime") Date createTime);
 
     List<PayRequest> selectWaitingPromote();
+
+    List<PayRequest> select(Map<String,Object> params);
+
+    int selectCount(Map<String,Object> params);
 }

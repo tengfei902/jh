@@ -4,13 +4,14 @@
   <resultMap id="BaseResultMap" type="jh.model.po.Channel" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="code_desc" property="codeDesc" jdbcType="VARCHAR" />
     <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
     <result column="fee_rate" property="feeRate" jdbcType="DECIMAL" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="url" property="url" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, channel_code, channel_name, fee_rate, `status`,url
+    id, channel_code,code_desc, channel_name, fee_rate, `status`,url
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -32,6 +33,9 @@
       <if test="channelCode != null" >
         channel_code,
       </if>
+      <if test="codeDesc != null" >
+        code_desc,
+      </if>
       <if test="channelName != null" >
         channel_name,
       </if>
@@ -52,6 +56,9 @@
       <if test="channelCode != null" >
         #{channelCode,jdbcType=VARCHAR},
       </if>
+      <if test="codeDesc != null" >
+        #{codeDesc,jdbcType=VARCHAR},
+      </if>
       <if test="channelName != null" >
         #{channelName,jdbcType=VARCHAR},
       </if>
@@ -71,6 +78,9 @@
     <set >
       <if test="channelCode != null" >
         channel_code = #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="codeDesc != null" >
+        code_desc = #{codeDesc,jdbcType=VARCHAR},
       </if>
       <if test="channelName != null" >
         channel_name = #{channelName,jdbcType=VARCHAR},

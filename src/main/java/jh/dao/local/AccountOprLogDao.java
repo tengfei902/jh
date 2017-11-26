@@ -4,6 +4,7 @@ import jh.model.po.AccountOprLog;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AccountOprLogDao {
     int deleteByPrimaryKey(Long id);
@@ -23,4 +24,12 @@ public interface AccountOprLogDao {
     List<AccountOprLog> selectByTradeNo(@Param("outTradeNo") String outTradeNo);
 
     int updateStatusById(@Param("id") Long id,@Param("fromStatus") Integer fromStatus,@Param("toStatus") Integer toStatus);
+
+    List<AccountOprLog> selectByGroupId(@Param("accountId")Long accountId,@Param("types")List<Integer> types,@Param("statusList") List<Integer> statusList);
+
+    List<AccountOprLog> select(Map<String,Object> params);
+
+    int count(Map<String,Object> params);
+
+    AccountOprLog selectByUnq(@Param("outTradeNo")String outTradeNo,@Param("groupId")Long groupId,@Param("type") Integer type);
 }

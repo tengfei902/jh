@@ -38,4 +38,6 @@ public interface UserBiz {
     void userPass(Long groupId);
 
     void saveAminGroup(UserGroup userGroup);
+
+    void saveUserGroup(UserGroup userGroup);
 }

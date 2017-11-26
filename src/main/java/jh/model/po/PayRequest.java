@@ -2,6 +2,7 @@ package jh.model.po;
 
 import jh.model.dto.PayRequestDto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class PayRequest {
@@ -10,6 +11,10 @@ public class PayRequest {
     private String outTradeNo;
 
     private Integer totalFee;
+
+    private BigDecimal fee;
+
+    private BigDecimal actualAmount;
 
     private String body;
 
@@ -32,6 +37,8 @@ public class PayRequest {
     private Date updateTime;
 
     private Integer version;
+
+    private Integer tradeType;
 
     public PayRequest() {
 
@@ -159,5 +166,29 @@ public class PayRequest {
 
     public void setTotalFee(Integer totalFee) {
         this.totalFee = totalFee;
+    }
+
+    public Integer getTradeType() {
+        return tradeType;
+    }
+
+    public void setTradeType(Integer tradeType) {
+        this.tradeType = tradeType;
+    }
+
+    public BigDecimal getFee() {
+        return fee;
+    }
+
+    public void setFee(BigDecimal fee) {
+        this.fee = fee;
+    }
+
+    public BigDecimal getActualAmount() {
+        return actualAmount;
+    }
+
+    public void setActualAmount(BigDecimal actualAmount) {
+        this.actualAmount = actualAmount;
     }
 }

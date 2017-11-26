@@ -39,7 +39,7 @@ public class AdminApi {
     @RequestMapping(value = "/save_admin_group",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<Boolean> saveAdminGroup(@RequestBody Map<String,Object> params) {
         try {
-            UserGroup userGroup = jh.utils.TypeConverter.convert(params, UserGroup.class);
+            UserGroup userGroup = hf.base.utils.TypeConverter.convert(params, UserGroup.class);
             if(Objects.isNull(userGroup.getSubGroupId())) {
                 throw new BizFailException("sub group id is null");
             }

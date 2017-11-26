@@ -1,22 +1,18 @@
 package jh.biz.impl;
 
-import hf.base.enums.CardStatus;
-import hf.base.enums.GroupStatus;
-import hf.base.enums.UserStatus;
-import hf.base.enums.UserType;
+import hf.base.enums.*;
 import hf.base.exceptions.BizFailException;
+import hf.base.utils.SegmentLock;
 import hf.base.utils.Utils;
 import jh.biz.UserBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
 import jh.dao.local.*;
-import jh.exceptions.BizException;
 import jh.model.po.*;
 import jh.model.dto.UserGroupDto;
 import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
 import jh.model.dto.UserInfoRequest;
-import jh.utils.SegmentLock;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -94,13 +88,13 @@ public class UserBizImpl implements UserBiz {
     public void edit(UserInfo userInfo) {
         UserInfo user = userInfoDao.selectByPrimaryKey(userInfo.getId());
         if(user.getStatus() != UserInfo.STATUS.init.getValue()) {
-            throw new BizException("用户状态不允许修改");
+            throw new BizFailException("用户状态不允许修改");
         }
 
         int count = userInfoDao.updateByPrimaryKeySelective(userInfo);
 
         if(count <=0) {
-            throw new BizException("用户更新失败");
+            throw new BizFailException("用户更新失败");
         }
     }
 
@@ -292,5 +286,29 @@ public class UserBizImpl implements UserBiz {
         AdminAccount adminAccount = new AdminAccount();
         adminAccount.setGroupId(userGroup.getId());
         adminAccountDao.insertSelective(adminAccount);
+    }
+
+    @Override
+    public void saveUserGroup(UserGroup userGroup) {
+        Long subGroupId = userGroup.getSubGroupId();
+        UserGroup subUserGroup = userGroupDao.selectByPrimaryKey(subGroupId);
+        if(!Objects.isNull(subUserGroup) && subUserGroup.getStatus() == GroupStatus.AVAILABLE.getValue()) {
+            userGroup.setSubGroupNo(subUserGroup.getGroupNo());
+            userGroup.setSubGroupId(subUserGroup.getId());
+            userGroup.setSubGroupName(subUserGroup.getName());
+            Long companyId = (subUserGroup.getType() == GroupType.COMPANY.getValue() || subUserGroup.getType() == GroupType.SUPER.getValue()) ? subUserGroup.getId(): subUserGroup.getCompanyId();
+            userGroup.setCompanyId(companyId);
+        }
+
+        userGroup.setStatus(GroupStatus.SUBMITED.getValue());
+
+        if(!Objects.isNull(userGroup.getId())) {
+            int count = userGroupDao.updateByPrimaryKeySelective(userGroup);
+            if(count<=0) {
+                throw new BizFailException("update user group failed");
+            }
+        } else {
+            userGroupDao.insertSelective(userGroup);
+        }
     }
 }

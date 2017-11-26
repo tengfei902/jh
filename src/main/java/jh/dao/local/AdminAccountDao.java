@@ -4,6 +4,7 @@ import jh.model.po.AdminAccount;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface AdminAccountDao {
     int deleteByPrimaryKey(Long id);
@@ -21,4 +22,10 @@ public interface AdminAccountDao {
     AdminAccount selectByGroupId(@Param("groupId") Long groupId);
 
     int addAmount(@Param("id")Long id , @Param("amount")BigDecimal amount,@Param("version") Integer version);
+
+    List<AdminAccount> selectByGroupIds(@Param("groupIds") List<Long> groupIds);
+
+    int lockAmount(@Param("id")Long id,@Param("lockAmount")BigDecimal lockAmount,@Param("version") Integer version);
+
+    int finishPay(@Param("id")Long id,@Param("lockAmount")BigDecimal lockAmount,@Param("version")Integer version);
 }
