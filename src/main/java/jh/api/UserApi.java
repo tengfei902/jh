@@ -12,9 +12,11 @@ import jh.biz.AccountBiz;
 import jh.biz.ChannelBiz;
 import jh.biz.TrdBiz;
 import jh.biz.UserBiz;
+import jh.biz.service.CacheService;
 import jh.dao.local.*;
 import jh.model.po.*;
 import jh.model.dto.*;
+import jh.model.po.Account;
 import jh.model.po.AdminBankCard;
 import jh.model.po.Channel;
 import jh.model.po.UserBankCard;
@@ -52,6 +54,10 @@ public class UserApi {
     private TrdBiz trdBiz;
     @Autowired
     private AccountBiz accountBiz;
+    @Autowired
+    private AccountDao accountDao;
+    @Autowired
+    private CacheService cacheService;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
@@ -439,5 +445,18 @@ public class UserApi {
         } catch (Exception e) {
             return ResponseResult.failed(CodeManager.BIZ_FAIELD, e.getMessage(), new Pagenation<AccountOprInfo>(Collections.EMPTY_LIST));
         }
+    }
+
+    @RequestMapping(value = "/get_account_by_group_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<Account> getAccountByGroupId(@RequestBody Map<String,String> params) {
+        Long groupId = Long.parseLong(params.get("groupId"));
+        Account account = accountDao.selectByGroupId(groupId);
+        return ResponseResult.success(account);
+    }
+
+    @RequestMapping(value = "/get_withdraw_fee_rate",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<BigDecimal> getWithDrawFeeRate() {
+        String feeRate = cacheService.getProp(Constants.SETTLE_FEE_RATE,"5");
+        return ResponseResult.success(new BigDecimal(feeRate));
     }
 }

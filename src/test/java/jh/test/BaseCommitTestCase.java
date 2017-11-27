@@ -379,4 +379,19 @@ public class BaseCommitTestCase {
         userBankCard.setProvince("上海");
         adminBankCardDao.insertSelective(userBankCard);
     }
+
+    @Test
+    public void testSaveAccountOprLog() {
+        Account account = accountDao.selectByGroupId(13L);
+        for(int i=0;i<100;i++) {
+            AccountOprLog accountOprLog = new AccountOprLog();
+            accountOprLog.setAccountId(account.getId());
+            accountOprLog.setOutTradeNo(String.valueOf(RandomUtils.nextLong()));
+            accountOprLog.setAmount(new BigDecimal(100+10*i));
+            accountOprLog.setType(OprType.PAY.getValue());
+            accountOprLog.setGroupId(account.getGroupId());
+            accountOprLog.setRemark("");
+            accountOprLogDao.insertSelective(accountOprLog);
+        }
+    }
 }
