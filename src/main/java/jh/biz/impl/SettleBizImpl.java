@@ -5,16 +5,28 @@ import hf.base.enums.OprStatus;
 import hf.base.enums.OprType;
 import hf.base.enums.SettleStatus;
 import hf.base.exceptions.BizFailException;
+import hf.base.model.WithDrawInfo;
+import hf.base.model.WithDrawRequest;
+import hf.base.utils.MapUtils;
+import hf.base.utils.Pagenation;
 import jh.biz.SettleBiz;
 import jh.biz.service.AccountService;
 import jh.biz.service.CacheService;
+import jh.biz.service.UserService;
 import jh.dao.local.*;
 import jh.model.po.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class SettleBizImpl implements SettleBiz {
@@ -22,8 +34,6 @@ public class SettleBizImpl implements SettleBiz {
     private UserGroupDao userGroupDao;
     @Autowired
     private AdminAccountDao adminAccountDao;
-    @Autowired
-    private AdminBankCardDao adminBankCardDao;
     @Autowired
     private CacheService cacheService;
     @Autowired
@@ -36,6 +46,12 @@ public class SettleBizImpl implements SettleBiz {
     private AccountService accountService;
     @Autowired
     private AdminAccountOprLogDao adminAccountOprLogDao;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserBankCardDao userBankCardDao;
+    @Autowired
+    private AdminBankCardDao adminBankCardDao;
 
     @Override
     public void saveSettle(SettleTask settleTask) {
@@ -128,5 +144,67 @@ public class SettleBizImpl implements SettleBiz {
         if(count<=0) {
             throw new BizFailException("update settle status failed");
         }
+    }
+
+    @Override
+    public Pagenation<WithDrawInfo> getWithDrawPage(WithDrawRequest withDrawRequest) {
+        List<UserGroup> childGroups = userService.getChildMchIds(withDrawRequest.getGroupId());
+        List<Long> groupIds = childGroups.parallelStream().map(UserGroup::getId).collect(Collectors.toList());
+
+        Integer startIndex = (withDrawRequest.getCurrentPage()-1)*withDrawRequest.getPageSize();
+        Map<String,Object> params = MapUtils.buildMap("groupIds",groupIds,
+                "status",withDrawRequest.getStatus(),
+                "startIndex",startIndex,
+                "pageSize",withDrawRequest.getPageSize(),
+                "mchId",withDrawRequest.getMchId());
+
+        List<SettleTask> tasks = settleTaskDao.select(params);
+        int count = settleTaskDao.count(params);
+
+        Set<Long> withdrawGroupIds = tasks.parallelStream().map(SettleTask::getGroupId).collect(Collectors.toSet());
+        List<UserGroup> withDrawUserGroups = userGroupDao.selectByIds(withdrawGroupIds);
+        Set<Long> payGroupIds = tasks.parallelStream().map(SettleTask::getPayGroupId).collect(Collectors.toSet());
+        List<UserGroup> payUserGroups = userGroupDao.selectByIds(payGroupIds);
+
+        Map<Long,UserGroup> withDrawGroupMap = withDrawUserGroups.parallelStream().collect(Collectors.toMap(UserGroup::getId, Function.identity()));
+        Map<Long,UserGroup> payGroupMap = payUserGroups.parallelStream().collect(Collectors.toMap(UserGroup::getId,Function.identity()));
+
+        List<WithDrawInfo> result = new ArrayList<>();
+        tasks.parallelStream().forEach(settleTask -> result.add(buildWithDrawInfo(settleTask,withDrawGroupMap,payGroupMap)));
+
+        return new Pagenation<WithDrawInfo>(result,count,withDrawRequest.getCurrentPage(),withDrawRequest.getPageSize());
+    }
+
+    private WithDrawInfo buildWithDrawInfo(SettleTask task,Map<Long,UserGroup> withDrawGroupMap,Map<Long,UserGroup> payGroupMap) {
+        WithDrawInfo withDrawInfo = new WithDrawInfo();
+        withDrawInfo.setId(task.getId());
+        withDrawInfo.setName(withDrawGroupMap.get(task.getGroupId()).getName());
+        withDrawInfo.setGroupId(task.getGroupId());
+        withDrawInfo.setAccountId(task.getAccountId());
+
+        UserBankCard userBankCard = userBankCardDao.selectByPrimaryKey(task.getSettleBankCard());
+        hf.base.model.UserBankCard card = new hf.base.model.UserBankCard();
+        BeanUtils.copyProperties(userBankCard,card);
+        withDrawInfo.setWithdrawBank(card);
+
+        withDrawInfo.setFee(task.getFee().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+        withDrawInfo.setFeeRate(task.getFeeRate());
+        withDrawInfo.setSettleAmount(task.getSettleAmount().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+        withDrawInfo.setPayAmount(task.getPayAmount().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+
+        withDrawInfo.setPayAccountId(task.getPayAccountId());
+        withDrawInfo.setPayGroupId(task.getPayGroupId());
+        withDrawInfo.setPayName(payGroupMap.get(task.getPayGroupId()).getName());
+
+        AdminBankCard adminBankCard = adminBankCardDao.selectByPrimaryKey(task.getPayBankCard());
+        hf.base.model.AdminBankCard adminCard = new hf.base.model.AdminBankCard();
+        BeanUtils.copyProperties(adminBankCard,adminCard);
+        withDrawInfo.setPayBank(adminCard);
+
+        withDrawInfo.setStatus(task.getStatus());
+        withDrawInfo.setStatusDesc(SettleStatus.parse(task.getStatus()).getDesc());
+        withDrawInfo.setCreateTime(task.getCreateTime());
+        withDrawInfo.setUpdateTime(task.getUpdateTime());
+        return withDrawInfo;
     }
 }

@@ -3,6 +3,9 @@ package jh.dao.local;
 import jh.model.po.SettleTask;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Map;
+
 public interface SettleTaskDao {
     int deleteByPrimaryKey(Long id);
 
@@ -17,4 +20,8 @@ public interface SettleTaskDao {
     int updateByPrimaryKey(SettleTask record);
 
     int updateStatusById(@Param("id")Long id,@Param("fromStatus")Integer fromStatus,@Param("toStatus")Integer toStatus);
+
+    List<SettleTask> select(Map<String,Object> params);
+
+    int count(Map<String,Object> params);
 }
