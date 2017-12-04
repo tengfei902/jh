@@ -3,15 +3,13 @@ package jh.test.user;
 import com.google.gson.Gson;
 import hf.base.enums.GroupType;
 import hf.base.exceptions.BizFailException;
-import hf.base.utils.MapUtils;
-import hf.base.utils.SegmentLock;
-import hf.base.utils.TypeConverter;
-import hf.base.utils.Utils;
+import hf.base.utils.*;
 import jh.biz.ChannelBiz;
 import jh.biz.UserBiz;
 import jh.dao.local.*;
 import jh.model.po.*;
 import jh.test.BaseTestCase;
+import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,5 +209,15 @@ public class UserTest extends BaseTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testPageSplit() {
+        List<Integer> datas = new ArrayList<>();
+        for(int i=0;i<15;i++) {
+            datas.add(RandomUtils.nextInt(1000));
+        }
+        Pagenation<Integer> pagenation = new Pagenation<Integer>(datas,1012,60,15);
+        System.out.println(new Gson().toJson(pagenation));
     }
 }

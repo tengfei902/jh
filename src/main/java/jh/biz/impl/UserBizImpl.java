@@ -72,7 +72,8 @@ public class UserBizImpl implements UserBiz {
         userGroup.setSubGroupId(subUserGroup.getId());
         userGroup.setSubGroupName(subUserGroup.getName());
         userGroup.setSubGroupNo(subUserGroup.getGroupNo());
-        userGroup.setCompanyId(subUserGroup.getCompanyId());
+        Long companyId = (subUserGroup.getType()==GroupType.COMPANY.getValue() || subUserGroup.getType() == GroupType.SUPER.getValue())?subUserGroup.getId():subUserGroup.getCompanyId();
+        userGroup.setCompanyId(companyId);
 
         userService.register(userGroup,userInfo);
     }

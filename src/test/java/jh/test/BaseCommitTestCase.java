@@ -1,5 +1,7 @@
 package jh.test;
 
+import hf.base.biz.CacheService;
+import hf.base.contants.Constants;
 import hf.base.enums.*;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
@@ -14,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,6 +45,10 @@ public class BaseCommitTestCase {
     private UserBankCardDao userBankCardDao;
     @Autowired
     private AdminBankCardDao adminBankCardDao;
+    @Autowired
+    private jh.biz.service.CacheService cacheService;
+    @Autowired
+    private SettleTaskDao settleTaskDao;
 
     @Test
     public void testSaveUserGroup() {
@@ -392,6 +399,42 @@ public class BaseCommitTestCase {
             accountOprLog.setGroupId(account.getGroupId());
             accountOprLog.setRemark("");
             accountOprLogDao.insertSelective(accountOprLog);
+        }
+    }
+
+    @Test
+    public void testSaveSettleTask() {
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(13L);
+        Account account = accountDao.selectByGroupId(userGroup.getId());
+        BigDecimal feeRate = new BigDecimal(cacheService.getProp(Constants.SETTLE_FEE_RATE,"5"));
+        List<UserBankCard> cards = userBankCardDao.selectByUser(userGroup.getId());
+        AdminBankCard adminBankCard = adminBankCardDao.selectByCompanyId(userGroup.getCompanyId(),userGroup.getId());
+
+        AdminAccount adminAccount = adminAccountDao.selectByGroupId(userGroup.getCompanyId());
+
+        List<Integer> taskStatusList = Arrays.asList(0,1,10);
+
+        for(int i=0;i<1000;i++) {
+            SettleTask settleTask = new SettleTask();
+            settleTask.setGroupId(userGroup.getId());
+            settleTask.setSettleBankCard(cards.get(0).getId());
+            settleTask.setStatus(taskStatusList.get(RandomUtils.nextInt(3)));
+
+            BigDecimal settleAmount = new BigDecimal(RandomUtils.nextInt(10000));
+            BigDecimal fee = settleAmount.multiply(feeRate).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal payAmount = settleAmount.subtract(fee);
+
+            settleTask.setSettleAmount(settleAmount);
+            settleTask.setFee(fee);
+            settleTask.setPayAmount(payAmount);
+            settleTask.setFeeRate(feeRate);
+
+            settleTask.setAccountId(account.getId());
+            settleTask.setPayGroupId(userGroup.getCompanyId());
+            settleTask.setPayBankCard(adminBankCard.getId());
+            settleTask.setPayAccountId(adminAccount.getId());
+
+            settleTaskDao.insertSelective(settleTask);
         }
     }
 }

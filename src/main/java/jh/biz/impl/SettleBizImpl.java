@@ -15,6 +15,7 @@ import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
 import jh.dao.local.*;
 import jh.model.po.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,6 +160,10 @@ public class SettleBizImpl implements SettleBiz {
                 "mchId",withDrawRequest.getMchId());
 
         List<SettleTask> tasks = settleTaskDao.select(params);
+        if(CollectionUtils.isEmpty(tasks)) {
+            return new Pagenation<WithDrawInfo>(new ArrayList<>());
+        }
+
         int count = settleTaskDao.count(params);
 
         Set<Long> withdrawGroupIds = tasks.parallelStream().map(SettleTask::getGroupId).collect(Collectors.toSet());
@@ -205,6 +210,9 @@ public class SettleBizImpl implements SettleBiz {
         withDrawInfo.setStatusDesc(SettleStatus.parse(task.getStatus()).getDesc());
         withDrawInfo.setCreateTime(task.getCreateTime());
         withDrawInfo.setUpdateTime(task.getUpdateTime());
+        withDrawInfo.setGroupNo(withDrawGroupMap.get(task.getGroupId()).getGroupNo());
+        //todo add remark to task
+        withDrawInfo.setRemark("");
         return withDrawInfo;
     }
 }

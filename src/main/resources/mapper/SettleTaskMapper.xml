@@ -219,7 +219,21 @@
 
   <select id="select" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    t1.id,
+    t1.group_id,
+    t1.account_id,
+    t1.settle_bank_card,
+    t1.settle_amount,
+    t1.fee_rate,
+    t1.pay_account_id,
+    t1.pay_group_id,
+    t1.pay_bank_card,
+    t1.fee,
+    t1.pay_amount,
+    t1.`status`,
+    t1.version,
+    t1.create_time,
+    t1.update_time
     from settle_task t1 left join user_group t2 on t1.group_id = t2.id
     where 1=1
     <if test="status != null and status != ''" >
@@ -238,7 +252,7 @@
     limit #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
   </select>
 
-  <select id="count" resultMap="BaseResultMap">
+  <select id="count" resultType="java.lang.Integer">
     select count(t1.id) from settle_task t1 left join user_group t2 on t1.group_id = t2.id
     where 1=1
     <if test="status != null and status != ''" >
