@@ -1,9 +1,7 @@
 package jh.biz.impl;
 
 import hf.base.contants.Constants;
-import hf.base.enums.OprStatus;
-import hf.base.enums.OprType;
-import hf.base.enums.SettleStatus;
+import hf.base.enums.*;
 import hf.base.exceptions.BizFailException;
 import hf.base.model.WithDrawInfo;
 import hf.base.model.WithDrawRequest;
@@ -22,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -148,16 +143,66 @@ public class SettleBizImpl implements SettleBiz {
     }
 
     @Override
-    public Pagenation<WithDrawInfo> getWithDrawPage(WithDrawRequest withDrawRequest) {
-        List<UserGroup> childGroups = userService.getChildMchIds(withDrawRequest.getGroupId());
-        List<Long> groupIds = childGroups.parallelStream().map(UserGroup::getId).collect(Collectors.toList());
+    public void settleFailed(Long id) {
+        SettleTask settleTask = settleTaskDao.selectByPrimaryKey(id);
+        //支付金额
+        AccountOprLog withdrawAccountLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getGroupId(),OprType.WITHDRAW.getValue());
+        int count = accountOprLogDao.updateStatusById(withdrawAccountLog.getId(), OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update oprLog status failed");
+        }
+        Account withdrawAccount = accountDao.selectByPrimaryKey(settleTask.getAccountId());
+        count = accountDao.unlockAmount(withdrawAccount.getId(),withdrawAccountLog.getAmount(),withdrawAccount.getVersion());
+        if(count<=0) {
+            throw new BizFailException("unlock withdraw failed");
+        }
 
-        Integer startIndex = (withDrawRequest.getCurrentPage()-1)*withDrawRequest.getPageSize();
-        Map<String,Object> params = MapUtils.buildMap("groupIds",groupIds,
-                "status",withDrawRequest.getStatus(),
-                "startIndex",startIndex,
-                "pageSize",withDrawRequest.getPageSize(),
-                "mchId",withDrawRequest.getMchId());
+        //手续费
+        AccountOprLog feeLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getGroupId(),OprType.TAX.getValue());
+        count = accountOprLogDao.updateStatusById(feeLog.getId(),OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update feelog status failed");
+        }
+
+        withdrawAccount = accountDao.selectByPrimaryKey(settleTask.getAccountId());
+        count = accountDao.unlockAmount(withdrawAccount.getId(),feeLog.getAmount(),withdrawAccount.getVersion());
+        if(count<=0) {
+            throw new BizFailException("update fee account failed");
+        }
+
+        //admin log
+        AdminAccountOprLog adminLog = adminAccountOprLogDao.selectByNo(String.valueOf(settleTask.getId()));
+        if(adminLog.getType() != OprType.WITHDRAW.getValue()) {
+            throw new BizFailException("opr log type not match");
+        }
+
+        count = adminAccountOprLogDao.updateStatusById(adminLog.getId(),OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update admin Opr log status failed");
+        }
+
+        AdminAccount adminAccount = adminAccountDao.selectByGroupId(settleTask.getPayGroupId());
+        count = adminAccountDao.unlockAmount(adminAccount.getId(),adminLog.getAmount(),adminAccount.getVersion());
+        if(count<=0) {
+            throw new BizFailException("update admin amount failed");
+        }
+
+        //admin true pay log
+        AccountOprLog payLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getPayGroupId(),OprType.FEE.getValue());
+        count = accountOprLogDao.updateStatusById(payLog.getId(),OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update opr log failed");
+        }
+
+        count = settleTaskDao.updateStatusById(settleTask.getId(), SettleStatus.PROCESSING.getValue(),SettleStatus.FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update settle status failed");
+        }
+    }
+
+    @Override
+    public Pagenation<WithDrawInfo> getWithDrawPage(WithDrawRequest withDrawRequest) {
+        Map<String,Object> params = buildWithDrawMap(withDrawRequest);
 
         List<SettleTask> tasks = settleTaskDao.select(params);
         if(CollectionUtils.isEmpty(tasks)) {
@@ -178,6 +223,26 @@ public class SettleBizImpl implements SettleBiz {
         tasks.parallelStream().forEach(settleTask -> result.add(buildWithDrawInfo(settleTask,withDrawGroupMap,payGroupMap)));
 
         return new Pagenation<WithDrawInfo>(result,count,withDrawRequest.getCurrentPage(),withDrawRequest.getPageSize());
+    }
+
+    private Map<String,Object> buildWithDrawMap(WithDrawRequest withDrawRequest) {
+        Integer startIndex = (withDrawRequest.getCurrentPage()-1)*withDrawRequest.getPageSize();
+        Map<String,Object> params = MapUtils.buildMap("status",withDrawRequest.getStatus(),
+                "startIndex",startIndex,
+                "pageSize",withDrawRequest.getPageSize(),
+                "mchId",withDrawRequest.getMchId());
+        WithDrawRole withDrawRole = WithDrawRole.parse(withDrawRequest.getRole());
+        switch (withDrawRole) {
+            case PAYER:
+                params.put("payGroupId",withDrawRequest.getGroupId());
+                break;
+            case DRAWER:
+                List<UserGroup> childGroups = userService.getChildMchIds(withDrawRequest.getGroupId());
+                List<Long> groupIds = childGroups.parallelStream().map(UserGroup::getId).collect(Collectors.toList());
+                params.put("groupIds",groupIds);
+                break;
+        }
+        return params;
     }
 
     private WithDrawInfo buildWithDrawInfo(SettleTask task,Map<Long,UserGroup> withDrawGroupMap,Map<Long,UserGroup> payGroupMap) {
@@ -213,6 +278,9 @@ public class SettleBizImpl implements SettleBiz {
         withDrawInfo.setGroupNo(withDrawGroupMap.get(task.getGroupId()).getGroupNo());
         //todo add remark to task
         withDrawInfo.setRemark("");
+
+        withDrawInfo.setGroupType(withDrawGroupMap.get(task.getGroupId()).getType());
+        withDrawInfo.setGroupTypeDesc(GroupType.parse(withDrawGroupMap.get(task.getGroupId()).getType()).getDesc());
         return withDrawInfo;
     }
 }

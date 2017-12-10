@@ -215,6 +215,16 @@
     and status = 0
   </update>
 
+  <update id="unlockAmount" >
+    update account
+    set
+    lock_amount = lock_amount-#{lockAmount,jdbcType=DECIMAL},
+    version = version+1
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+    and <![CDATA[lock_amount-#{lockAmount,jdbcType=DECIMAL}>=0 ]]>
+    and status = 0
+  </update>
+
   <update id="finishWithDraw" >
     update account
     set

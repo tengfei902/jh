@@ -1,9 +1,14 @@
 package jh.test;
 
 import com.google.gson.Gson;
+import hf.base.enums.OprStatus;
 import hf.base.enums.OprType;
 import hf.base.enums.SettleStatus;
+import hf.base.enums.WithDrawRole;
 import hf.base.exceptions.BizFailException;
+import hf.base.model.WithDrawInfo;
+import hf.base.model.WithDrawRequest;
+import hf.base.utils.Pagenation;
 import hf.base.utils.TypeConverter;
 import jh.biz.SettleBiz;
 import jh.dao.local.*;
@@ -29,6 +34,8 @@ public class SettleTest extends BaseTestCase {
     private AccountDao accountDao;
     @Autowired
     private AdminAccountDao adminAccountDao;
+    @Autowired
+    private UserGroupDao userGroupDao;
 
     @Test
     public void testSaveSettle() {
@@ -118,5 +125,116 @@ public class SettleTest extends BaseTestCase {
         Assert.assertTrue(payAccount.getLockAmount().compareTo(payLockAmount)==0);
         Assert.assertTrue(payAccount.getFee().compareTo(payFee)==0);
         Assert.assertTrue(payAccount.getPaidAmount().compareTo(payPaidAmount.add(new BigDecimal("950")))==0);
+    }
+
+    @Test
+    public void testGetWithDrawPage() {
+        WithDrawRequest withDrawRequest = new WithDrawRequest();
+        withDrawRequest.setGroupId(13L);
+        withDrawRequest.setCurrentPage(1);
+        withDrawRequest.setPageSize(15);
+        withDrawRequest.setRole(WithDrawRole.DRAWER.getValue());
+        Pagenation<WithDrawInfo> pagenation = settleBiz.getWithDrawPage(withDrawRequest);
+        System.out.println(new Gson().toJson(pagenation));
+
+        withDrawRequest = new WithDrawRequest();
+        withDrawRequest.setGroupId(1L);
+        withDrawRequest.setCurrentPage(1);
+        withDrawRequest.setPageSize(15);
+        withDrawRequest.setRole(WithDrawRole.PAYER.getValue());
+        pagenation = settleBiz.getWithDrawPage(withDrawRequest);
+        System.out.println(new Gson().toJson(pagenation));
+    }
+
+    @Test
+    public void testFinishSettle() {
+        Map<String,Object> map = new HashMap<>();
+        map.put("groupId","8");
+        map.put("settleAmount","1000");
+        map.put("settleAmount","1000");
+        map.put("settleBankCard","1");
+        SettleTask settleTask;
+        try {
+            settleTask = TypeConverter.convert(map, SettleTask.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BizFailException(e.getMessage());
+        }
+        Account settleAccount = accountDao.selectByGroupId(settleTask.getGroupId());
+        BigDecimal settleAmount = settleAccount.getAmount();
+        BigDecimal settleLockAmount = settleAccount.getLockAmount();
+        BigDecimal settlePayAmount = settleAccount.getPaidAmount();
+        BigDecimal settleFee = settleAccount.getFee();
+
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(settleTask.getGroupId());
+
+        AdminAccount adminAccount = adminAccountDao.selectByGroupId(userGroup.getCompanyId());
+        BigDecimal adminAmount = adminAccount.getAmount();
+        BigDecimal adminPaidAmount = adminAccount.getPaidAmount();
+        BigDecimal adminFee = adminAccount.getFee();
+        BigDecimal adminLockAmount = adminAccount.getPaidAmount();
+
+        Account payAccount = accountDao.selectByGroupId(userGroup.getCompanyId());
+        BigDecimal payAmount = payAccount.getAmount();
+        BigDecimal payFee = payAccount.getFee();
+        BigDecimal payPaidAmount = payAccount.getPaidAmount();
+        BigDecimal payLockAmount = payAccount.getLockAmount();
+
+        settleBiz.saveSettle(settleTask);
+
+        settleTask = settleTaskDao.selectByPrimaryKey(settleTask.getId());
+        Assert.assertEquals(settleTask.getStatus().intValue(),SettleStatus.PROCESSING.getValue());
+        settleAccount = accountDao.selectByGroupId(settleTask.getGroupId());
+
+        Assert.assertTrue(settleAccount.getAmount().compareTo(settleAmount)==0);
+        Assert.assertTrue(settleAccount.getLockAmount().subtract(settleLockAmount).compareTo(new BigDecimal("1000"))==0);
+        Assert.assertTrue(settleAccount.getPaidAmount().compareTo(settlePayAmount)==0);
+        Assert.assertTrue(settleAccount.getFee().compareTo(settleFee)==0);
+
+        AccountOprLog amountLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getGroupId(),OprType.WITHDRAW.getValue());
+        Assert.assertEquals(amountLog.getStatus().intValue(), OprStatus.NEW.getValue());
+        AccountOprLog feeLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getGroupId(),OprType.TAX.getValue());
+        Assert.assertEquals(feeLog.getStatus().intValue(),OprStatus.NEW.getValue());
+
+        adminAccount = adminAccountDao.selectByGroupId(settleTask.getPayGroupId());
+        Assert.assertEquals(adminAccount.getLockAmount(),settleTask.getPayAmount());
+        AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(String.valueOf(settleTask.getId()));
+        Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.NEW.getValue());
+        Assert.assertTrue(adminAccountOprLog.getAmount().compareTo(settleTask.getPayAmount())==0);
+
+        AccountOprLog payOprLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getPayGroupId(),OprType.FEE.getValue());
+        Assert.assertTrue(payOprLog.getAmount().compareTo(settleTask.getFee())==0);
+
+
+        settleBiz.settleFailed(settleTask.getId());
+
+        settleTask = settleTaskDao.selectByPrimaryKey(settleTask.getId());
+        Assert.assertEquals(settleTask.getStatus().intValue(),SettleStatus.FAILED.getValue());
+        settleAccount = accountDao.selectByGroupId(settleTask.getGroupId());
+        Assert.assertTrue(settleAccount.getLockAmount().compareTo(settleLockAmount)==0);
+        Assert.assertTrue(settleAccount.getAmount().compareTo(settleAmount)==0);
+        Assert.assertTrue(settleAccount.getPaidAmount().compareTo(settlePayAmount)==0);
+        Assert.assertTrue(settleAccount.getFee().compareTo(settleFee)==0);
+
+        amountLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getGroupId(),OprType.WITHDRAW.getValue());
+        Assert.assertEquals(amountLog.getStatus().intValue(),OprStatus.PAY_FAILED.getValue());
+
+        feeLog = accountOprLogDao.selectByUnq(String.valueOf(settleTask.getId()),settleTask.getGroupId(),OprType.TAX.getValue());
+        Assert.assertEquals(feeLog.getStatus().intValue(),OprStatus.PAY_FAILED.getValue());
+
+        adminAccount = adminAccountDao.selectByGroupId(settleTask.getPayGroupId());
+        Assert.assertTrue(adminAccount.getLockAmount().compareTo(adminLockAmount)==0);
+        Assert.assertTrue(adminAccount.getAmount().compareTo(adminAmount)==0);
+        Assert.assertTrue(adminAccount.getPaidAmount().compareTo(adminPaidAmount)==0);
+        Assert.assertTrue(adminAccount.getFee().compareTo(adminFee)==0);
+
+        AdminAccountOprLog adminLog = adminAccountOprLogDao.selectByNo(String.valueOf(settleTask.getId()));
+        Assert.assertEquals(adminLog.getStatus().intValue(),OprStatus.PAY_FAILED.getValue());
+
+        Account account = accountDao.selectByGroupId(settleTask.getPayGroupId());
+        Assert.assertTrue(account.getFee().compareTo(payFee)==0);
+        Assert.assertTrue(account.getLockAmount().compareTo(payLockAmount)==0);
+        Assert.assertTrue(account.getAmount().compareTo(payAmount)==0);
+        Assert.assertTrue(account.getPaidAmount().compareTo(payPaidAmount)==0);
     }
 }

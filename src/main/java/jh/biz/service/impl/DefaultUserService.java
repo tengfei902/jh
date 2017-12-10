@@ -7,6 +7,7 @@ import jh.dao.local.UserInfoDao;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class DefaultUserService implements UserService {
     public void register(UserGroup userGroup, UserInfo userInfo) {
         userGroupDao.insertSelective(userGroup);
         userInfo.setGroupId(userGroup.getId());
+        userInfo.setInviteCode(RandomStringUtils.random(16, 20, 110, true, true));
         userInfoDao.insertSelective(userInfo);
     }
 

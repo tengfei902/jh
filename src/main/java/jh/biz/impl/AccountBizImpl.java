@@ -221,4 +221,11 @@ public class AccountBizImpl implements AccountBiz {
         accountOprInfo.setAdd(OprType.parse(log.getType()).isAdd());
         return accountOprInfo;
     }
+
+    @Override
+    public BigDecimal getLockedAmount(Long groupId) {
+        List<UserGroup> groups = userService.getChildMchIds(groupId);
+        List<Long> groupIds = groups.parallelStream().map(UserGroup::getId).collect(Collectors.toList());
+        return accountOprLogDao.sumLockAmount(groupIds,OprType.getAddList());
+    }
 }

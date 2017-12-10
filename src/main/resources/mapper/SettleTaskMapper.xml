@@ -245,10 +245,19 @@
         #{groupId}
       </foreach>
     </if>
+    <if test="excludeGroupIds != null and excludeGroupIds.size()>0">
+      and t1.group_id not in
+      <foreach item="groupId" index="index" collection="excludeGroupIds" open="(" separator="," close=")">
+        #{groupId}
+      </foreach>
+    </if>
     <if test="mchId != null and mchId != ''" >
       and t2.group_no like concat(concat('%',#{mchId,jdbcType=VARCHAR}),'%')
     </if>
-    order by id desc
+    <if test="payGroupId != null" >
+      and t1.pay_group_id = #{payGroupId,jdbcType=BIGINT}
+    </if>
+    order by t1.id desc
     limit #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
   </select>
 
@@ -264,8 +273,17 @@
         #{groupId}
       </foreach>
     </if>
+    <if test="excludeGroupIds != null and excludeGroupIds.size()>0">
+      and t1.group_id not in
+      <foreach item="groupId" index="index" collection="excludeGroupIds" open="(" separator="," close=")">
+        #{groupId}
+      </foreach>
+    </if>
     <if test="mchId != null and mchId != ''" >
       and t2.group_no like concat(concat('%',#{mchId,jdbcType=VARCHAR}),'%')
+    </if>
+    <if test="payGroupId != null" >
+      and t1.pay_group_id = #{payGroupId,jdbcType=BIGINT}
     </if>
   </select>
 </mapper>

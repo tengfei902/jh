@@ -248,7 +248,7 @@
     from pay_request
     where 1=1
     <if test="outTradeNo != null">
-      and out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
+      and out_trade_no like concat(#{outTradeNo,jdbcType=VARCHAR},'%')
     </if>
     <if test="mchId != null">
       and mch_id = #{mchId,jdbcType=VARCHAR}

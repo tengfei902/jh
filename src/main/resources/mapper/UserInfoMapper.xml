@@ -14,11 +14,12 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />
     <result column="id_card" property="idCard" jdbcType="VARCHAR" />
+    <result column="invite_code" property="inviteCode" jdbcType="VARCHAR" />
   </resultMap>
 
   <sql id="Base_Column_List" >
     id, login_id, `password`, `name`, tel, qq,address, `type`,
-    `status`, create_time,group_id,id_card
+    `status`, create_time,group_id,id_card,invite_code
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -67,6 +68,9 @@
       <if test="idCard != null" >
         id_card,
       </if>
+      <if test="inviteCode != null" >
+        invite_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -101,6 +105,9 @@
       </if>
       <if test="idCard != null" >
         #{idCard,jdbcType=VARCHAR},
+      </if>
+      <if test="inviteCode != null" >
+        #{inviteCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -190,7 +197,17 @@
       <if test="address != null" >
         `address` = #{address,jdbcType=VARCHAR},
       </if>
+      <if test="inviteCode != null" >
+        `invite_code` = #{inviteCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectByInviteCode" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from user_info
+    where invite_code = #{inviteCode,jdbcType=VARCHAR}
+  </select>
 </mapper>

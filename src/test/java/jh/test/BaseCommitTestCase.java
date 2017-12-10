@@ -1,12 +1,17 @@
 package jh.test;
 
+import com.google.gson.Gson;
 import hf.base.biz.CacheService;
 import hf.base.contants.Constants;
 import hf.base.enums.*;
+import hf.base.model.TradeRequest;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
 import jh.dao.local.*;
+import jh.model.dto.UserInfoRequest;
 import jh.model.po.*;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by tengfei on 2017/11/6.
@@ -49,6 +52,8 @@ public class BaseCommitTestCase {
     private jh.biz.service.CacheService cacheService;
     @Autowired
     private SettleTaskDao settleTaskDao;
+    @Autowired
+    private UserChannelDao userChannelDao;
 
     @Test
     public void testSaveUserGroup() {
@@ -436,5 +441,47 @@ public class BaseCommitTestCase {
 
             settleTaskDao.insertSelective(settleTask);
         }
+    }
+
+    @Test
+    public void testSaveTradeRequest() {
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(13L);
+        List<UserChannel> channels = userChannelDao.selectByGroupId(13L);
+
+        List<Integer> statusList = new ArrayList<>();
+        for(PayRequestStatus payRequestStatus: PayRequestStatus.values()) {
+            statusList.add(payRequestStatus.getValue());
+        }
+
+        List<Integer> tradeTypes = new ArrayList<>();
+        for(TradeType tradeType:TradeType.values()) {
+            tradeTypes.add(tradeType.getValue());
+        }
+
+        for(int i=0;i<1000;i++) {
+            PayRequest payRequest = new PayRequest();
+            payRequest.setSubOpenid(String.valueOf(RandomUtils.nextLong()));
+            payRequest.setBuyerId(String.valueOf(RandomUtils.nextLong()));
+            payRequest.setAppid("test1");
+            payRequest.setSign("12345678");
+            payRequest.setBody("test 1213456");
+            payRequest.setTotalFee(1000+i*100);
+            payRequest.setOutTradeNo(String.valueOf(RandomUtils.nextLong()));
+            payRequest.setMchId(userGroup.getGroupNo());
+            payRequest.setFee(new BigDecimal(payRequest.getTotalFee()).multiply(new BigDecimal("5")).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+            payRequest.setActualAmount(new BigDecimal(payRequest.getTotalFee()).subtract(payRequest.getFee()));
+            payRequest.setService(channels.get(RandomUtils.nextInt(100)%channels.size()).getChannelCode());
+            payRequest.setStatus(statusList.get(RandomUtils.nextInt(100)%statusList.size()));
+            payRequest.setTradeType(tradeTypes.get(RandomUtils.nextInt(100)%tradeTypes.size()));
+
+            payRequestDao.insertSelective(payRequest);
+        }
+
+    }
+
+    @Test
+    public void testGetRandomStr() {
+        UserInfo userInfo = userInfoDao.selectByInviteCode("6eaKfRkbW99ciF7j");
+        System.out.println(new Gson().toJson(userInfo));
     }
 }

@@ -4,6 +4,8 @@ import hf.base.model.*;
 import hf.base.utils.Pagenation;
 import jh.model.dto.AccountOprQueryRequest;
 import jh.model.dto.AccountOprQueryResponse;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -14,4 +16,5 @@ public interface AccountBiz {
     Pagenation<AccountPageInfo> getAccountPage(AccountRequest accountRequest);
     Pagenation<AdminAccountPageInfo> getAdminAccountPage(AccountRequest accountRequest);
     Pagenation<AccountOprInfo> getAccountOprPage(AccountOprRequest accountOprRequest);
+    BigDecimal getLockedAmount(Long groupId);
 }

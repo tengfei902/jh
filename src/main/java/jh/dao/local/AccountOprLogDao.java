@@ -3,6 +3,7 @@ package jh.dao.local;
 import jh.model.po.AccountOprLog;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -32,4 +33,6 @@ public interface AccountOprLogDao {
     int count(Map<String,Object> params);
 
     AccountOprLog selectByUnq(@Param("outTradeNo")String outTradeNo,@Param("groupId")Long groupId,@Param("type") Integer type);
+
+    BigDecimal sumLockAmount(@Param("groupIds")List<Long> groupIds,@Param("types") List<Integer> types);
 }

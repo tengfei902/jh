@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,5 +117,11 @@ public class AccountTest extends BaseTestCase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testGetSumAmount() {
+        BigDecimal logAmount = accountBiz.getLockedAmount(13L);
+        System.out.println(logAmount);
     }
 }

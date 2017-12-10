@@ -3,6 +3,7 @@ package jh.api;
 import hf.base.contants.CodeManager;
 import hf.base.contants.Constants;
 import hf.base.enums.GroupStatus;
+import hf.base.enums.UserStatus;
 import hf.base.exceptions.BizFailException;
 import hf.base.model.*;
 import hf.base.utils.Pagenation;
@@ -17,6 +18,7 @@ import jh.dao.local.*;
 import jh.model.po.*;
 import jh.model.dto.*;
 import jh.model.po.Account;
+import jh.model.po.AdminAccount;
 import jh.model.po.AdminBankCard;
 import jh.model.po.Channel;
 import jh.model.po.UserBankCard;
@@ -24,6 +26,7 @@ import jh.model.po.UserChannel;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,6 +61,8 @@ public class UserApi {
     private AccountDao accountDao;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private AdminAccountDao adminAccountDao;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
@@ -351,6 +356,7 @@ public class UserApi {
         String address = params.get("address");
         String groupId = params.get("groupId");
         String id = params.get("id");
+        String type = params.get("type");
 
         UserInfo userInfo = new UserInfo();
         userInfo.setLoginId(loginId);
@@ -360,10 +366,17 @@ public class UserApi {
         userInfo.setTel(tel);
         userInfo.setQq(qq);
         userInfo.setAddress(address);
-        userInfo.setGroupId(Long.parseLong(groupId));
-        userInfo.setId(Long.parseLong(id));
+        if(StringUtils.isNotEmpty(groupId)) {
+            userInfo.setGroupId(Long.parseLong(groupId));
+        }
+        if(StringUtils.isNotEmpty(id)) {
+            userInfo.setId(Long.parseLong(id));
+        }
+        userInfo.setType(Integer.parseInt(type));
+        userInfo.setStatus(UserStatus.AVAILABLE.getValue());
 
         if(StringUtils.isEmpty(id)) {
+            userInfo.setInviteCode(RandomStringUtils.random(16, 20, 110, true, true));
             userInfoDao.insertSelective(userInfo);
         } else {
             int count = userInfoDao.updateByPrimaryKeySelective(userInfo);
@@ -447,9 +460,16 @@ public class UserApi {
         }
     }
 
+    @RequestMapping(value = "/get_sum_lock_amount",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<BigDecimal> getLockedAmount(@RequestBody Map<String,Object> params) {
+        Long groupId = new BigDecimal(params.get("groupId").toString()).longValue();
+        BigDecimal logAmount = accountBiz.getLockedAmount(groupId);
+        return ResponseResult.success(logAmount);
+    }
+
     @RequestMapping(value = "/get_account_by_group_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody ResponseResult<Account> getAccountByGroupId(@RequestBody Map<String,String> params) {
-        Long groupId = Long.parseLong(params.get("groupId"));
+        Long groupId = new BigDecimal(params.get("groupId")).longValue();
         Account account = accountDao.selectByGroupId(groupId);
         return ResponseResult.success(account);
     }
@@ -458,5 +478,15 @@ public class UserApi {
     public @ResponseBody ResponseResult<BigDecimal> getWithDrawFeeRate() {
         String feeRate = cacheService.getProp(Constants.SETTLE_FEE_RATE,"5");
         return ResponseResult.success(new BigDecimal(feeRate));
+    }
+
+    @RequestMapping(value = "/get_admin_account_by_group_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody ResponseResult<AdminAccount> getAdminAccountByGroupId(@RequestBody Map<String,String> params) {
+        if(MapUtils.isEmpty(params) || params.get("groupId") == null) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,"no param",null);
+        }
+        Long groupId =  new BigDecimal(params.get("groupId")).longValue();
+        AdminAccount adminAccount = adminAccountDao.selectByGroupId(groupId);
+        return ResponseResult.success(adminAccount);
     }
 }

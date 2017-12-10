@@ -27,5 +27,7 @@ public interface AdminAccountDao {
 
     int lockAmount(@Param("id")Long id,@Param("lockAmount")BigDecimal lockAmount,@Param("version") Integer version);
 
+    int unlockAmount(@Param("id")Long id,@Param("lockAmount")BigDecimal lockAmount,@Param("version") Integer version);
+
     int finishPay(@Param("id")Long id,@Param("lockAmount")BigDecimal lockAmount,@Param("version")Integer version);
 }
