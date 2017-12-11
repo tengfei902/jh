@@ -484,4 +484,26 @@ public class BaseCommitTestCase {
         UserInfo userInfo = userInfoDao.selectByInviteCode("6eaKfRkbW99ciF7j");
         System.out.println(new Gson().toJson(userInfo));
     }
+
+    @Test
+    public void saveUserChannel() {
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(5L);
+        for(ChannelCode channelCode:ChannelCode.values()) {
+            UserChannel userChannel = new UserChannel();
+            userChannel.setCipherCode(String.valueOf(RandomUtils.nextLong()));
+            userChannel.setFeeRate(new BigDecimal(RandomUtils.nextInt(15)));
+            userChannel.setMchId(userGroup.getGroupNo());
+            userChannel.setGroupName(userGroup.getName());
+            userChannel.setStandardFeeRate(new BigDecimal("10"));
+            userChannel.setSubGroupId(userGroup.getSubGroupId());
+            userChannel.setCompanyId(userGroup.getCompanyId());
+            userChannel.setChannelCode(channelCode.getService());
+            userChannel.setSubFeeRate(new BigDecimal(9));
+            Channel channel = channelDao.selectByCode(channelCode.getService());
+            userChannel.setChannelId(channel.getId());
+            userChannel.setGroupId(5L);
+
+            userChannelDao.insertSelective(userChannel);
+        }
+    }
 }
