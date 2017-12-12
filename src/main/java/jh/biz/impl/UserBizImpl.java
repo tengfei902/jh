@@ -49,17 +49,22 @@ public class UserBizImpl implements UserBiz {
     private AccountDao accountDao;
 
     @Override
-    public void register(String loginId, String password, String inviteCode) {
-        UserGroup subUserGroup;
-        if(StringUtils.isEmpty(inviteCode)) {
-            subUserGroup = userGroupDao.selectDefaultUserGroup();
-        } else {
+    public void register(String loginId, String password, String inviteCode,String subGroupId) {
+        UserGroup subUserGroup = null;
+
+        if(StringUtils.isNotEmpty(subGroupId)) {
+            subUserGroup = userGroupDao.selectByPrimaryKey(Long.parseLong(subGroupId));
+        }
+
+        if(StringUtils.isNotEmpty(inviteCode)) {
             UserInfo subUserInfo = userInfoDao.selectByInviteCode(inviteCode);
-            if(Objects.isNull(subUserInfo)) {
-                subUserGroup = userGroupDao.selectDefaultUserGroup();
-            } else {
+            if(!Objects.isNull(subUserInfo)) {
                 subUserGroup = userGroupDao.selectByPrimaryKey(subUserInfo.getGroupId());
             }
+        }
+
+        if(Objects.isNull(subUserGroup)) {
+            subUserGroup = userGroupDao.selectDefaultUserGroup();
         }
 
         UserInfo userInfo = new UserInfo();

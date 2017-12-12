@@ -1,7 +1,10 @@
 package jh.test.user;
 
 import com.google.gson.Gson;
+import hf.base.enums.GroupStatus;
 import hf.base.enums.GroupType;
+import hf.base.enums.UserStatus;
+import hf.base.enums.UserType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.*;
 import jh.biz.ChannelBiz;
@@ -46,7 +49,7 @@ public class UserTest extends BaseTestCase {
         String loginId = "test";
         String password = "123456";
         String inviteCode = "";
-        userBiz.register(loginId,password,inviteCode);
+        userBiz.register(loginId,password,inviteCode,null);
 
         UserInfo userInfo = userInfoDao.selectByLoginId(loginId, Utils.convertPassword(password));
         Assert.assertNotNull(userInfo);
@@ -219,5 +222,61 @@ public class UserTest extends BaseTestCase {
         }
         Pagenation<Integer> pagenation = new Pagenation<Integer>(datas,1012,60,15);
         System.out.println(new Gson().toJson(pagenation));
+    }
+
+    @Test
+    public void testAddUserByAgent() {
+        String loginId = String.valueOf(RandomUtils.nextLong());
+        String password = String.valueOf(RandomUtils.nextLong());
+        userBiz.register(loginId,password,null,null);
+        UserInfo userInfo = userInfoDao.selectByLoginId(loginId,Utils.convertPassword(password));
+        Assert.assertNotNull(userInfo);
+
+        UserGroup defaultGroup = userGroupDao.selectDefaultUserGroup();
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setType(GroupType.AGENT.getValue());
+        userGroup.setCompanyId(defaultGroup.getId());
+        userGroup.setSubGroupId(defaultGroup.getId());
+        userGroup.setSubGroupName(defaultGroup.getName());
+        userGroup.setSubGroupNo(defaultGroup.getGroupNo());
+        userGroup.setAddress("tessfag");
+        userGroup.setGroupNo(String.valueOf(RandomUtils.nextLong()));
+        userGroup.setIdCard(String.valueOf(RandomUtils.nextInt(100000)));
+        userGroup.setName("tesfs");
+        userGroup.setTel("12345223");
+        userGroup.setOwnerName("张三");
+        userGroup.setStatus(GroupStatus.AVAILABLE.getValue());
+        userGroupDao.insertSelective(userGroup);
+
+        UserInfo userInfo1 = new UserInfo();
+        userInfo1.setGroupId(userGroup.getId());
+        userInfo1.setLoginId(String.valueOf(RandomUtils.nextLong()));
+        userInfo1.setPassword(Utils.convertPassword("tengfei"));
+        userInfo1.setType(UserType.ADMIN.getValue());
+        userInfo1.setName("test");
+        userInfo1.setQq("132134322");
+        userInfo1.setTel("1232131");
+        userInfo1.setAddress("12sasdd");
+        userInfo1.setInviteCode(String.valueOf(RandomUtils.nextLong()));
+        userInfo1.setIdCard("3321634215");
+        userInfo1.setStatus(UserStatus.AVAILABLE.getValue());
+
+        userInfoDao.insertSelective(userInfo1);
+        userInfo1 = userInfoDao.selectByPrimaryKey(userInfo1.getId());
+
+        loginId = String.valueOf(RandomUtils.nextLong());
+        password = String.valueOf(RandomUtils.nextLong());
+        userBiz.register(loginId,password,userInfo1.getInviteCode(),null);
+
+        userInfo = userInfoDao.selectByLoginId(loginId,Utils.convertPassword(password));
+        UserGroup newUserGroup = userGroupDao.selectByPrimaryKey(userInfo.getGroupId());
+        Assert.assertEquals(newUserGroup.getSubGroupId(),userGroup.getId());
+
+        loginId = String.valueOf(RandomUtils.nextLong());
+        password = String.valueOf(RandomUtils.nextLong());
+        userBiz.register(loginId,password,null,String.valueOf(userGroup.getId()));
+        newUserGroup = userGroupDao.selectByPrimaryKey(userInfo.getGroupId());
+        Assert.assertEquals(newUserGroup.getSubGroupId(),userGroup.getId());
     }
 }

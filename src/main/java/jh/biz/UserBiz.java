@@ -15,7 +15,7 @@ import java.util.List;
  * Created by tengfei on 2017/10/29.
  */
 public interface UserBiz {
-    void register(String loginId,String password,String inviteCode);
+    void register(String loginId,String password,String inviteCode,String subGroupId);
 
     boolean login(String loginId,String password);
 

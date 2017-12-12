@@ -163,13 +163,14 @@ public class UserApi {
         String loginId = datas.get("loginId");
         String password = datas.get("password");
         String inviteCode = datas.get("inviteCode");
+        String subGroupId = datas.get("subGroupId");
 
         if(StringUtils.isEmpty(loginId) || StringUtils.isEmpty(password)) {
             return ResponseResult.failed(CodeManager.PARAM_INVALID,"param invalid","FAILED");
         }
 
         try {
-            userBiz.register(loginId,password,inviteCode);
+            userBiz.register(loginId,password,inviteCode,subGroupId);
         } catch (Exception e) {
             return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),"FAIELD");
         }
