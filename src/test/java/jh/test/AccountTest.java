@@ -5,6 +5,7 @@ import hf.base.enums.GroupType;
 import hf.base.model.*;
 import hf.base.utils.Pagenation;
 import hf.base.utils.TypeConverter;
+import hf.base.utils.Utils;
 import jh.biz.AccountBiz;
 import org.junit.Assert;
 import org.junit.Test;
@@ -123,5 +124,16 @@ public class AccountTest extends BaseTestCase {
     public void testGetSumAmount() {
         BigDecimal logAmount = accountBiz.getLockedAmount(13L);
         System.out.println(logAmount);
+    }
+
+    @Test
+    public void testGetUrlParams(){
+        AccountOprRequest accountOprRequest = new AccountOprRequest();
+        accountOprRequest.setOprType(1);
+        accountOprRequest.setStatus(10);
+        accountOprRequest.setOutTradeNo("112345");
+        accountOprRequest.setName("test");
+        String params = Utils.getUrlParam(accountOprRequest,AccountOprRequest.class);
+        System.out.println(params);
     }
 }
