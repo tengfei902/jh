@@ -253,10 +253,10 @@ public class UserBizImpl implements UserBiz {
     @Override
     public void userPass(Long groupId) {
         //admin bank
-        List<AdminBankCard> cards = adminBankCardDao.selectByGroupId(groupId);
-        if(CollectionUtils.isEmpty(cards)) {
-            throw new BizFailException("结算账号未设置");
-        }
+//        List<AdminBankCard> cards = adminBankCardDao.selectByGroupId(groupId);
+//        if(CollectionUtils.isEmpty(cards)) {
+//            throw new BizFailException("结算账号未设置");
+//        }
 
         List<UserChannel> channels = userChannelDao.selectByGroupId(groupId);
         if(CollectionUtils.isEmpty(channels)) {

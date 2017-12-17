@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface AdminBankCardDao {
     int deleteByPrimaryKey(Long id);
@@ -25,5 +26,5 @@ public interface AdminBankCardDao {
 
     AdminBankCard selectAvailableCard(@Param("groupId") Long groupId, @Param("amount") BigDecimal amount);
 
-    List<AdminBankCard> select();
+    List<AdminBankCard> select(Map<String,Object> map);
 }

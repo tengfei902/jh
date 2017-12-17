@@ -318,7 +318,7 @@ public class PayServiceImpl implements PayService {
     @Transactional
     @Override
     public void updateDailyLimit() {
-        List<AdminBankCard> list = adminBankCardDao.select();
+        List<AdminBankCard> list = adminBankCardDao.select(new HashMap<>());
         Map<Long,List<AdminBankCard>> map = list.parallelStream().collect(Collectors.groupingBy(AdminBankCard::getGroupId));
         for(Long groupId:map.keySet()) {
             for(AdminBankCard adminBankCard:list) {

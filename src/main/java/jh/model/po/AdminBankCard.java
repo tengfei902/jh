@@ -9,7 +9,7 @@ public class AdminBankCard {
     private Long id;
     @Field(required = true)
     private Long companyId;
-    @Field(required = true)
+    @Field
     private Long groupId;
     @Field(required = true)
     private String bankNo;
@@ -25,12 +25,20 @@ public class AdminBankCard {
     private String city;
     private Integer status;
     private String remark;
+    @Field(required = true)
     private String mchId;
+    @Field(required = true)
     private String outletNo;
+    @Field(required = true)
     private String name;
+    @Field(required = true)
     private String ownerName;
+    @Field(required = true)
     private BigDecimal limitAmount;
+    @Field(required = true)
     private String cipherCode;
+    @Field(required = true)
+    private String channelNo;
 
     public Long getId() {
         return id;
@@ -166,5 +174,13 @@ public class AdminBankCard {
 
     public void setCipherCode(String cipherCode) {
         this.cipherCode = cipherCode;
+    }
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
     }
 }

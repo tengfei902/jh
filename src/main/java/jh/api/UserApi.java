@@ -288,6 +288,13 @@ public class UserApi {
         return ResponseResult.success(userChannels);
     }
 
+    @RequestMapping(value = "/get_user_channel_by_id",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<UserChannel> getUserChannelById(@RequestBody Map<String,String> params) {
+        Long id = new BigDecimal(params.get("id")).longValue();
+        UserChannel userChannel = userChannelDao.selectByPrimaryKey(id);
+        return ResponseResult.success(userChannel);
+    }
+
     @RequestMapping(value = "/save_channel",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<Boolean> saveChannel(@RequestBody Map<String,Object> data) {
         try {
@@ -310,11 +317,32 @@ public class UserApi {
         }
     }
 
+    @RequestMapping(value = "/get_admin_bank_card_list",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<AdminBankCard>> getAdminBankCardList(@RequestBody Map<String,String> data) {
+        Long companyId = new BigDecimal(data.get("companyId")).longValue();
+        String channelNo = String.valueOf(null==data.get("channelNo")?"":data.get("channelNo"));
+
+        List<AdminBankCard> list = adminBankCardDao.select(hf.base.utils.MapUtils.buildMap("companyId",companyId,"channelNo",channelNo));
+        return ResponseResult.success(list);
+    }
+
     @RequestMapping(value = "/get_admin_bank_card",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<AdminBankCard> getAdminBankCard(@RequestBody Map<String,String> data) {
-        Long groupId = new BigDecimal(data.get("groupId")).longValue();
+        Long groupId = null;
+        if(!Objects.isNull(data.get("groupId"))) {
+            groupId = new BigDecimal(data.get("groupId")).longValue();
+        }
+
         Long companyId = new BigDecimal(data.get("companyId")).longValue();
         AdminBankCard adminBankCard = adminBankCardDao.selectByCompanyId(companyId,groupId);
+        return ResponseResult.success(adminBankCard);
+    }
+
+    @RequestMapping(value = "/get_admin_bank_card_by_id",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<AdminBankCard> getAdminBankCardById(@RequestBody Map<String,String> data) {
+        Long id = new BigDecimal(data.get("id")).longValue();
+
+        AdminBankCard adminBankCard = adminBankCardDao.selectByPrimaryKey(id);
         return ResponseResult.success(adminBankCard);
     }
 

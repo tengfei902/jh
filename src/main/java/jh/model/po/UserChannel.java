@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class UserChannel {
+    @Field
     private Long id;
 
     private String channelName;

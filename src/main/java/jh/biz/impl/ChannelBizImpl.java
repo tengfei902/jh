@@ -30,32 +30,36 @@ public class ChannelBizImpl implements ChannelBiz {
 
     @Override
     public void saveUserChannel(UserChannel userChannel) {
-        Channel channel = channelDao.selectByPrimaryKey(userChannel.getChannelId());
-        userChannel.setChannelCode(channel.getChannelCode());
-        userChannel.setChannelName(channel.getChannelName());
-        userChannel.setStandardFeeRate(channel.getFeeRate());
-        UserGroup userGroup = userGroupDao.selectByPrimaryKey(userChannel.getGroupId());
-        userChannel.setGroupName(userGroup.getName());
-        userChannel.setCompanyId(userGroup.getCompanyId());
-
-        UserChannel subUserChannel = getSubUserChannel(userGroup.getSubGroupId(),channel.getId());
-        if(Objects.isNull(subUserChannel)) {
-            userChannel.setSubFeeRate(channel.getFeeRate());
+        if(userChannel.getId()!=null) {
+            userChannelDao.updateByPrimaryKeySelective(userChannel);
         } else {
-            userChannel.setSubFeeRate(subUserChannel.getFeeRate());
+            Channel channel = channelDao.selectByPrimaryKey(userChannel.getChannelId());
+            userChannel.setChannelCode(channel.getChannelCode());
+            userChannel.setChannelName(channel.getChannelName());
+            userChannel.setStandardFeeRate(channel.getFeeRate());
+            UserGroup userGroup = userGroupDao.selectByPrimaryKey(userChannel.getGroupId());
+            userChannel.setGroupName(userGroup.getName());
+            userChannel.setCompanyId(userGroup.getCompanyId());
+
+            UserChannel subUserChannel = getSubUserChannel(userGroup.getSubGroupId(),channel.getId());
+            if(Objects.isNull(subUserChannel)) {
+                userChannel.setSubFeeRate(channel.getFeeRate());
+            } else {
+                userChannel.setSubFeeRate(subUserChannel.getFeeRate());
+            }
+
+            userChannel.setSubGroupId(userGroup.getSubGroupId());
+
+            if(userChannel.getFeeRate().compareTo(userChannel.getSubFeeRate())<0) {
+                throw new BizFailException(String.format("feeRate should lt subFeeRate,%s,%s",userChannel.getFeeRate(),userChannel.getSubFeeRate()));
+            }
+
+            if(userChannel.getSubFeeRate().compareTo(userChannel.getStandardFeeRate())<0) {
+                throw new BizFailException(String.format("subFeeRate should lt standardFeeRate,%s,%s",userChannel.getSubFeeRate(),userChannel.getStandardFeeRate()));
+            }
+
+            userChannelDao.insertSelective(userChannel);
         }
-
-        userChannel.setSubGroupId(userGroup.getSubGroupId());
-
-        if(userChannel.getFeeRate().compareTo(userChannel.getSubFeeRate())<0) {
-            throw new BizFailException(String.format("feeRate should lt subFeeRate,%s,%s",userChannel.getFeeRate(),userChannel.getSubFeeRate()));
-        }
-
-        if(userChannel.getSubFeeRate().compareTo(userChannel.getStandardFeeRate())<0) {
-            throw new BizFailException(String.format("subFeeRate should lt standardFeeRate,%s,%s",userChannel.getSubFeeRate(),userChannel.getStandardFeeRate()));
-        }
-
-        userChannelDao.insertSelective(userChannel);
     }
 
     private UserChannel getSubUserChannel(Long groupId,Long channelId) {

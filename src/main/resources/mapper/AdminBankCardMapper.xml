@@ -19,10 +19,11 @@
     <result column="owner_name" jdbcType="VARCHAR" property="ownerName" />
     <result column="limit_amount" jdbcType="DECIMAL" property="limitAmount" />
     <result column="cipher_code" jdbcType="VARCHAR" property="cipherCode" />
+    <result column="channel_no" jdbcType="VARCHAR" property="channelNo" />
   </resultMap>
   <sql id="Base_Column_List">
     id, company_id, group_id, bank_no, bank, deposit, `owner`, province, city, `status`, 
-    remark,mch_id,outlet_no,name,owner_name,limit_amount,cipher_code
+    remark,mch_id,outlet_no,name,owner_name,limit_amount,cipher_code,channel_no
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -98,6 +99,9 @@
       <if test="cipherCode != null">
         cipher_code,
       </if>
+      <if test="channelNo != null">
+        channel_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -151,6 +155,9 @@
       <if test="cipherCode != null">
         #{cipherCode,jdbcType=VARCHAR},
       </if>
+      <if test="channelNo != null">
+        #{channelNo,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.AdminBankCard">
@@ -192,6 +199,9 @@
       <if test="cipherCode != null">
         cipher_code = #{cipherCode,jdbcType=VARCHAR},
       </if>
+      <if test="channelNo != null">
+        channel_no = #{channelNo,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -214,7 +224,10 @@
     select
     <include refid="Base_Column_List" />
     from admin_bank_card
-    where company_id = #{companyId,jdbcType=BIGINT} and group_id = #{groupId,jdbcType=BIGINT}
+    where company_id = #{companyId,jdbcType=BIGINT}
+      <if test="groupId != null">
+      and group_id = #{groupId,jdbcType=BIGINT}
+      </if>
   </select>
 
   <select id="selectByGroupId" resultMap="BaseResultMap">
@@ -229,6 +242,14 @@
     <include refid="Base_Column_List" />
     from admin_bank_card
     where status = 10
+    <if test="companyId != null">
+       and company_id = #{companyId,jdbcType=BIGINT}
+    </if>
+    <if test="channelNo != null and channelNo!=''">
+      and channel_no = #{channelNo,jdbcType=VARCHAR}
+    </if>
+    <if test="status != null">
+      and status = #{status,jdbcType=INTEGER}
+    </if>
   </select>
-
 </mapper>
