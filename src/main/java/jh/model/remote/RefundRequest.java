@@ -1,4 +1,4 @@
-package jh.model.dto;
+package jh.model.remote;
 
 /**
  * Created by tengfei on 2017/10/28.

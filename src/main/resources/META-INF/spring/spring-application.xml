@@ -23,6 +23,7 @@
 	<task:executor id="asyncExecutor" pool-size="5-10" queue-capacity="200" rejection-policy="CALLER_RUNS"/>
 
 	<bean class="org.springframework.web.client.RestTemplate"/>
+	<bean class="jh.utils.BeanContextUtils" lazy-init="false"/>
 
 	<bean id="velocityConfigurer" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
 		<property name="resourceLoaderPath" value="/WEB-INF/velocity/" /><!-- 模板存放的路径 -->
@@ -43,4 +44,14 @@
 		<property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->
 		<property name="toolboxConfigLocation" value="/WEB-INF/toolbox.xml"/>
 	</bean>
+
+	<bean id="payBizCollection" class="jh.biz.service.PayBizCollection">
+		<constructor-arg>
+			<map>
+				<entry key="ys" value-ref="ysPayBiz"/>
+				<entry key="fxt" value-ref="fxtPayBiz"/>
+			</map>
+		</constructor-arg>
+	</bean>
+
 </beans>

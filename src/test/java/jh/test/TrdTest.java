@@ -14,9 +14,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TrdTest extends BaseTestCase {
     @Autowired
@@ -71,5 +69,21 @@ public class TrdTest extends BaseTestCase {
         }catch (Exception e ) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testTreeSet() {
+        Set<String> set = new TreeSet<>();
+        set.add("a1002244");
+        set.add("12345");
+        set.add("c2435312");
+        set.add("cd253");
+        set.add("hssd");
+        set.add("dfgfas");
+        set.add("dg2134565");
+        for(String str:set) {
+            System.out.println(str);
+        }
+
     }
 }

@@ -1,20 +1,30 @@
 package jh.biz.service.impl;
 
 import com.google.gson.Gson;
+import hf.base.contants.CodeManager;
 import hf.base.enums.OprStatus;
 import hf.base.enums.OprType;
 import hf.base.enums.PayRequestStatus;
 import hf.base.exceptions.BizFailException;
+import hf.base.exceptions.RetryableException;
 import hf.base.utils.BdUtils;
+import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.AccountService;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
 import jh.model.po.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -24,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PayServiceImpl implements PayService {
+    private Logger logger = LoggerFactory.getLogger(PayServiceImpl.class);
     @Autowired
     private UserChannelDao userChannelDao;
     @Autowired
@@ -42,6 +53,14 @@ public class PayServiceImpl implements PayService {
     private AdminAccountOprLogDao adminAccountOprLogDao;
     @Autowired
     private AdminAccountDao adminAccountDao;
+    @Autowired
+    private PayMsgRecordDao payMsgRecordDao;
+    @Autowired
+    private AccountDailyLimitSumDao accountDailyLimitSumDao;
+    @Autowired
+    private AccountDailyLimitDao accountDailyLimitDao;
+    @Autowired
+    private AdminBankCardDao adminBankCardDao;
 
     @Override
     @Transactional
@@ -180,6 +199,12 @@ public class PayServiceImpl implements PayService {
 
     @Transactional
     @Override
+    public void payFailed(String outTradeNo) {
+
+    }
+
+    @Transactional
+    @Override
     public void payPromote(String outTradeNo) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.PAY_SUCCESS.getValue(),PayRequestStatus.OPR_SUCCESS.getValue());
@@ -201,5 +226,124 @@ public class PayServiceImpl implements PayService {
 
         List<AccountOprLog> logs = accountOprLogDao.selectByTradeNo(outTradeNo);
         logs.stream().forEach(log -> accountService.promote(log));
+    }
+
+    @Transactional
+    @Override
+    public void savePayMsg(List<PayMsgRecord> records) {
+        for(PayMsgRecord payMsgRecord : records) {
+            payMsgRecordDao.insertSelective(payMsgRecord);
+        }
+    }
+
+    @Transactional
+    @Override
+    public synchronized Map<Long,BigDecimal> chooseAdminBank(Long groupId,BigDecimal amount) {
+        AccountDailyLimitSum accountDailyLimitSum = accountDailyLimitSumDao.selectByGroupId(groupId);
+        if(Objects.isNull(accountDailyLimitSum)) {
+            throw new BizFailException();
+        }
+        int count = accountDailyLimitSumDao.lock(accountDailyLimitSum.getId(),amount,accountDailyLimitSum.getVersion());
+        if(count <= 0) {
+            throw new BizFailException();
+        }
+
+        List<AccountDailyLimit> list = accountDailyLimitDao.selectByGroupId(groupId);
+        if(CollectionUtils.isEmpty(list)) {
+            throw new BizFailException();
+        }
+
+        Map<Long,BigDecimal> map = new HashMap<>();
+
+        BigDecimal tempAmount = amount;
+        for(AccountDailyLimit accountDailyLimit:list) {
+            BigDecimal avaAmount = accountDailyLimit.getLimitAmount().subtract(accountDailyLimit.getLockAmount());
+            BigDecimal curAmount = BdUtils.min(avaAmount,tempAmount);
+
+            map.put(accountDailyLimit.getRefId(),curAmount);
+
+            count = accountDailyLimitDao.lock(accountDailyLimit.getId(),curAmount,accountDailyLimit.getVersion());
+            if(count<=0) {
+                throw new BizFailException();
+            }
+
+            tempAmount = tempAmount.subtract(curAmount);
+            if(tempAmount.compareTo(BigDecimal.ZERO)<=0) {
+                break;
+            }
+        }
+
+        if(tempAmount.compareTo(BigDecimal.ZERO)!=0) {
+            throw new BizFailException();
+        }
+
+        return map;
+    }
+
+    @Transactional
+    @Retryable(value= {RetryableException.class},maxAttempts = 3,backoff = @Backoff(delay = 100,multiplier = 1))
+    @Override
+    public synchronized AdminBankCard chooseAdminBank1(Long groupId, BigDecimal amount) {
+        AccountDailyLimit accountDailyLimit = accountDailyLimitDao.selectAvailableAccount(groupId,amount);
+        if(Objects.isNull(accountDailyLimit)) {
+            throw new BizFailException(CodeManager.PAY_FAILED,"额度不足");
+        }
+
+        int count = accountDailyLimitDao.lock(accountDailyLimit.getId(),amount,accountDailyLimit.getVersion());
+        if(count<=0) {
+            throw new RetryableException();
+        }
+
+        AccountDailyLimitSum accountDailyLimitSum = accountDailyLimitSumDao.selectByGroupId(groupId);
+        if(Objects.isNull(accountDailyLimitSum)) {
+            throw new BizFailException(CodeManager.PAY_FAILED,"额度不足");
+        }
+        count = accountDailyLimitSumDao.lock(accountDailyLimitSum.getId(),amount,accountDailyLimitSum.getVersion());
+        if(count <= 0) {
+            throw new RetryableException();
+        }
+
+        return adminBankCardDao.selectByPrimaryKey(accountDailyLimit.getRefId());
+    }
+
+    @Transactional
+    @Override
+    public void savePayRequest(List<PayMsgRecord> msgRecords, PayRequest payRequest) {
+        for(PayMsgRecord payMsgRecord : msgRecords) {
+            payMsgRecordDao.insertSelective(payMsgRecord);
+        }
+        payRequestDao.insertSelective(payRequest);
+    }
+
+    @Transactional
+    @Override
+    public void updateDailyLimit() {
+        List<AdminBankCard> list = adminBankCardDao.select();
+        Map<Long,List<AdminBankCard>> map = list.parallelStream().collect(Collectors.groupingBy(AdminBankCard::getGroupId));
+        for(Long groupId:map.keySet()) {
+            for(AdminBankCard adminBankCard:list) {
+                AccountDailyLimit accountDailyLimit = new AccountDailyLimit();
+                accountDailyLimit.setGroupId(adminBankCard.getGroupId());
+                accountDailyLimit.setLimitAmount(adminBankCard.getLimitAmount());
+                accountDailyLimit.setRefId(adminBankCard.getId());
+                accountDailyLimit.setDateStr(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+                try {
+                    accountDailyLimitDao.insertSelective(accountDailyLimit);
+                } catch (DuplicateKeyException e) {
+                    logger.warn(e.getMessage());
+                }
+            }
+
+            List<AdminBankCard> cards = map.get(groupId);
+            AccountDailyLimitSum accountDailyLimitSum = new AccountDailyLimitSum();
+            accountDailyLimitSum.setDateStr(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+            accountDailyLimitSum.setGroupId(groupId);
+            accountDailyLimitSum.setSumLimitAmount(cards.parallelStream().map(AdminBankCard::getLimitAmount).reduce(new BigDecimal("0"),BigDecimal::add));
+            try {
+                accountDailyLimitSumDao.insertSelective(accountDailyLimitSum);
+            } catch (DuplicateKeyException e) {
+                logger.warn(e.getMessage());
+            }
+        }
     }
 }

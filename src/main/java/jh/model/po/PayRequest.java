@@ -40,6 +40,8 @@ public class PayRequest {
 
     private Integer tradeType;
 
+    private String remark;
+
     public PayRequest() {
 
     }
@@ -55,6 +57,8 @@ public class PayRequest {
         this.sign = request.getSign();
         this.totalFee = request.getTotal_fee();
     }
+
+//    public PayRequest
 
     public Long getId() {
         return id;
@@ -190,5 +194,13 @@ public class PayRequest {
 
     public void setActualAmount(BigDecimal actualAmount) {
         this.actualAmount = actualAmount;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

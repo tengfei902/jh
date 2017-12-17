@@ -7,6 +7,7 @@ import hf.base.enums.UserStatus;
 import hf.base.exceptions.BizFailException;
 import hf.base.model.*;
 import hf.base.utils.Pagenation;
+import hf.base.utils.ResponseResult;
 import hf.base.utils.TypeConverter;
 import hf.base.utils.Utils;
 import jh.biz.AccountBiz;
@@ -65,7 +66,8 @@ public class UserApi {
     private AdminAccountDao adminAccountDao;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
-    public @ResponseBody ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
+    public @ResponseBody
+    ResponseResult<List<UserInfoDto>> getUserList(@RequestBody UserInfoRequest request) {
         List<UserInfoDto> list = userBiz.getUserList(request);
         return ResponseResult.success(list);
     }
@@ -165,7 +167,7 @@ public class UserApi {
         String inviteCode = datas.get("inviteCode");
         String subGroupId = datas.get("subGroupId");
 
-        if(StringUtils.isEmpty(loginId) || StringUtils.isEmpty(password)) {
+        if(Utils.isEmpty(loginId) || Utils.isEmpty(password)) {
             return ResponseResult.failed(CodeManager.PARAM_INVALID,"param invalid","FAILED");
         }
 

@@ -9,6 +9,7 @@ import jh.dao.local.HfPropertiesDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
 import jh.model.po.Account;
+import jh.model.po.Channel;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,17 +39,6 @@ public class CacheServiceImpl implements CacheService {
                 }
             });
 
-//    private LoadingCache<Long,Account> accountCache = CacheBuilder.newBuilder()
-//            .expireAfterAccess(10,TimeUnit.MINUTES)
-//            .maximumSize(1000)
-//            .refreshAfterWrite(10,TimeUnit.MINUTES)
-//            .build(new CacheLoader<Long, Account>() {
-//                @Override
-//                public Account load(Long userId) throws Exception {
-//                    return accountDao.selectByUserId(userId);
-//                }
-//            });
-
     private LoadingCache<Long,UserGroup> groupCache = CacheBuilder.newBuilder()
             .expireAfterAccess(10,TimeUnit.MINUTES)
             .maximumSize(1000)
@@ -60,6 +50,17 @@ public class CacheServiceImpl implements CacheService {
                 }
             });
 
+    private LoadingCache<String,UserGroup> groupNoCache = CacheBuilder.newBuilder()
+            .expireAfterAccess(10,TimeUnit.MINUTES)
+            .maximumSize(1000)
+            .refreshAfterWrite(10,TimeUnit.MINUTES)
+            .build(new CacheLoader<String, UserGroup>() {
+                @Override
+                public UserGroup load(String groupNo) throws Exception {
+                    return userGroupDao.selectByGroupNo(groupNo);
+                }
+            });
+
     private LoadingCache<String,String> propCache = CacheBuilder.newBuilder().expireAfterAccess(10,TimeUnit.MINUTES)
             .maximumSize(1000).refreshAfterWrite(10,TimeUnit.MINUTES)
             .build(new CacheLoader<String, String>() {
@@ -68,6 +69,8 @@ public class CacheServiceImpl implements CacheService {
                     return hfPropertiesDao.selectByKey(s);
                 }
             });
+
+
 
     @Override
     public UserInfo getUserInfo(Long userId) {
@@ -98,12 +101,20 @@ public class CacheServiceImpl implements CacheService {
     }
 
     @Override
+    public UserGroup getGroup(String groupNo) {
+        try {
+            return groupNoCache.get(groupNo);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
     public String getProp(String key,String defaultValue) {
         try {
             return propCache.get(key);
         } catch (Exception e) {
             return defaultValue;
         }
-
     }
 }

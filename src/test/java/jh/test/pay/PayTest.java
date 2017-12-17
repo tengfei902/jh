@@ -1,11 +1,13 @@
 package jh.test.pay;
 
 import com.google.gson.Gson;
-import hf.base.enums.ChannelCode;
-import hf.base.enums.OprStatus;
-import hf.base.enums.PayRequestStatus;
+import hf.base.contants.CodeManager;
+import hf.base.enums.*;
+import hf.base.exceptions.BizFailException;
 import hf.base.utils.MapUtils;
+import hf.base.utils.Utils;
 import jh.biz.PayBiz;
+import jh.biz.service.PayBizCollection;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
 import jh.model.dto.PayRequestDto;
@@ -13,11 +15,13 @@ import jh.model.po.*;
 import jh.test.BaseTestCase;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +32,9 @@ public class PayTest extends BaseTestCase {
     @Autowired
     @Qualifier("ysPayBiz")
     private PayBiz payBiz;
+    @Autowired
+    @Qualifier("fxtPayBiz")
+    private PayBiz fxtBiz;
     @Autowired
     private PayRequestDao payRequestDao;
     @Autowired
@@ -46,6 +53,84 @@ public class PayTest extends BaseTestCase {
     private AdminAccountDao adminAccountDao;
     @Autowired
     private AdminAccountOprLogDao adminAccountOprLogDao;
+    @Autowired
+    private PayBizCollection payBizCollection;
+    @Autowired
+    private AdminBankCardDao adminBankCardDao;
+    @Autowired
+    private PayMsgRecordDao payMsgRecordDao;
+
+    private Map<String,Object> params = new HashMap<>();
+
+    @Before
+    public void initData() {
+        params.put("service","02");
+        params.put("version","1.0");
+        params.put("merchant_no","123456");
+        params.put("outlet_no","1234321");
+        params.put("total","100000");
+        params.put("name","234521");
+        params.put("remark","备注");
+        params.put("out_trade_no",String.valueOf(RandomUtils.nextLong()));
+        params.put("create_ip","127.0.0.1");
+        params.put("out_notify_url","www.baidu.com");
+        params.put("sub_openid","12132");
+        params.put("buyer_id","1234521");
+        params.put("authcode","120061098828009406");
+        params.put("nonce_str", Utils.getRandomString(10));
+        params.put("sign_type","MD5");
+        String sign = Utils.encrypt(params,"123456786");
+        params.put("sign",sign);
+    }
+
+    @Test
+    public void testBizCollection() {
+        for(ChannelCode channelCode:ChannelCode.values()) {
+            PayBiz payBiz = payBizCollection.getPayBiz(channelCode.getService());
+            Assert.assertNotNull(payBiz);
+        }
+    }
+
+    @Test
+    public void testCheckParams() {
+        prepareData();
+        fxtBiz.checkParam(params);
+        params.put("service","06");
+        params.remove("buyer_id");
+        try {
+            fxtBiz.checkParam(params);
+        } catch (BizFailException e) {
+            Assert.assertEquals(e.getCode(), CodeManager.PARAM_CHECK_FAILED);
+        }
+
+        params.put("service","01");
+        params.remove("sub_openid");
+        try {
+            fxtBiz.checkParam(params);
+        } catch (BizFailException e) {
+            Assert.assertEquals(e.getCode(), CodeManager.PARAM_CHECK_FAILED);
+        }
+    }
+
+    @Test
+    public void testSavePayRequest() {
+        Long groupId = prepareData();
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(groupId);
+        params.put("merchant_no",userGroup.getGroupNo());
+        String sign = Utils.encrypt(params,"123456786");
+        params.put("sign",sign);
+        fxtBiz.savePayRequest(params);
+        String outTradeNo = String.valueOf(params.get("out_trade_no"));
+
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        System.out.println(new Gson().toJson(payRequest));
+
+        PayMsgRecord inMsg = payMsgRecordDao.selectByTradeNo(outTradeNo,OperateType.USER_HF.getValue(),TradeType.PAY.getValue());
+        System.out.println(new Gson().toJson(inMsg));
+
+        PayMsgRecord outMsg = payMsgRecordDao.selectByTradeNo(outTradeNo,OperateType.HF_CLIENT.getValue(),TradeType.PAY.getValue());
+        System.out.println(new Gson().toJson(outMsg));
+    }
 
     @Test
     public void testPay() {
@@ -58,7 +143,7 @@ public class PayTest extends BaseTestCase {
         payRequest.setService(ChannelCode.ALI.getService());
         payRequest.setAppid(String.valueOf(RandomUtils.nextLong()));
         payRequest.setSign(String.valueOf(RandomUtils.nextLong()));
-        payBiz.pay(payRequest);
+//        payBiz.pay(MapUtils.beanToMap(payRequest));
     }
 
     @Test
@@ -95,7 +180,7 @@ public class PayTest extends BaseTestCase {
         request = payRequestDao.selectByPrimaryKey(request.getId());
         Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
 
-        payBiz.finishPay();
+//        payBiz.finishPay();
 
         request = payRequestDao.selectByPrimaryKey(request.getId());
         Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.PAY_SUCCESS.getValue());
@@ -108,7 +193,7 @@ public class PayTest extends BaseTestCase {
             Assert.assertEquals(log.getStatus().intValue(),OprStatus.PAY_SUCCESS.getValue());
         }
 
-        payBiz.promote();
+//        payBiz.promote();
 
         request = payRequestDao.selectByPrimaryKey(request.getId());
         Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.OPR_SUCCESS.getValue());
@@ -124,14 +209,13 @@ public class PayTest extends BaseTestCase {
             Account account = accountDao.selectByPrimaryKey(log.getAccountId());
             Assert.assertTrue(account.getAmount().compareTo(log.getAmount())== 0);
         }
-
-
     }
 
     public Long prepareData() {
         Channel channel = new Channel();
         channel.setChannelName("test");
-        channel.setChannelCode(ChannelCode.QQ.getService());
+        channel.setChannelCode(ChannelCode.FXT_WX.getService());
+        channel.setChannelNo("fxt");
         channel.setUrl("www.baidu.com");
         channel.setFeeRate(new BigDecimal("5.5"));
         channelDao.insertSelective(channel);
@@ -150,6 +234,24 @@ public class PayTest extends BaseTestCase {
         superUserGroup.setSubGroupNo("");
 
         userGroupDao.insertSelective(superUserGroup);
+
+        AdminBankCard adminBankCard = new AdminBankCard();
+        adminBankCard.setBank("中国工商银行");
+        adminBankCard.setBankNo("62222222222");
+        adminBankCard.setCity("上海");
+        adminBankCard.setCompanyId(superUserGroup.getId());
+        adminBankCard.setDeposit("上海支行");
+        adminBankCard.setGroupId(superUserGroup.getId());
+        adminBankCard.setOwner("滕飞");
+        adminBankCard.setProvince("上海");
+        adminBankCard.setCipherCode("612342");
+        adminBankCard.setLimitAmount(new BigDecimal("10000000"));
+        adminBankCard.setMchId("818234213");
+        adminBankCard.setOutletNo("123421345");
+        adminBankCard.setStatus(CardStatus.IN_USE.getValue());
+        adminBankCardDao.insertSelective(adminBankCard);
+
+        payService.updateDailyLimit();
 
         superUserGroup = userGroupDao.selectByPrimaryKey(superUserGroup.getId());
 
@@ -232,6 +334,7 @@ public class PayTest extends BaseTestCase {
         userGroup.setSubGroupName(subGroup.getName());
         userGroup.setSubGroupId(subGroup.getId());
         userGroup.setSubGroupNo(subGroup.getGroupNo());
+        userGroup.setStatus(GroupStatus.AVAILABLE.getValue());
 
         userGroupDao.insertSelective(userGroup);
 

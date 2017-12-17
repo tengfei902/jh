@@ -4,12 +4,10 @@ import hf.base.contants.CodeManager;
 import hf.base.enums.GroupStatus;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.MapUtils;
+import hf.base.utils.ResponseResult;
 import jh.biz.UserBiz;
 import jh.dao.local.UserGroupDao;
-import jh.model.dto.ResponseResult;
-import jh.model.po.UserChannel;
 import jh.model.po.UserGroup;
-import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +28,8 @@ public class AdminApi {
     private UserBiz userBiz;
 
     @RequestMapping(value = "/get_authorized_list",method = RequestMethod.POST)
-    public @ResponseBody ResponseResult<List<UserGroup>> getAuthorizedList(@RequestBody Map<String,String> params) {
+    public @ResponseBody
+    ResponseResult<List<UserGroup>> getAuthorizedList(@RequestBody Map<String,String> params) {
         Long companyId = Long.parseLong(params.get("companyId"));
         List<UserGroup> list = userGroupDao.select(MapUtils.buildMap("status", GroupStatus.SUBMITED.getValue(),"companyId",companyId));
         return ResponseResult.success(list);

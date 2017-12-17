@@ -8,8 +8,7 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-	<context:component-scan
-		base-package="jh.*">
+	<context:component-scan base-package="jh.*">
 		<context:include-filter type="annotation"
 			expression="org.springframework.stereotype.Service" />
 		<context:include-filter type="annotation"
@@ -23,4 +22,13 @@
 	<task:executor id="asyncExecutor" pool-size="5-10" queue-capacity="200" rejection-policy="CALLER_RUNS"/>
 
 	<bean class="org.springframework.web.client.RestTemplate"/>
+	<bean class="jh.utils.BeanContextUtils"/>
+	<bean id="payBizCollection" class="jh.biz.service.PayBizCollection">
+		<constructor-arg>
+			<map>
+				<entry key="ys" value-ref="ysPayBiz"/>
+				<entry key="fxt" value-ref="fxtPayBiz"/>
+			</map>
+		</constructor-arg>
+	</bean>
 </beans>

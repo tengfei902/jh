@@ -3,6 +3,7 @@ package jh.dao.local;
 import jh.model.po.AdminBankCard;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AdminBankCardDao {
@@ -21,4 +22,8 @@ public interface AdminBankCardDao {
     AdminBankCard selectByCompanyId(@Param("companyId")Long companyId,@Param("groupId")Long groupId);
 
     List<AdminBankCard> selectByGroupId(@Param("groupId")Long groupId);
+
+    AdminBankCard selectAvailableCard(@Param("groupId") Long groupId, @Param("amount") BigDecimal amount);
+
+    List<AdminBankCard> select();
 }

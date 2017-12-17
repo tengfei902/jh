@@ -18,6 +18,8 @@ public class Channel {
     private String url;
     @Field(required = true,type = Field.Type.number)
     private Integer status;
+    @Field(required = true)
+    private String channelNo;
 
     public Long getId() {
         return id;
@@ -73,5 +75,13 @@ public class Channel {
 
     public void setCodeDesc(String codeDesc) {
         this.codeDesc = codeDesc;
+    }
+
+    public String getChannelNo() {
+        return channelNo;
+    }
+
+    public void setChannelNo(String channelNo) {
+        this.channelNo = channelNo;
     }
 }

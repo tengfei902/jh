@@ -9,9 +9,10 @@
     <result column="fee_rate" property="feeRate" jdbcType="DECIMAL" />
     <result column="status" property="status" jdbcType="INTEGER" />
     <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="channel_no" property="channelNo" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, channel_code,code_desc, channel_name, fee_rate, `status`,url
+    id, channel_code,code_desc, channel_name, fee_rate, `status`,url,channel_no
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -48,6 +49,9 @@
       <if test="url != null" >
         url,
       </if>
+      <if test="channelNo != null" >
+        channel_no,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -70,6 +74,9 @@
       </if>
       <if test="url != null" >
         #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="channelNo != null" >
+        #{channelNo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

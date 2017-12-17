@@ -1,20 +1,17 @@
 package jh.job;
 
-import jh.biz.PayBiz;
+import jh.biz.service.PayService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PayResultJob {
+public class DailyLimitUpdateJob {
     @Autowired
-    @Qualifier("ysPayBiz")
-    private PayBiz payBiz;
+    private PayService payService;
 
-    @Scheduled(cron = "0 5/5 * * * *")
+    @Scheduled(cron = "0 0 1 * * ? ")
     public void checkPayResult() {
-        //todo job log
-//        payBiz.finishPay();
+        payService.updateDailyLimit();
     }
 }

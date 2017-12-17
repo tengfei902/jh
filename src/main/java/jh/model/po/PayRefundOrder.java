@@ -1,7 +1,6 @@
 package jh.model.po;
 
-import jh.model.dto.RefundRequest;
-import jh.model.dto.ReverseRequest;
+import jh.model.remote.RefundRequest;
 
 import java.util.Date;
 

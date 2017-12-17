@@ -13,10 +13,16 @@
     <result column="city" jdbcType="VARCHAR" property="city" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="mch_id" jdbcType="VARCHAR" property="mchId" />
+    <result column="outlet_no" jdbcType="VARCHAR" property="outletNo" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="owner_name" jdbcType="VARCHAR" property="ownerName" />
+    <result column="limit_amount" jdbcType="DECIMAL" property="limitAmount" />
+    <result column="cipher_code" jdbcType="VARCHAR" property="cipherCode" />
   </resultMap>
   <sql id="Base_Column_List">
     id, company_id, group_id, bank_no, bank, deposit, `owner`, province, city, `status`, 
-    remark
+    remark,mch_id,outlet_no,name,owner_name,limit_amount,cipher_code
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -74,6 +80,24 @@
       <if test="remark != null">
         remark,
       </if>
+      <if test="mchId != null">
+        mch_id,
+      </if>
+      <if test="outletNo != null">
+        outlet_no,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="ownerName != null">
+        owner_name,
+      </if>
+      <if test="limitAmount != null">
+        limit_amount,
+      </if>
+      <if test="cipherCode != null">
+        cipher_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -108,6 +132,24 @@
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="mchId != null">
+        #{mchId,jdbcType=VARCHAR},
+      </if>
+      <if test="outletNo != null">
+        #{outletNo,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="ownerName != null">
+        #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="limitAmount != null">
+        #{limitAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="cipherCode != null">
+        #{cipherCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -144,6 +186,12 @@
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="limitAmount != null">
+        limit_amount = #{limitAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="cipherCode != null">
+        cipher_code = #{cipherCode,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -175,4 +223,12 @@
     from admin_bank_card
     where group_id = #{groupId,jdbcType=BIGINT}
   </select>
+
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from admin_bank_card
+    where status = 10
+  </select>
+
 </mapper>

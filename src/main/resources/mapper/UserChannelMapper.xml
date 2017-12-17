@@ -246,7 +246,6 @@
     from user_channel
     where mch_id = #{mchId,jdbcType=VARCHAR}
     and channel_code = #{channelCode,jdbcType=VARCHAR}
-    and channel_name = #{channelName,jdbcType=VARCHAR}
   </select>
 
   <select id="selectByGroupIdList" resultMap="BaseResultMap">

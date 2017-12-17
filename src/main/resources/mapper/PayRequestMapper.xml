@@ -19,10 +19,11 @@
     <result column="fee" property="fee" jdbcType="DECIMAL" />
     <result column="actual_amount" property="actualAmount" jdbcType="DECIMAL" />
     <result column="total_fee" property="totalFee" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, out_trade_no, body, mch_id, sub_openid, buyer_id, service, appid, sign, `status`, 
-    create_time, update_time, version,trade_type,fee,actual_amount,total_fee
+    create_time, update_time, version,trade_type,fee,actual_amount,total_fee,remark
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -100,6 +101,9 @@
       <if test="totalFee != null" >
         total_fee,
       </if>
+      <if test="remark != null" >
+        remark,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -153,6 +157,9 @@
       <if test="totalFee != null" >
         #{totalFee,jdbcType=INTEGER},
       </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.PayRequest" >
@@ -194,6 +201,9 @@
       <if test="version != null" >
         version = #{version,jdbcType=INTEGER},
       </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -224,6 +234,13 @@
   <update id="updateStatusById">
     update pay_request
     set status = #{toStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateFailed">
+    update pay_request
+    set status = 98,
+    remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT} and status = #{fromStatus,jdbcType=INTEGER}
   </update>
 
