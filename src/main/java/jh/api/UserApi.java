@@ -2,6 +2,7 @@ package jh.api;
 
 import hf.base.contants.CodeManager;
 import hf.base.contants.Constants;
+import hf.base.enums.ChannelStatus;
 import hf.base.enums.GroupStatus;
 import hf.base.enums.UserStatus;
 import hf.base.exceptions.BizFailException;
@@ -25,6 +26,7 @@ import jh.model.po.Channel;
 import jh.model.po.UserBankCard;
 import jh.model.po.UserChannel;
 import jh.model.po.UserGroup;
+import jh.model.po.UserGroupExt;
 import jh.model.po.UserInfo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -64,6 +66,10 @@ public class UserApi {
     private CacheService cacheService;
     @Autowired
     private AdminAccountDao adminAccountDao;
+    @Autowired
+    private ChannelProviderDao channelProviderDao;
+    @Autowired
+    private UserGroupExtDao userGroupExtDao;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody
@@ -299,7 +305,14 @@ public class UserApi {
     public @ResponseBody ResponseResult<Boolean> saveChannel(@RequestBody Map<String,Object> data) {
         try {
             Channel channel = TypeConverter.convert(data, Channel.class);
-            channelDao.insertSelective(channel);
+            if(channel.getId() != null && channel.getId() > 0) {
+                channelDao.updateByPrimaryKeySelective(channel);
+            } else {
+                ChannelProvider channelProvider = channelProviderDao.selectByCode(channel.getProviderCode());
+                channel.setProviderName(channelProvider.getProviderName());
+                channel.setProviderNo("");
+                channelDao.insertSelective(channel);
+            }
             return ResponseResult.success(true);
         } catch (Exception e) {
             throw new BizFailException(e.getMessage());
@@ -312,9 +325,19 @@ public class UserApi {
             UserChannel userChannel = TypeConverter.convert(data,UserChannel.class);
             channelBiz.saveUserChannel(userChannel);
             return ResponseResult.success(Boolean.TRUE);
+        } catch (BizFailException e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),Boolean.FALSE);
         } catch (Exception e) {
             throw new BizFailException(e.getMessage());
         }
+    }
+
+
+    @RequestMapping(value = "/del_channel",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> deleteChannel(@RequestBody Map<String,Object> data) {
+        Long channelId = new BigDecimal(data.get("channelId").toString()).longValue();
+        channelDao.deleteByPrimaryKey(channelId);
+        return ResponseResult.success(true);
     }
 
     @RequestMapping(value = "/get_admin_bank_card_list",method = RequestMethod.POST)
@@ -442,7 +465,7 @@ public class UserApi {
 
     @RequestMapping(value = "/get_channel_by_id",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody ResponseResult<Channel> getChannelById(@RequestBody Map<String,String> params) {
-        Long id = Long.parseLong(params.get("id"));
+        Long id = new BigDecimal(params.get("id")).longValue();
         Channel channel = channelDao.selectByPrimaryKey(id);
         return ResponseResult.success(channel);
     }
@@ -519,5 +542,52 @@ public class UserApi {
         Long groupId =  new BigDecimal(params.get("groupId")).longValue();
         AdminAccount adminAccount = adminAccountDao.selectByGroupId(groupId);
         return ResponseResult.success(adminAccount);
+    }
+
+    @RequestMapping(value = "/get_user_group_ext_by_code",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<UserGroupExt> getUserGroupExtByCode(@RequestBody Map<String,Object> data) {
+        String providerCode = String.valueOf(data.get("providerCode"));
+        Long groupId = new BigDecimal(data.get("groupId").toString()).longValue();
+        UserGroupExt userGroupExt = userGroupExtDao.selectByUnq(groupId,providerCode);
+        return ResponseResult.success(userGroupExt);
+    }
+
+    @RequestMapping(value = "/get_user_group_ext_by_id",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<UserGroupExt> getUserGroupExtById(@RequestBody Map<String,Object> data) {
+        Long id = new BigDecimal(data.get("id").toString()).longValue();
+        UserGroupExt userGroupExt = userGroupExtDao.selectByPrimaryKey(id);
+        return ResponseResult.success(userGroupExt);
+    }
+
+
+    @RequestMapping(value = "/save_user_group_ext",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveUserGroupExt(@RequestBody Map<String,Object> data) {
+        try {
+            UserGroupExt userGroupExt = TypeConverter.convert(data,UserGroupExt.class);
+            if(userGroupExt.getId()!= null && userGroupExt.getId()>0L) {
+                userGroupExtDao.updateByPrimaryKeySelective(userGroupExt);
+            } else {
+                ChannelProvider channelProvider = channelProviderDao.selectByCode(userGroupExt.getProviderCode());
+                userGroupExt.setProviderName(channelProvider.getProviderName());
+                userGroupExtDao.insertSelective(userGroupExt);
+            }
+            return ResponseResult.success(true);
+        } catch (Exception e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),false);
+        }
+    }
+
+    @RequestMapping(value = "/get_user_channel_info",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<UserChannelPage>> getUserChannelInfo(@RequestBody Map<String,Object> data) {
+        Long groupId = new BigDecimal(data.get("groupId").toString()).longValue();
+        List<UserChannelPage> list = userBiz.getUserChannelInfo(groupId);
+        return ResponseResult.success(list);
+    }
+
+    @RequestMapping(value = "/get_provider_channel_list",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<Channel>> getProviderChannelList(@RequestBody Map<String,Object> data) {
+        String providerCode = data.get("providerCode").toString();
+        List<Channel> channels = channelDao.selectByProviderCode(providerCode);
+        return ResponseResult.success(channels);
     }
 }

@@ -1,17 +1,23 @@
 package jh.dao.remote;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import hf.base.client.BaseClient;
+import hf.base.model.RemoteParams;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
-public class YsClient implements PayClient {
+public class YsClient extends BaseClient implements PayClient {
     private static final String payUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=apiPay";
     private static final String checkPayUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=queryOrder";
 
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
-        return null;
+        RemoteParams remoteParams = new RemoteParams(payUrl).withParams(params);
+        String result = super.post(remoteParams);
+        return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());
     }
 
     @Override

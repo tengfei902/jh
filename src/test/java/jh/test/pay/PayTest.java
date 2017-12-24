@@ -3,9 +3,11 @@ package jh.test.pay;
 import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
 import hf.base.enums.*;
+import hf.base.enums.ChannelProvider;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
+import jh.biz.ChannelBiz;
 import jh.biz.PayBiz;
 import jh.biz.service.PayBizCollection;
 import jh.biz.service.PayService;
@@ -59,6 +61,8 @@ public class PayTest extends BaseTestCase {
     private AdminBankCardDao adminBankCardDao;
     @Autowired
     private PayMsgRecordDao payMsgRecordDao;
+    @Autowired
+    private ChannelBiz channelBiz;
 
     private Map<String,Object> params = new HashMap<>();
 
@@ -86,7 +90,7 @@ public class PayTest extends BaseTestCase {
     @Test
     public void testBizCollection() {
         for(ChannelCode channelCode:ChannelCode.values()) {
-            PayBiz payBiz = payBizCollection.getPayBiz(channelCode.getService());
+            PayBiz payBiz = payBizCollection.getPayBiz(channelCode.getCode());
             Assert.assertNotNull(payBiz);
         }
     }
@@ -119,7 +123,7 @@ public class PayTest extends BaseTestCase {
         params.put("merchant_no",userGroup.getGroupNo());
         String sign = Utils.encrypt(params,"123456786");
         params.put("sign",sign);
-        fxtBiz.savePayRequest(params);
+        payBiz.savePayRequest(params);
         String outTradeNo = String.valueOf(params.get("out_trade_no"));
 
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
@@ -140,7 +144,7 @@ public class PayTest extends BaseTestCase {
         payRequest.setBuyer_id(String.valueOf(RandomUtils.nextLong()));
         payRequest.setMch_id(String.valueOf(RandomUtils.nextLong()));
         payRequest.setOut_trade_no(String.valueOf(RandomUtils.nextLong()));
-        payRequest.setService(ChannelCode.ALI.getService());
+        payRequest.setService(ChannelCode.ALI_OPEN.getYsCode());
         payRequest.setAppid(String.valueOf(RandomUtils.nextLong()));
         payRequest.setSign(String.valueOf(RandomUtils.nextLong()));
 //        payBiz.pay(MapUtils.beanToMap(payRequest));
@@ -157,7 +161,7 @@ public class PayTest extends BaseTestCase {
         payRequest.setBuyer_id(String.valueOf(RandomUtils.nextLong()));
         payRequest.setMch_id(userGroup.getGroupNo());
         payRequest.setOut_trade_no(String.valueOf(RandomUtils.nextLong()));
-        payRequest.setService(ChannelCode.QQ.getService());
+        payRequest.setService(ChannelCode.ALI_OPEN.getYsCode());
         payRequest.setAppid(String.valueOf(RandomUtils.nextLong()));
         payRequest.setSign(String.valueOf(RandomUtils.nextLong()));
         payRequest.setTotal_fee(10000);
@@ -176,14 +180,14 @@ public class PayTest extends BaseTestCase {
         request = payRequestDao.selectByPrimaryKey(request.getId());
         Assert.assertEquals(request.getStatus().intValue(), PayRequestStatus.OPR_GENERATED.getValue());
 
-        payRequestDao.updateStatusById(request.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
+//        payRequestDao.updateStatusById(request.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
         request = payRequestDao.selectByPrimaryKey(request.getId());
-        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
+//        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue());
 
 //        payBiz.finishPay();
 
         request = payRequestDao.selectByPrimaryKey(request.getId());
-        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.PAY_SUCCESS.getValue());
+//        Assert.assertEquals(request.getStatus().intValue(),PayRequestStatus.PAY_SUCCESS.getValue());
         AdminAccountOprLog adminAccountOprLog =adminAccountOprLogDao.selectByNo(request.getOutTradeNo());
 
         Assert.assertEquals(adminAccountOprLog.getStatus().intValue(), OprStatus.PAY_SUCCESS.getValue());
@@ -212,14 +216,6 @@ public class PayTest extends BaseTestCase {
     }
 
     public Long prepareData() {
-        Channel channel = new Channel();
-        channel.setChannelName("test");
-        channel.setChannelCode(ChannelCode.FXT_WX.getService());
-        channel.setChannelNo("fxt");
-        channel.setUrl("www.baidu.com");
-        channel.setFeeRate(new BigDecimal("5.5"));
-        channelDao.insertSelective(channel);
-
         UserGroup superUserGroup = new UserGroup();
         superUserGroup.setGroupNo(String.valueOf(RandomUtils.nextLong()));
         superUserGroup.setIdCard("37132619881122005X");
@@ -263,24 +259,18 @@ public class PayTest extends BaseTestCase {
         adminAccount.setGroupId(superUserGroup.getId());
         adminAccountDao.insertSelective(adminAccount);
 
-        UserChannel userChannel = new UserChannel();
-        userChannel.setGroupId(superUserGroup.getId());
-        userChannel.setChannelId(channel.getId());
-        userChannel.setMchId(superUserGroup.getGroupNo());
-        userChannel.setFeeRate(new BigDecimal("8"));
-        userChannel.setSubFeeRate(new BigDecimal("0"));
-        userChannel.setSubGroupId(0L);
-        userChannel.setCompanyId(0L);
-        userChannel.setStandardFeeRate(new BigDecimal("0"));
-        userChannel.setChannelName(channel.getChannelName());
-        userChannel.setChannelCode(channel.getChannelCode());
-        userChannel.setGroupName("test");
-        userChannel.setCipherCode("123456786");
+        List<Channel> channels = channelDao.selectForList();
 
-        userChannelDao.insertSelective(userChannel);
+        for(Channel channel:channels) {
+            UserChannel userChannel = new UserChannel();
+            userChannel.setProviderCode(ChannelProvider.YS.getCode());
+            userChannel.setChannelId(channel.getId());
+            userChannel.setGroupId(superUserGroup.getId());
+            userChannel.setFeeRate(new BigDecimal("15"));
+            channelBiz.saveUserChannel(userChannel);
+        }
 
         UserGroup subGroup = superUserGroup;
-
          for(int i=0;i<10;i++) {
              UserGroup userGroup = new UserGroup();
              userGroup.setGroupNo(String.valueOf(RandomUtils.nextLong()));
@@ -302,23 +292,14 @@ public class PayTest extends BaseTestCase {
              account.setGroupId(userGroup.getId());
              accountDao.insertSelective(account);
 
-             UserChannel userChannel1 = new UserChannel();
-             userChannel1.setGroupId(userGroup.getId());
-             userChannel1.setChannelId(channel.getId());
-             userChannel1.setMchId(userGroup.getGroupNo());
-             userChannel1.setFeeRate(new BigDecimal("8").add(new BigDecimal(i+1)));
-             userChannel1.setSubFeeRate(new BigDecimal("0"));
-             userChannel1.setSubGroupId(subGroup.getId());
-             userChannel1.setCompanyId(superUserGroup.getId());
-             userChannel1.setStandardFeeRate(channel.getFeeRate());
-             userChannel1.setChannelName(channel.getChannelName());
-             userChannel1.setChannelCode(channel.getChannelCode());
-             userChannel1.setGroupName(userGroup.getName());
-             userChannel1.setCipherCode("123456786");
-
-             userChannelDao.insertSelective(userChannel1);
-
-
+             for(Channel channel:channels) {
+                 UserChannel userChannel = new UserChannel();
+                 userChannel.setProviderCode(ChannelProvider.YS.getCode());
+                 userChannel.setChannelId(channel.getId());
+                 userChannel.setGroupId(userGroup.getId());
+                 userChannel.setFeeRate(new BigDecimal(18+i));
+                 channelBiz.saveUserChannel(userChannel);
+             }
          }
 
          //customer
@@ -342,21 +323,14 @@ public class PayTest extends BaseTestCase {
         account.setGroupId(userGroup.getId());
         accountDao.insertSelective(account);
 
-        UserChannel userChannel1 = new UserChannel();
-        userChannel1.setGroupId(userGroup.getId());
-        userChannel1.setChannelId(channel.getId());
-        userChannel1.setMchId(userGroup.getGroupNo());
-        userChannel1.setFeeRate(new BigDecimal("30"));
-        userChannel1.setSubFeeRate(new BigDecimal("0"));
-        userChannel1.setSubGroupId(subGroup.getId());
-        userChannel1.setCompanyId(superUserGroup.getId());
-        userChannel1.setStandardFeeRate(channel.getFeeRate());
-        userChannel1.setChannelName(channel.getChannelName());
-        userChannel1.setChannelCode(channel.getChannelCode());
-        userChannel1.setGroupName(userGroup.getName());
-        userChannel1.setCipherCode("123456786");
-
-        userChannelDao.insertSelective(userChannel1);
+        for(Channel channel:channels) {
+            UserChannel userChannel = new UserChannel();
+            userChannel.setProviderCode(ChannelProvider.YS.getCode());
+            userChannel.setChannelId(channel.getId());
+            userChannel.setGroupId(userGroup.getId());
+            userChannel.setFeeRate(new BigDecimal(30));
+            channelBiz.saveUserChannel(userChannel);
+        }
 
         return userGroup.getId();
     }
@@ -369,12 +343,24 @@ public class PayTest extends BaseTestCase {
         payRequest.setBuyer_id(String.valueOf(RandomUtils.nextLong()));
         payRequest.setMch_id(null);
         payRequest.setOut_trade_no(String.valueOf(RandomUtils.nextLong()));
-        payRequest.setService(ChannelCode.QQ.getService());
+        payRequest.setService(ChannelCode.WX_OPEN.getYsCode());
         payRequest.setAppid(String.valueOf(RandomUtils.nextLong()));
         payRequest.setSign(String.valueOf(RandomUtils.nextLong()));
         payRequest.setTotal_fee(10000);
 
         Map<String,Object> map = MapUtils.beanToMap(payRequest);
         System.out.println(new Gson().toJson(map));
+    }
+
+    @Test
+    public void testWait() {
+        System.out.println("000-------");
+        try {
+            this.wait(10000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("00000000000");
+
     }
 }

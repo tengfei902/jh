@@ -20,10 +20,12 @@
     <result column="actual_amount" property="actualAmount" jdbcType="DECIMAL" />
     <result column="total_fee" property="totalFee" jdbcType="INTEGER" />
     <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="channel_provider_code" property="channelProviderCode" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, out_trade_no, body, mch_id, sub_openid, buyer_id, service, appid, sign, `status`, 
-    create_time, update_time, version,trade_type,fee,actual_amount,total_fee,remark
+    create_time, update_time, version,trade_type,fee,actual_amount,total_fee,remark,
+    channel_provider_code
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -104,6 +106,9 @@
       <if test="remark != null" >
         remark,
       </if>
+      <if test="channelProviderCode != null" >
+        channel_provider_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -159,6 +164,9 @@
       </if>
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="channelProviderCode != null" >
+        #{channelProviderCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

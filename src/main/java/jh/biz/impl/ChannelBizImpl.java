@@ -34,7 +34,7 @@ public class ChannelBizImpl implements ChannelBiz {
             userChannelDao.updateByPrimaryKeySelective(userChannel);
         } else {
             Channel channel = channelDao.selectByPrimaryKey(userChannel.getChannelId());
-            userChannel.setChannelCode(channel.getChannelCode());
+            userChannel.setChannelCode(channel.getCode());
             userChannel.setChannelName(channel.getChannelName());
             userChannel.setStandardFeeRate(channel.getFeeRate());
             UserGroup userGroup = userGroupDao.selectByPrimaryKey(userChannel.getGroupId());
@@ -51,11 +51,11 @@ public class ChannelBizImpl implements ChannelBiz {
             userChannel.setSubGroupId(userGroup.getSubGroupId());
 
             if(userChannel.getFeeRate().compareTo(userChannel.getSubFeeRate())<0) {
-                throw new BizFailException(String.format("feeRate should lt subFeeRate,%s,%s",userChannel.getFeeRate(),userChannel.getSubFeeRate()));
+                throw new BizFailException(String.format("费率必须大于%s",userChannel.getSubFeeRate()));
             }
 
             if(userChannel.getSubFeeRate().compareTo(userChannel.getStandardFeeRate())<0) {
-                throw new BizFailException(String.format("subFeeRate should lt standardFeeRate,%s,%s",userChannel.getSubFeeRate(),userChannel.getStandardFeeRate()));
+                throw new BizFailException(String.format("费率必须大于%s",userChannel.getStandardFeeRate()));
             }
 
             userChannelDao.insertSelective(userChannel);

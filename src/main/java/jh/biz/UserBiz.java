@@ -1,5 +1,6 @@
 package jh.biz;
 
+import hf.base.model.UserChannelPage;
 import jh.model.po.AdminBankCard;
 import jh.model.po.UserBankCard;
 import jh.model.po.UserGroup;
@@ -40,4 +41,6 @@ public interface UserBiz {
     void saveAminGroup(UserGroup userGroup);
 
     void saveUserGroup(UserGroup userGroup);
+
+    List<UserChannelPage> getUserChannelInfo(Long groupId);
 }

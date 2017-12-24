@@ -2,36 +2,49 @@ package jh.biz.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import hf.base.contants.CodeManager;
 import hf.base.enums.OperateType;
 import hf.base.enums.PayRequestStatus;
 import hf.base.enums.TradeType;
 import hf.base.exceptions.BizFailException;
 import jh.biz.PayBiz;
+import jh.biz.service.CacheService;
 import jh.biz.service.PayService;
+import jh.dao.local.ChannelDao;
 import jh.dao.local.PayMsgRecordDao;
 import jh.dao.local.PayRequestDao;
+import jh.dao.local.UserChannelDao;
 import jh.dao.remote.PayClient;
 import jh.model.po.PayMsgRecord;
 import jh.model.po.PayRequest;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import java.util.Map;
 import java.util.Objects;
 
 public abstract class AbstractPayBiz implements PayBiz {
 
-    private Logger logger = LoggerFactory.getLogger(AbstractPayBiz.class);
+    protected Logger logger = LoggerFactory.getLogger(AbstractPayBiz.class);
     @Autowired
-    private PayRequestDao payRequestDao;
+    protected PayRequestDao payRequestDao;
     @Autowired
     private PayService payService;
     @Autowired
-    private PayMsgRecordDao payMsgRecordDao;
+    protected PayMsgRecordDao payMsgRecordDao;
+    @Autowired
+    protected CacheService cacheService;
+    @Autowired
+    protected UserChannelDao userChannelDao;
+    @Autowired
+    protected ChannelDao channelDao;
+
+    private static final String[] needFields = {"service","version","merchant_no","outlet_no","total","name","remark","out_trade_no",
+            "create_ip","out_notify_url","authcode","nonce_str","sign"};
 
     abstract PayClient getPayClient();
+    abstract void handlePayResult(PayRequest payRequest,PayMsgRecord payMsgRecord,Map<String, Object> payResult);
 
     @Override
     public void pay(PayRequest payRequest) {
@@ -39,14 +52,13 @@ public abstract class AbstractPayBiz implements PayBiz {
 
         switch (PayRequestStatus.parse(payRequest.getStatus())) {
             case NEW:
+                payService.saveOprLog(payRequest);
                 doRemoteCall(payRequest);
                 break;
             case OPR_GENERATED:
                 doRemoteCall(payRequest);
                 break;
-            case REMOTE_CALL_FINISHED:
-                break;
-            case PAY_SUCCESS:
+            case PROCESSING:
                 break;
             case PAY_FAILED:
                 break;
@@ -60,36 +72,8 @@ public abstract class AbstractPayBiz implements PayBiz {
     private void doRemoteCall(PayRequest payRequest) {
         PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(payRequest.getOutTradeNo(), OperateType.HF_CLIENT.getValue(), TradeType.PAY.getValue());
         Map<String,Object> params = new Gson().fromJson(payMsgRecord.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
-        Map<String,Object> result = getPayClient().refundorder(params);
-        if(MapUtils.isEmpty(result)) {
-            throw new BizFailException();
-        }
-
-        if(Objects.isNull(result.get("errcode"))) {
-            throw new BizFailException();
-        }
-
-        PayMsgRecord remoteReturnMsgRecord = new PayMsgRecord(payMsgRecord.getOutTradeNo(),payMsgRecord.getMerchantNo(),payMsgRecord.getService(),OperateType.CLIENT_HF.getValue(), TradeType.PAY.getValue(),result);
-        try {
-            payMsgRecordDao.insertSelective(remoteReturnMsgRecord);
-        } catch (DuplicateKeyException e) {
-            logger.warn(String.format("pay msg already exist,%s,%s,%s",remoteReturnMsgRecord.getOutTradeNo(),remoteReturnMsgRecord.getTradeType(),remoteReturnMsgRecord.getOperateType()));
-        }
-
-        PayMsgRecord hfToUserMsgRecord = new PayMsgRecord(payMsgRecord.getOutTradeNo(),payMsgRecord.getMerchantNo(),payMsgRecord.getService(),OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),result);
-        try {
-            payMsgRecordDao.insertSelective(hfToUserMsgRecord);
-        } catch (DuplicateKeyException e ){
-            logger.warn(String.format("pay msg already exists,%s,%s,%s",hfToUserMsgRecord.getOutTradeNo(),hfToUserMsgRecord.getTradeType(),hfToUserMsgRecord.getOperateType()));
-        }
-
-        String errcode = String.valueOf(result.get("errcode"));
-        String message = String.valueOf(result.get("message"));
-        if("0".equalsIgnoreCase(errcode) || "4".equalsIgnoreCase(errcode)) {
-            payService.saveOprLog(payRequest);
-        } else {
-            payRequestDao.updateFailed(payRequest.getId(),PayRequestStatus.NEW.getValue(),message);
-        }
+        Map<String,Object> result = getPayClient().unifiedorder(params);
+        handlePayResult(payRequest,payMsgRecord,result);
     }
 
     @Override
@@ -131,4 +115,12 @@ public abstract class AbstractPayBiz implements PayBiz {
 //                payService.payPromote(payRequest.getOutTradeNo())
 //        );
 //    }
+
+    protected void checkField(Map<String,Object> map) {
+        for(String field:needFields) {
+            if(Objects.isNull(map.get(field)) || StringUtils.isBlank(map.get(field).toString()) || StringUtils.equalsIgnoreCase("null",map.get(field).toString())) {
+                throw new BizFailException(CodeManager.PARAM_CHECK_FAILED,String.format("参数错误:%s",field));
+            }
+        }
+    }
 }

@@ -16,9 +16,11 @@
     <result column="company_id" property="companyId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="owner_name" property="ownerName" jdbcType="VARCHAR" />
+    <result column="cipher_code" property="cipherCode" jdbcType="VARCHAR" />
+    <result column="callback_url" property="callbackUrl" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, `name`, id_card, tel, address, `type`, `status`, group_no,sub_group_id,sub_group_no,sub_group_name,company_id,create_time,owner_name
+    id, `name`, id_card, tel, address, `type`, `status`, group_no,sub_group_id,sub_group_no,sub_group_name,company_id,create_time,owner_name,cipher_code,callback_url
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -80,6 +82,12 @@
       <if test="ownerName != null" >
         owner_name,
       </if>
+      <if test="cipherCode != null" >
+        cipher_code,
+      </if>
+      <if test="callbackUrl != null" >
+        callback_url,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -121,6 +129,12 @@
       <if test="ownerName != null" >
         #{ownerName,jdbcType=VARCHAR},
       </if>
+      <if test="cipherCode != null" >
+        #{cipherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callbackUrl != null" >
+        #{callbackUrl,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="jh.model.po.UserGroup" >
@@ -149,6 +163,12 @@
       </if>
       <if test="ownerName != null" >
         owner_name = #{ownerName,jdbcType=VARCHAR},
+      </if>
+      <if test="cipherCode != null" >
+        cipher_code = #{cipherCode,jdbcType=VARCHAR},
+      </if>
+      <if test="callbackUrl != null" >
+        callback_url = #{callbackUrl,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}

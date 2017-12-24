@@ -33,6 +33,10 @@ public class UserGroup {
     private Date createTime;
     @Field(required = true)
     private String ownerName;
+    @Field
+    private String callbackUrl;
+    @Field
+    private String cipherCode;
 
     public Long getId() {
         return id;
@@ -144,6 +148,22 @@ public class UserGroup {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
+    }
+
+    public String getCipherCode() {
+        return cipherCode;
+    }
+
+    public void setCipherCode(String cipherCode) {
+        this.cipherCode = cipherCode;
     }
 
     public enum Status {

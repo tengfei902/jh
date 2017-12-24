@@ -2,6 +2,7 @@ package jh.biz.impl;
 
 import hf.base.contants.CodeManager;
 import hf.base.enums.*;
+import hf.base.enums.ChannelProvider;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
 import jh.biz.service.CacheService;
@@ -11,9 +12,11 @@ import jh.dao.remote.PayClient;
 import jh.model.dto.*;
 import jh.model.po.*;
 import jh.model.remote.RefundRequest;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
@@ -21,27 +24,14 @@ import java.util.*;
 @Service
 public class FxtPayBiz extends AbstractPayBiz {
     @Autowired
-    private UserChannelDao userChannelDao;
-    @Autowired
-    private ChannelDao channelDao;
-    @Autowired
     private PayService payService;
-    @Autowired
-    private CacheService cacheService;
-    @Autowired
-    private PayMsgRecordDao payMsgRecordDao;
-    @Autowired
-    private PayRequestDao payRequestDao;
     @Autowired
     @Qualifier("fxtClient")
     private PayClient payClient;
 
-    private String[] needFields = {"service","version","merchant_no","outlet_no","total","name","remark","out_trade_no",
-    "create_ip","out_notify_url","authcode","nonce_str","sign"};
-
     @Override
     public void checkParam(Map<String, Object> map) {
-        checkField(map);
+        super.checkField(map);
         String service = String.valueOf(map.get("service"));
         String sub_openid = String.valueOf(map.get("sub_openid"));
         String buyer_id = String.valueOf(map.get("buyer_id"));
@@ -62,7 +52,7 @@ public class FxtPayBiz extends AbstractPayBiz {
             throw new BizFailException(CodeManager.PERMISSION_DENY,"没有权限");
         }
 
-        UserChannel userChannel = userChannelDao.selectByMchId(String.valueOf(map.get("merchant_no")),String.valueOf(map.get("service")));
+        UserChannel userChannel = userChannelDao.selectByGroupChannelCode(userGroup.getId(),String.valueOf(map.get("service")), ChannelProvider.FXT.getCode());
         if(Objects.isNull(userChannel) || userChannel.getStatus() != UserChannelStatus.VALID.getValue()) {
             throw new BizFailException(CodeManager.PERMISSION_DENY,"没有权限");
         }
@@ -137,17 +127,42 @@ public class FxtPayBiz extends AbstractPayBiz {
         return payRequest.getId();
     }
 
-    private void checkField(Map<String,Object> map) {
-        for(String field:needFields) {
-            if(Objects.isNull(map.get(field)) || StringUtils.isBlank(map.get(field).toString()) || StringUtils.equalsIgnoreCase("null",map.get(field).toString())) {
-                throw new BizFailException(CodeManager.PARAM_CHECK_FAILED,String.format("参数错误:%s",field));
-            }
-        }
-    }
-
     @Override
     PayClient getPayClient() {
         return payClient;
+    }
+
+    @Override
+    void handlePayResult(PayRequest payRequest,PayMsgRecord payMsgRecord,Map<String, Object> payResult) {
+        if(MapUtils.isEmpty(payResult)) {
+            throw new BizFailException();
+        }
+
+        if(Objects.isNull(payResult.get("errcode"))) {
+            throw new BizFailException();
+        }
+
+        PayMsgRecord remoteReturnMsgRecord = new PayMsgRecord(payMsgRecord.getOutTradeNo(),payMsgRecord.getMerchantNo(),payMsgRecord.getService(),OperateType.CLIENT_HF.getValue(), TradeType.PAY.getValue(),payResult);
+        try {
+            payMsgRecordDao.insertSelective(remoteReturnMsgRecord);
+        } catch (DuplicateKeyException e) {
+            logger.warn(String.format("pay msg already exist,%s,%s,%s",remoteReturnMsgRecord.getOutTradeNo(),remoteReturnMsgRecord.getTradeType(),remoteReturnMsgRecord.getOperateType()));
+        }
+
+        PayMsgRecord hfToUserMsgRecord = new PayMsgRecord(payMsgRecord.getOutTradeNo(),payMsgRecord.getMerchantNo(),payMsgRecord.getService(),OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),payResult);
+        try {
+            payMsgRecordDao.insertSelective(hfToUserMsgRecord);
+        } catch (DuplicateKeyException e ){
+            logger.warn(String.format("pay msg already exists,%s,%s,%s",hfToUserMsgRecord.getOutTradeNo(),hfToUserMsgRecord.getTradeType(),hfToUserMsgRecord.getOperateType()));
+        }
+
+        String errcode = String.valueOf(payResult.get("errcode"));
+        String message = String.valueOf(payResult.get("message"));
+        if("0".equalsIgnoreCase(errcode) || "4".equalsIgnoreCase(errcode)) {
+            payService.saveOprLog(payRequest);
+        } else {
+            payRequestDao.updateFailed(payRequest.getId(),PayRequestStatus.NEW.getValue(),message);
+        }
     }
 
     @Override
@@ -158,5 +173,20 @@ public class FxtPayBiz extends AbstractPayBiz {
     @Override
     public ReverseResponse reverse(ReverseRequest reverseRequest) {
         return null;
+    }
+
+    @Override
+    public ChannelProvider getProvider() {
+        return ChannelProvider.FXT;
+    }
+
+    @Override
+    public void checkCallBack(Map<String, Object> map) {
+
+    }
+
+    @Override
+    public void finishPay(Map<String, Object> map) {
+
     }
 }

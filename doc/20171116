@@ -2,3 +2,24 @@ todo :
 1.user_group:企业相关字段：法人，身份证号，备案号，工商号等，待确认;
 
 2.总部与分公司的区别：总部sub_group_id = 0,分公司sub_group_id = 总公司id，两者company_id都为0
+
+3.支付流程：
+    1.接收用户付款申请；
+    2.校验付款信息
+    3.落地msg，payRequest
+    4.保存opr log信息，payRequest状态NEW - OPR_FINISH
+    5.远程调用付款接口
+        a.付款成功:
+            修改payRequest状态 OPR_FINISH - PROCESSING
+        b.付款失败:
+            修改payRequest状态 OPR_FINISH - failed 98
+            修改OPR LOG状态 失败
+        c.状态不明:
+            查询opr_finish状态payRequest,远程调用查询接口，查询处理结果,重复a,b操作
+    6.接收回调消息，校验回调参数
+        a.回调成功修改payRequest状态为OPR_SUCCESS
+        b.回调失败，修改payRequest状态为FAILED 99
+        c.没有回调消息，主动查询PROCESSING状态的payRequest
+    7.回调用户url
+    8.promote
+

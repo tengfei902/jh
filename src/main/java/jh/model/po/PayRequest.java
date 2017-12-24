@@ -42,6 +42,8 @@ public class PayRequest {
 
     private String remark;
 
+    private String channelProviderCode;
+
     public PayRequest() {
 
     }
@@ -202,5 +204,13 @@ public class PayRequest {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getChannelProviderCode() {
+        return channelProviderCode;
+    }
+
+    public void setChannelProviderCode(String channelProviderCode) {
+        this.channelProviderCode = channelProviderCode;
     }
 }

@@ -10,6 +10,7 @@ import hf.base.utils.Utils;
 import jh.dao.local.*;
 import jh.model.dto.UserInfoRequest;
 import jh.model.po.*;
+import jh.model.po.ChannelProvider;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.RandomUtils;
@@ -54,6 +55,18 @@ public class BaseCommitTestCase {
     private SettleTaskDao settleTaskDao;
     @Autowired
     private UserChannelDao userChannelDao;
+    @Autowired
+    private ChannelProviderDao channelProviderDao;
+
+    @Test
+    public void testSaveChannel() {
+        for(hf.base.enums.ChannelProvider provider: hf.base.enums.ChannelProvider.values()) {
+            ChannelProvider channelProvider = new ChannelProvider();
+            channelProvider.setProviderCode(provider.getCode());
+            channelProvider.setProviderName(provider.getName());
+            channelProviderDao.insertSelective(channelProvider);
+        }
+    }
 
     @Test
     public void testSaveUserGroup() {
@@ -261,7 +274,7 @@ public class BaseCommitTestCase {
     public void saveChannel() {
         Channel channel = new Channel();
         channel.setChannelName("阿是大富大贵");
-        channel.setChannelCode(ChannelCode.QQ.getService());
+        channel.setChannelCode(ChannelCode.WX_OPEN.getCode());
         channel.setFeeRate(new BigDecimal("10"));
         channel.setUrl("");
 
@@ -314,7 +327,7 @@ public class BaseCommitTestCase {
 
             for(int i=0;i<100;i++) {
                 PayRequest payRequest = new PayRequest();
-                payRequest.setService(ChannelCode.QQ.getService());
+                payRequest.setService(ChannelCode.WX_OPEN.getCode());
                 payRequest.setActualAmount(new BigDecimal(i+100));
                 payRequest.setFee(new BigDecimal(i));
                 payRequest.setMchId(userGroup.getGroupNo());
@@ -497,9 +510,9 @@ public class BaseCommitTestCase {
             userChannel.setStandardFeeRate(new BigDecimal("10"));
             userChannel.setSubGroupId(userGroup.getSubGroupId());
             userChannel.setCompanyId(userGroup.getCompanyId());
-            userChannel.setChannelCode(channelCode.getService());
+            userChannel.setChannelCode(channelCode.getYsCode());
             userChannel.setSubFeeRate(new BigDecimal(9));
-            Channel channel = channelDao.selectByCode(channelCode.getService());
+            Channel channel = channelDao.selectByCode(channelCode.getCode(), hf.base.enums.ChannelProvider.YS.getCode());
             userChannel.setChannelId(channel.getId());
             userChannel.setGroupId(5L);
 

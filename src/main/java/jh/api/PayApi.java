@@ -7,6 +7,7 @@ import hf.base.enums.TradeType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
 import jh.biz.PayBiz;
+import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.PayBizCollection;
 import jh.dao.local.PayMsgRecordDao;
@@ -14,7 +15,10 @@ import jh.dao.local.PayRequestDao;
 import jh.model.po.PayMsgRecord;
 import jh.model.po.PayRequest;
 import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +37,9 @@ public class PayApi {
     @Autowired
     private PayBizCollection payBizCollection;
     @Autowired
-    private CacheService cacheService;
+    @Qualifier("ysPayBiz")
+    private PayBiz payBiz;
+    protected Logger logger = LoggerFactory.getLogger(PayApi.class);
 
     @RequestMapping(value = "/unifiedorder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody String unifiedorder(@RequestBody Map<String,Object> params) {
@@ -74,5 +80,28 @@ public class PayApi {
             }
             return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
         }
+    }
+
+    /**
+     * 友收宝支付回调
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "/ys/payCallBack",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody String payCallBack(@RequestBody Map<String,Object> params) {
+        try {
+            payBiz.checkCallBack(params);
+        } catch (BizFailException e) {
+            logger.warn(e.getMessage());
+            return CodeManager.FAILED;
+        }
+
+        try {
+            payBiz.finishPay(params);
+        } catch (BizFailException e) {
+            logger.warn(e.getMessage());
+        }
+
+        return CodeManager.SUCCESS;
     }
 }

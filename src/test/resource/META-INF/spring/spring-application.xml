@@ -23,12 +23,4 @@
 
 	<bean class="org.springframework.web.client.RestTemplate"/>
 	<bean class="jh.utils.BeanContextUtils"/>
-	<bean id="payBizCollection" class="jh.biz.service.PayBizCollection">
-		<constructor-arg>
-			<map>
-				<entry key="ys" value-ref="ysPayBiz"/>
-				<entry key="fxt" value-ref="fxtPayBiz"/>
-			</map>
-		</constructor-arg>
-	</bean>
 </beans>

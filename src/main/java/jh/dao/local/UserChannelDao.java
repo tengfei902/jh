@@ -20,9 +20,11 @@ public interface UserChannelDao {
 
     List<UserChannel> selectByGroupId(@Param("groupId") Long groupId);
 
+    List<UserChannel> selectByGroupIdProvider(@Param("groupId") Long groupId,@Param("providerCode")String providerCode);
+
     UserChannel selectByGroupChannel(@Param("groupId") Long groupId,@Param("channelId") Long channelId);
 
-    UserChannel selectByMchId(@Param("mchId")String mchId,@Param("channelCode") String channelCode);
+    UserChannel selectByGroupChannelCode(@Param("groupId") Long groupId,@Param("channelCode") String channelCode,@Param("providerCode")String providerCode);
 
     List<UserChannel> selectByGroupIdList(@Param("channelId") Long channelId,@Param("groupIds")List<Long> groupIds);
 }

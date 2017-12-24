@@ -22,5 +22,6 @@ public interface PayService {
     AdminBankCard chooseAdminBank1(Long groupId, BigDecimal amount);
     void savePayRequest(List<PayMsgRecord> msgRecords,PayRequest payRequest);
     void updateDailyLimit();
+    void savePayMsg(PayMsgRecord payMsgRecord);
 
 }

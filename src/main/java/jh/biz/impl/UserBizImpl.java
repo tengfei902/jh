@@ -2,9 +2,11 @@ package jh.biz.impl;
 
 import hf.base.enums.*;
 import hf.base.exceptions.BizFailException;
+import hf.base.model.UserChannelPage;
 import hf.base.utils.SegmentLock;
 import hf.base.utils.Utils;
 import jh.biz.UserBiz;
+import jh.biz.service.ArchService;
 import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
 import jh.dao.local.*;
@@ -13,12 +15,14 @@ import jh.model.dto.UserGroupDto;
 import jh.model.dto.UserGroupRequest;
 import jh.model.dto.UserInfoDto;
 import jh.model.dto.UserInfoRequest;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,6 +51,10 @@ public class UserBizImpl implements UserBiz {
     private AdminAccountDao adminAccountDao;
     @Autowired
     private AccountDao accountDao;
+    @Autowired
+    private UserGroupExtDao userGroupExtDao;
+    @Autowired
+    private ArchService archService;
 
     @Override
     public void register(String loginId, String password, String inviteCode,String subGroupId) {
@@ -79,7 +87,10 @@ public class UserBizImpl implements UserBiz {
         userGroup.setSubGroupNo(subUserGroup.getGroupNo());
         Long companyId = (subUserGroup.getType()==GroupType.COMPANY.getValue() || subUserGroup.getType() == GroupType.SUPER.getValue())?subUserGroup.getId():subUserGroup.getCompanyId();
         userGroup.setCompanyId(companyId);
-
+        userGroup.setCipherCode(Utils.getRandomString(8));
+        String groupNo = archService.getId();
+        userGroup.setGroupNo(groupNo);
+        userGroup.setStatus(GroupStatus.NEW.getValue());
         userService.register(userGroup,userInfo);
     }
 
@@ -204,10 +215,10 @@ public class UserBizImpl implements UserBiz {
             }
         }
 
-        int count = userGroupDao.updateStatusById(groupId, GroupStatus.NEW.getValue(),GroupStatus.SUBMITED.getValue());
-        if(count<=0) {
-            throw new BizFailException("update user group failed");
-        }
+        userGroupDao.updateStatusById(groupId, GroupStatus.NEW.getValue(),GroupStatus.SUBMITED.getValue());
+//        if(count<=0) {
+//            throw new BizFailException("update user group failed");
+//        }
     }
 
     @Override
@@ -288,6 +299,8 @@ public class UserBizImpl implements UserBiz {
     @Override
     public void saveAminGroup(UserGroup userGroup) {
         userGroup.setType(hf.base.model.UserGroup.GroupType.COMPANY.getValue());
+        userGroup.setCipherCode(Utils.getRandomString(10));
+        userGroup.setGroupNo(archService.getId());
         userGroupDao.insertSelective(userGroup);
         AdminAccount adminAccount = new AdminAccount();
         adminAccount.setGroupId(userGroup.getId());
@@ -314,7 +327,45 @@ public class UserBizImpl implements UserBiz {
                 throw new BizFailException("update user group failed");
             }
         } else {
+            if(StringUtils.isEmpty(userGroup.getCipherCode())) {
+                userGroup.setCipherCode(Utils.getRandomString(10));
+            }
+            userGroup.setGroupNo(archService.getId());
             userGroupDao.insertSelective(userGroup);
         }
+    }
+
+    @Override
+    public List<UserChannelPage> getUserChannelInfo(Long groupId) {
+        List<UserGroupExt> userGroupExts = userGroupExtDao.selectByGroupId(groupId);
+        List<UserChannelPage> pages = new ArrayList<>();
+        userGroupExts.parallelStream().forEach(userGroupExt -> {
+            UserChannelPage userChannelPage = new UserChannelPage();
+            pages.add(userChannelPage);
+            hf.base.model.UserGroupExt ext = new hf.base.model.UserGroupExt();
+            try {
+                BeanUtils.copyProperties(ext,userGroupExt);
+                userChannelPage.setUserGroupExt(ext);
+            } catch (Exception e) {
+                throw new BizFailException(e.getMessage());
+            }
+
+            List<UserChannel> channels = userChannelDao.selectByGroupIdProvider(groupId,userGroupExt.getProviderCode());
+            List<hf.base.model.UserChannel> userChannels = new ArrayList<>();
+
+            channels.parallelStream().forEach(userChannel -> {
+                hf.base.model.UserChannel channel = new hf.base.model.UserChannel();
+                try {
+                    BeanUtils.copyProperties(channel,userChannel);
+                    userChannels.add(channel);
+                } catch (Exception e) {
+                    throw new BizFailException(e.getMessage());
+                }
+            });
+
+            userChannelPage.setUserChannels(userChannels);
+
+        });
+        return pages;
     }
 }

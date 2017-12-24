@@ -8,27 +8,22 @@ import java.util.Date;
 public class UserChannel {
     @Field
     private Long id;
-
     private String channelName;
-
     private String channelCode;
-    @Field(required = true)
+    @Field
+    private String providerCode;
+    @Field
     private Long channelId;
-    @Field(required = true)
+    @Field
     private Long groupId;
-
     private String groupName;
-    @Field(required = true)
+    @Field
     private BigDecimal feeRate;
-
     private BigDecimal standardFeeRate;
-    @Field(required = true)
     private String mchId;
-    @Field(required = true)
     private String cipherCode;
-    @Field(required = true)
     private String callbackUrl;
-
+    @Field
     private Integer status;
 
     private Integer version;
@@ -185,5 +180,13 @@ public class UserChannel {
 
     public void setSubFeeRate(BigDecimal subFeeRate) {
         this.subFeeRate = subFeeRate;
+    }
+
+    public String getProviderCode() {
+        return providerCode;
+    }
+
+    public void setProviderCode(String providerCode) {
+        this.providerCode = providerCode;
     }
 }

@@ -5,21 +5,28 @@ import hf.base.annotations.Field;
 import java.math.BigDecimal;
 
 public class Channel {
+    @Field(alias = "channelId")
     private Long id;
-    @Field(required = true)
+    @Field
+    private String code;
+    @Field
     private String channelCode;
-    @Field(required = true)
-    private String codeDesc;
-    @Field(required = true)
+    @Field
     private String channelName;
-    @Field(required = true,type = Field.Type.number)
+    @Field
+    private String channelDesc;
+    @Field
     private BigDecimal feeRate;
-    @Field(required = true)
+    @Field
     private String url;
-    @Field(required = true,type = Field.Type.number)
+    @Field
     private Integer status;
-    @Field(required = true)
-    private String channelNo;
+    @Field
+    private String providerCode;
+
+    private String providerName;
+
+    private String providerNo;
 
     public Long getId() {
         return id;
@@ -43,6 +50,14 @@ public class Channel {
 
     public void setChannelName(String channelName) {
         this.channelName = channelName;
+    }
+
+    public String getChannelDesc() {
+        return channelDesc;
+    }
+
+    public void setChannelDesc(String channelDesc) {
+        this.channelDesc = channelDesc;
     }
 
     public BigDecimal getFeeRate() {
@@ -69,19 +84,35 @@ public class Channel {
         this.status = status;
     }
 
-    public String getCodeDesc() {
-        return codeDesc;
+    public String getProviderCode() {
+        return providerCode;
     }
 
-    public void setCodeDesc(String codeDesc) {
-        this.codeDesc = codeDesc;
+    public void setProviderCode(String providerCode) {
+        this.providerCode = providerCode;
     }
 
-    public String getChannelNo() {
-        return channelNo;
+    public String getProviderName() {
+        return providerName;
     }
 
-    public void setChannelNo(String channelNo) {
-        this.channelNo = channelNo;
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
+
+    public String getProviderNo() {
+        return providerNo;
+    }
+
+    public void setProviderNo(String providerNo) {
+        this.providerNo = providerNo;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

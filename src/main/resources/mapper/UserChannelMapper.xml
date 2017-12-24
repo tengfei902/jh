@@ -5,6 +5,7 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
     <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+    <result column="provider_code" property="providerCode" jdbcType="VARCHAR" />
     <result column="channel_id" property="channelId" jdbcType="BIGINT" />
     <result column="group_id" property="groupId" jdbcType="BIGINT" />
     <result column="group_name" property="groupName" jdbcType="VARCHAR" />
@@ -22,7 +23,7 @@
     <result column="sub_fee_rate" property="subFeeRate" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, channel_name, channel_code, channel_id, group_id, group_name, fee_rate, standard_fee_rate,
+    id, channel_name, channel_code,provider_code, channel_id, group_id, group_name, fee_rate, standard_fee_rate,
     mch_id, cipher_code, callback_url, `status`, version, create_time, update_time,sub_group_id,
     company_id,sub_fee_rate
   </sql>
@@ -59,6 +60,9 @@
       </if>
       <if test="channelCode != null" >
         channel_code,
+      </if>
+      <if test="providerCode != null" >
+        provider_code,
       </if>
       <if test="channelId != null" >
         channel_id,
@@ -115,6 +119,9 @@
       </if>
       <if test="channelCode != null" >
         #{channelCode,jdbcType=VARCHAR},
+      </if>
+      <if test="providerCode != null" >
+        #{providerCode,jdbcType=VARCHAR},
       </if>
       <if test="channelId != null" >
         #{channelId,jdbcType=BIGINT},
@@ -233,6 +240,13 @@
     where group_id = #{groupId,jdbcType=BIGINT} order by status ,id desc
   </select>
 
+  <select id="selectByGroupIdProvider" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_channel
+    where group_id = #{groupId,jdbcType=BIGINT} and provider_code = #{providerCode,jdbcType=VARCHAR} order by status ,id desc
+  </select>
+
   <select id="selectByGroupChannel" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
@@ -246,6 +260,16 @@
     from user_channel
     where mch_id = #{mchId,jdbcType=VARCHAR}
     and channel_code = #{channelCode,jdbcType=VARCHAR}
+    and provider_code = #{providerCode,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByGroupChannelCode" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from user_channel
+    where group_id = #{groupId,jdbcType=BIGINT}
+    and channel_code = #{channelCode,jdbcType=VARCHAR}
+    and provider_code = #{providerCode,jdbcType=VARCHAR}
   </select>
 
   <select id="selectByGroupIdList" resultMap="BaseResultMap">

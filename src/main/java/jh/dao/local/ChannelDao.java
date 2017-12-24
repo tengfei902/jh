@@ -22,5 +22,7 @@ public interface ChannelDao {
 
     List<Channel> selectForAvaList();
 
-    Channel selectByCode(@Param("channelCode") String channelCode);
+    Channel selectByCode(@Param("code") String code,@Param("providerCode")String providerCode);
+
+    List<Channel> selectByProviderCode(@Param("providerCode") String providerCode);
 }

@@ -37,7 +37,7 @@
 		</javaClientGenerator>
 
 		<!-- 正式生成之前需要删除 此事例 -->
-		<table tableName="account_daily_limit_sum" domainObjectName="AccountDailyLimitSum"
+		<table tableName="tbl_sequence" domainObjectName="TblSequence"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

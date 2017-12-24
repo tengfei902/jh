@@ -8,7 +8,6 @@ import hf.base.enums.PayRequestStatus;
 import hf.base.exceptions.BizFailException;
 import hf.base.exceptions.RetryableException;
 import hf.base.utils.BdUtils;
-import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.AccountService;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
@@ -65,7 +64,7 @@ public class PayServiceImpl implements PayService {
     @Override
     @Transactional
     public void saveOprLog(PayRequest payRequest) {
-        Channel channel = channelDao.selectByCode(payRequest.getService());
+        Channel channel = channelDao.selectByCode(payRequest.getService(),payRequest.getChannelProviderCode());
         UserGroup userGroup = userGroupDao.selectByGroupNo(payRequest.getMchId());
         UserChannel userChannel = userChannelDao.selectByGroupChannel(userGroup.getId(),channel.getId());
 
@@ -114,7 +113,7 @@ public class PayServiceImpl implements PayService {
             UserGroup group = groups.get(i);
 
             if(i==groups.size()-1) {
-                feeMap.put(group.getId(),totalFee.subtract(tempFee));
+                feeMap.put(group.getId(),amount.subtract(tempFee));
                 continue;
             }
 
@@ -177,7 +176,7 @@ public class PayServiceImpl implements PayService {
     @Override
     public void paySuccess(String outTradeNo) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
-        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.REMOTE_CALL_FINISHED.getValue(),PayRequestStatus.PAY_SUCCESS.getValue());
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.PROCESSING.getValue(),PayRequestStatus.OPR_SUCCESS.getValue());
         if(count<=0) {
             throw new BizFailException(String.format("update pay request status from 2 to 5 failed,%s",outTradeNo));
         }
@@ -200,14 +199,35 @@ public class PayServiceImpl implements PayService {
     @Transactional
     @Override
     public void payFailed(String outTradeNo) {
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        if(payRequest.getStatus() != PayRequestStatus.OPR_GENERATED.getValue() && payRequest.getStatus() != PayRequestStatus.PROCESSING.getValue()) {
+            throw new BizFailException(String.format("status:%s,not valid,%s",payRequest.getStatus(),outTradeNo));
+        }
+        int count = payRequestDao.updateStatusById(payRequest.getId(),payRequest.getStatus(),PayRequestStatus.PAY_FAILED.getValue());
+        if(count <=0) {
+            logger.warn(String.format("update payRequest status failed,%s",outTradeNo));
+            throw new BizFailException(String.format("update payRequest status failed,%s",outTradeNo));
+        }
+        AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
+        count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(), OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update admin opr log status from 0 to 99 failed,log id:%s",adminAccountOprLog.getId()));
+        }
 
+        List<AccountOprLog> accountOprLogs = accountOprLogDao.selectByTradeNo(outTradeNo);
+        for(AccountOprLog log:accountOprLogs) {
+            count = accountOprLogDao.updateStatusById(log.getId(), OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
+            if(count<=0) {
+                throw new BizFailException(String.format("update opr log status from 0 to 99 failed,logid:%s",log.getId()));
+            }
+        }
     }
 
     @Transactional
     @Override
     public void payPromote(String outTradeNo) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
-        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.PAY_SUCCESS.getValue(),PayRequestStatus.OPR_SUCCESS.getValue());
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
         if(count<=0) {
             throw new BizFailException(String.format("update payrequest status from 5 to 10 failed,tradeNo:%s",outTradeNo));
         }
@@ -344,6 +364,15 @@ public class PayServiceImpl implements PayService {
             } catch (DuplicateKeyException e) {
                 logger.warn(e.getMessage());
             }
+        }
+    }
+
+    @Override
+    public void savePayMsg(PayMsgRecord payMsgRecord) {
+        try {
+            payMsgRecordDao.insertSelective(payMsgRecord);
+        } catch (DuplicateKeyException e) {
+            logger.warn(String.format("msg already exist,outTradeNo:%s,tradeType:%s,operateType:%s",payMsgRecord.getOutTradeNo(),payMsgRecord.getTradeType(),payMsgRecord.getOperateType()));
         }
     }
 }

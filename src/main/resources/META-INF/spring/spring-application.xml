@@ -44,14 +44,4 @@
 		<property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->
 		<property name="toolboxConfigLocation" value="/WEB-INF/toolbox.xml"/>
 	</bean>
-
-	<bean id="payBizCollection" class="jh.biz.service.PayBizCollection">
-		<constructor-arg>
-			<map>
-				<entry key="ys" value-ref="ysPayBiz"/>
-				<entry key="fxt" value-ref="fxtPayBiz"/>
-			</map>
-		</constructor-arg>
-	</bean>
-
 </beans>
