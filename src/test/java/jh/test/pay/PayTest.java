@@ -2,6 +2,7 @@ package jh.test.pay;
 
 import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
+import hf.base.contants.Constants;
 import hf.base.enums.*;
 import hf.base.enums.ChannelProvider;
 import hf.base.exceptions.BizFailException;
@@ -9,6 +10,7 @@ import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
 import jh.biz.ChannelBiz;
 import jh.biz.PayBiz;
+import jh.biz.service.CacheService;
 import jh.biz.service.PayBizCollection;
 import jh.biz.service.PayService;
 import jh.dao.local.*;
@@ -63,6 +65,8 @@ public class PayTest extends BaseTestCase {
     private PayMsgRecordDao payMsgRecordDao;
     @Autowired
     private ChannelBiz channelBiz;
+    @Autowired
+    private CacheService cacheService;
 
     private Map<String,Object> params = new HashMap<>();
 
@@ -362,5 +366,11 @@ public class PayTest extends BaseTestCase {
         }
         System.out.println("00000000000");
 
+    }
+
+    @Test
+    public void testGetFeeRate() {
+        String feeRate = cacheService.getProp(Constants.SETTLE_FEE_RATE,"5");
+        System.out.println(feeRate);
     }
 }

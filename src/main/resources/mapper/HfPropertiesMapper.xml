@@ -69,10 +69,7 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-  <select id="selectByKey" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from hf_properties
-    where prop_name = #{propName,jdbcType=VARCHAR}
+  <select id="selectByKey" resultType="java.lang.String">
+    select prop_value from hf_properties where prop_name = #{propName,jdbcType=VARCHAR}
   </select>
 </mapper>
