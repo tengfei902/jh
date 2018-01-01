@@ -104,12 +104,7 @@ public class UserBizImpl implements UserBiz {
     @Override
     public void edit(UserInfo userInfo) {
         UserInfo user = userInfoDao.selectByPrimaryKey(userInfo.getId());
-        if(user.getStatus() != UserInfo.STATUS.init.getValue()) {
-            throw new BizFailException("用户状态不允许修改");
-        }
-
         int count = userInfoDao.updateByPrimaryKeySelective(userInfo);
-
         if(count <=0) {
             throw new BizFailException("用户更新失败");
         }
