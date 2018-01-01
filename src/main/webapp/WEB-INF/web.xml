@@ -76,4 +76,14 @@
     <url-pattern>*.vm</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>jhTest</servlet-name>
+    <servlet-class>jh.api.JhTest</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>jhTest</servlet-name>
+    <url-pattern>/jhTest</url-pattern>
+  </servlet-mapping>
+
 </web-app>

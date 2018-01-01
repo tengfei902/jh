@@ -33,4 +33,6 @@ public interface PayRequestDao {
     int selectCount(Map<String,Object> params);
 
     int updateFailed(@Param("id") Long id,@Param("fromStatus") int fromStatus,@Param("remark")String remark);
+
+    int updatePayResult(@Param("id")Long id,@Param("payResult")String payResult,@Param("version") int version);
 }

@@ -176,7 +176,11 @@ public class PayServiceImpl implements PayService {
     @Override
     public void paySuccess(String outTradeNo) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
-        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.PROCESSING.getValue(),PayRequestStatus.OPR_SUCCESS.getValue());
+        int count = payRequestDao.updatePayResult(payRequest.getId(),"0",payRequest.getVersion());
+        if(count<=0) {
+            throw new BizFailException("update payResult failed,%s",outTradeNo);
+        }
+        count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.PROCESSING.getValue(),PayRequestStatus.OPR_SUCCESS.getValue());
         if(count<=0) {
             throw new BizFailException(String.format("update pay request status from 2 to 5 failed,%s",outTradeNo));
         }
@@ -203,10 +207,15 @@ public class PayServiceImpl implements PayService {
         if(payRequest.getStatus() != PayRequestStatus.OPR_GENERATED.getValue() && payRequest.getStatus() != PayRequestStatus.PROCESSING.getValue()) {
             throw new BizFailException(String.format("status:%s,not valid,%s",payRequest.getStatus(),outTradeNo));
         }
-        int count = payRequestDao.updateStatusById(payRequest.getId(),payRequest.getStatus(),PayRequestStatus.PAY_FAILED.getValue());
+        int count = payRequestDao.updateStatusById(payRequest.getId(),payRequest.getStatus(),PayRequestStatus.OPR_SUCCESS.getValue());
         if(count <=0) {
             logger.warn(String.format("update payRequest status failed,%s",outTradeNo));
             throw new BizFailException(String.format("update payRequest status failed,%s",outTradeNo));
+        }
+        payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        count = payRequestDao.updatePayResult(payRequest.getId(),"1",payRequest.getVersion());
+        if(count<=0) {
+            throw new BizFailException("update pay result failed,%s",outTradeNo);
         }
         AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
         count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(), OprStatus.NEW.getValue(),OprStatus.PAY_FAILED.getValue());
@@ -227,7 +236,7 @@ public class PayServiceImpl implements PayService {
     @Override
     public void payPromote(String outTradeNo) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
-        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.USER_NOTIFIED.getValue(),PayRequestStatus.PAY_SUCCESS.getValue());
         if(count<=0) {
             throw new BizFailException(String.format("update payrequest status from 5 to 10 failed,tradeNo:%s",outTradeNo));
         }

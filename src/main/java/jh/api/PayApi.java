@@ -8,6 +8,7 @@ import hf.base.enums.TradeType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
 import jh.biz.PayBiz;
+import jh.biz.PayFlow;
 import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.PayBizCollection;
@@ -42,6 +43,9 @@ public class PayApi {
     @Autowired
     @Qualifier("ysPayBiz")
     private PayBiz payBiz;
+    @Autowired
+    private PayFlow payFlow;
+
     protected Logger logger = LoggerFactory.getLogger(PayApi.class);
 
     @RequestMapping(value = "/unifiedorder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
@@ -60,7 +64,8 @@ public class PayApi {
         }
 
         String out_trade_no = String.valueOf(params.get("out_trade_no"));
-        PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(out_trade_no, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+        String mchId = String.valueOf(params.get("merchant_no"));
+        PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
         if(!Objects.isNull(payMsgRecord)) {
             return payMsgRecord.getMsgBody();
         }
@@ -72,10 +77,10 @@ public class PayApi {
         }
 
         try {
-            PayRequest payRequest = payRequestDao.selectByTradeNo(out_trade_no);
-            payBiz.pay(payRequest);
+            payFlow.invoke(out_trade_no,PayRequestStatus.PROCESSING);
             payMsgRecord = payMsgRecordDao.selectByTradeNo(out_trade_no, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
             return payMsgRecord.getMsgBody();
+
         } catch (BizFailException e) {
             payMsgRecord = payMsgRecordDao.selectByTradeNo(out_trade_no, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
             if(!Objects.isNull(payMsgRecord)) {

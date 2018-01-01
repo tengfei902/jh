@@ -1,6 +1,5 @@
 package jh.biz.impl;
 
-import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
 import hf.base.enums.*;
 import hf.base.enums.ChannelProvider;
@@ -102,10 +101,16 @@ public class YsPayBiz extends AbstractPayBiz {
         String sign_type = "MD5";
         String sign = String.valueOf(map.get("sign"));
 
+        if(!Utils.checkEncrypt(map,userGroup.getCipherCode())) {
+            throw new BizFailException(CodeManager.CHECK_ENCRIPT_FAILED,"验签失败");
+        }
+
+        String outTradeNo = String.format("%s_%s",merchant_no,out_trade_no);
+
         Map<String,Object> outRequest = new HashMap<>();
         outRequest.put("total_fee",total);
         outRequest.put("body",name);
-        outRequest.put("out_trade_no",out_trade_no);
+        outRequest.put("out_trade_no",outTradeNo);
         outRequest.put("mch_id",userGroupExt.getMerchantNo());
         if(!Utils.isEmpty(sub_openid)) {
             outRequest.put("sub_openid",sub_openid);
@@ -120,11 +125,11 @@ public class YsPayBiz extends AbstractPayBiz {
         sign = Utils.encrypt(outRequest,userGroupExt.getCipherCode());
         outRequest.put("sign",sign);
 
-        PayMsgRecord inPayMsgRecord = new PayMsgRecord(out_trade_no,merchant_no,service, OperateType.USER_HF.getValue(), TradeType.PAY.getValue(),map);
-        PayMsgRecord outPayMsgRecord = new PayMsgRecord(out_trade_no,userGroupExt.getMerchantNo(),channel.getChannelCode(),OperateType.HF_CLIENT.getValue(),TradeType.PAY.getValue(),outRequest);
+        PayMsgRecord inPayMsgRecord = new PayMsgRecord(outTradeNo,merchant_no,service, OperateType.USER_HF.getValue(), TradeType.PAY.getValue(),map);
+        PayMsgRecord outPayMsgRecord = new PayMsgRecord(outTradeNo,userGroupExt.getMerchantNo(),channel.getChannelCode(),OperateType.HF_CLIENT.getValue(),TradeType.PAY.getValue(),outRequest);
 
         PayRequest payRequest = new PayRequest();
-        payRequest.setOutTradeNo(out_trade_no);
+        payRequest.setOutTradeNo(outTradeNo);
         payRequest.setBody(name);
         payRequest.setMchId(merchant_no);
         payRequest.setSubOpenid(sub_openid);
@@ -181,7 +186,7 @@ public class YsPayBiz extends AbstractPayBiz {
         if("0".equalsIgnoreCase(status)) {
             payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.PROCESSING.getValue());
         } else {
-            payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.PAY_FAILED.getValue());
+            payService.payFailed(payRequest.getOutTradeNo());
         }
     }
 
@@ -251,14 +256,56 @@ public class YsPayBiz extends AbstractPayBiz {
         String url = userGroup.getCallbackUrl();
         if(StringUtils.isEmpty(url)) {
             logger.warn(String.format("callback url is null,%s",url));
+            if(StringUtils.equalsIgnoreCase(payRequest.getPayResult(),"0")) {
+                payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+            } else {
+                payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
+            }
             return;
         }
 
-        return;
+        Map<String,Object> resutMap = new HashMap<>();
+
+        if(StringUtils.equalsIgnoreCase(payRequest.getPayResult(),"0")) {
+            //code 0成功 99失败
+            resutMap.put("code","0");
+            //msg
+            resutMap.put("msg","支付成功");
+            //out_trade_no
+            resutMap.put("out_trade_no",payRequest.getOutTradeNo().split("_")[1]);
+            //mch_id
+            resutMap.put("merchant_no",payRequest.getMchId());
+            //total
+            resutMap.put("total",payRequest.getTotalFee());
+            //fee
+            resutMap.put("fee",payRequest.getFee());
+            //trade_type 1:收单 2:撤销 3:退款
+            resutMap.put("trade_type","1");
+            //sign_type
+            resutMap.put("sign_type","MD5");
+            String sign = Utils.encrypt(resutMap,userGroup.getCipherCode());
+            resutMap.put("sign",sign);
+
+            boolean result = callBackClient.post(url,resutMap);
+            if(result) {
+                payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+            }
+        } else {
+            resutMap.put("code","99");
+            resutMap.put("msg","支付失败");
+            resutMap.put("out_trade_no",payRequest.getOutTradeNo());
+            resutMap.put("mch_id",payRequest.getMchId());
+
+            boolean result = callBackClient.post(url,resutMap);
+            if(result) {
+                payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
+            }
+        }
+
     }
 
     @Override
     public void promote(PayRequest payRequest) {
-
+        payService.payPromote(payRequest.getOutTradeNo());
     }
 }

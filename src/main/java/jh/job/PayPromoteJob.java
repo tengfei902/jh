@@ -24,6 +24,6 @@ public class PayPromoteJob {
     @Scheduled(cron = "0 0 1 * * ?")
     public void doPromote() {
         List<PayRequest> list = payRequestDao.selectWaitingPromote();
-//        list.parallelStream().forEach(payRequest -> payBiz.promote(payRequest.getOutTradeNo()));
+        list.parallelStream().forEach(payRequest -> payBiz.promote(payRequest));
     }
 }

@@ -325,4 +325,10 @@
       </foreach>
     </if>
   </select>
+
+  <update id="updatePayResult">
+    update pay_request
+    set pay_result = #{payResult,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
+  </update>
 </mapper>

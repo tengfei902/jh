@@ -88,7 +88,7 @@ public class PayBizTest extends BaseTestCase {
                 "type", GroupType.COMPANY.getValue(),
                 "subGroupId",0,
                 "cipherCode","123452s",
-                "callbackUrl","www.baidu.com");
+                "callbackUrl","http://127.0.0.1:8080/jh/jhTest");
 
         UserGroup userGroup = TypeConverter.convert(map,UserGroup.class);
         userBiz.saveUserGroup(userGroup);
@@ -170,7 +170,7 @@ public class PayBizTest extends BaseTestCase {
                         "type", GroupType.CUSTOMER.getValue(),
                         "subGroupId",agentUserGroup.getId(),
                         "cipherCode","123452s",
-                        "callbackUrl","www.baidu3.com");
+                        "callbackUrl","http://127.0.0.1:8080/jh/jhTest");
 
                 UserGroup customerUserGroup = TypeConverter.convert(customerMap,UserGroup.class);
                 userBiz.saveUserGroup(customerUserGroup);
@@ -268,12 +268,12 @@ public class PayBizTest extends BaseTestCase {
         params.put("authcode",String.valueOf(RandomUtils.nextLong()));
         params.put("nonce_str",Utils.getRandomString(10));
         params.put("sub_openid",String.valueOf(RandomUtils.nextLong()));
-        String cipherCode = "123456";
+        String cipherCode = userGroup.getCipherCode();
         String sign = Utils.encrypt(params,cipherCode);
         params.put("sign",sign);
         payBiz.savePayRequest(params);
 
-        String outTradeNo = String.valueOf(params.get("out_trade_no"));
+        String outTradeNo = String.format("%s_%s",String.valueOf(params.get("merchant_no")),String.valueOf(params.get("out_trade_no")));
 
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         Assert.assertNotNull(payRequest);
@@ -334,12 +334,12 @@ public class PayBizTest extends BaseTestCase {
         params.put("authcode",String.valueOf(RandomUtils.nextLong()));
         params.put("nonce_str",Utils.getRandomString(10));
         params.put("sub_openid",String.valueOf(RandomUtils.nextLong()));
-        cipherCode = "123456";
+        cipherCode = userGroup.getCipherCode();
         sign = Utils.encrypt(params,cipherCode);
         params.put("sign",sign);
         payBiz.savePayRequest(params);
 
-        outTradeNo = String.valueOf(params.get("out_trade_no"));
+        outTradeNo = String.format("%s_%s",String.valueOf(params.get("merchant_no")),String.valueOf(params.get("out_trade_no")));
 
         payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         Assert.assertNotNull(payRequest);
@@ -428,12 +428,12 @@ public class PayBizTest extends BaseTestCase {
         params.put("authcode",String.valueOf(RandomUtils.nextLong()));
         params.put("nonce_str",Utils.getRandomString(10));
         params.put("sub_openid",String.valueOf(RandomUtils.nextLong()));
-        String cipherCode = "123456";
+        String cipherCode = userGroup.getCipherCode();
         String sign = Utils.encrypt(params,cipherCode);
         params.put("sign",sign);
         payBiz.savePayRequest(params);
 
-        String outTradeNo = String.valueOf(params.get("out_trade_no"));
+        String outTradeNo = String.format("%s_%s",String.valueOf(params.get("merchant_no")),String.valueOf(params.get("out_trade_no"))) ;
 
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         Assert.assertNotNull(payRequest);
@@ -483,6 +483,7 @@ public class PayBizTest extends BaseTestCase {
 
         payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
         Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.OPR_SUCCESS.getValue());
+        Assert.assertEquals(payRequest.getPayResult(),"0");
 
         adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
         Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.PAY_SUCCESS.getValue());
@@ -496,6 +497,14 @@ public class PayBizTest extends BaseTestCase {
 //            Account account = accountDao.selectByGroupId(oprLog.getGroupId());
 //            System.out.println(account.getAmount().subtract(groupAmountMap.get(oprLog.getGroupId())));
         }
+
+        payRequest  = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        payBiz.notice(payRequest);
+
+        payRequest  = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+
+        payBiz.promote(payRequest);
     }
 
     @Test
@@ -520,12 +529,12 @@ public class PayBizTest extends BaseTestCase {
         params.put("authcode",String.valueOf(RandomUtils.nextLong()));
         params.put("nonce_str",Utils.getRandomString(10));
         params.put("sub_openid",String.valueOf(RandomUtils.nextLong()));
-        String cipherCode = "123456";
+        String cipherCode = userGroup.getCipherCode();
         String sign = Utils.encrypt(params,cipherCode);
         params.put("sign",sign);
         payBiz.savePayRequest(params);
 
-        String outTradeNo = String.valueOf(params.get("out_trade_no"));
+        String outTradeNo = String.format("%s_%s",String.valueOf(params.get("merchant_no")),String.valueOf(params.get("out_trade_no"))) ;
 
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         Assert.assertNotNull(payRequest);
@@ -574,7 +583,7 @@ public class PayBizTest extends BaseTestCase {
         payBiz.finishPay(payResult);
 
         payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
-        Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.PAY_FAILED.getValue());
+        Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.OPR_SUCCESS.getValue());
 
         adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
         Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.PAY_FAILED.getValue());
@@ -583,5 +592,9 @@ public class PayBizTest extends BaseTestCase {
         for(AccountOprLog oprLog:accountOprLogs) {
             Assert.assertEquals(oprLog.getStatus().intValue(),OprStatus.PAY_FAILED.getValue());
         }
+
+        payBiz.notice(payRequest);
+        payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        Assert.assertEquals(PayRequestStatus.OPR_FINISHED.getValue(),payRequest.getStatus().intValue());
     }
 }
