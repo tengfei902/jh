@@ -454,7 +454,7 @@ public class UserApi {
 
     @RequestMapping(value = "/get_sub_user_group",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody ResponseResult<List<Map<String,Object>>> getSubUserGroup(@RequestBody Map<String,String> params) {
-        List<UserGroup> list = userGroupDao.select(hf.base.utils.MapUtils.buildMap("exceptGroupId",params.get("groupId"),"status", GroupStatus.AVAILABLE.getValue()));
+        List<UserGroup> list = userGroupDao.select1(hf.base.utils.MapUtils.buildMap("exceptGroupId",params.get("groupId"),"status", GroupStatus.AVAILABLE.getValue()));
         List<Map<String,Object>> result = new ArrayList<>();
         list.stream().forEach(userGroup -> {
             result.add(hf.base.utils.MapUtils.buildMap("id",String.valueOf(userGroup.getId()),"name",userGroup.getName()));

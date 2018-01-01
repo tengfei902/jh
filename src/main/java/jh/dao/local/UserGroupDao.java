@@ -25,6 +25,7 @@ public interface UserGroupDao {
     List<UserGroup> selectByGroupNos(@Param("groupNos")Set<String> groupNos);
 
     List<UserGroup> select(Map<String,Object> map);
+    List<UserGroup> select1(Map<String,Object> map);
 
     List<UserGroup> selectBySubGroupId(@Param("subGroupId") Long subGroupId);
 
