@@ -2,6 +2,7 @@ package jh.biz.impl;
 
 import hf.base.enums.*;
 import hf.base.exceptions.BizFailException;
+import hf.base.model.SalesManDto;
 import hf.base.model.UserChannelPage;
 import hf.base.utils.SegmentLock;
 import hf.base.utils.Utils;
@@ -361,5 +362,31 @@ public class UserBizImpl implements UserBiz {
 
         });
         return pages;
+    }
+
+    @Override
+    public List<SalesManDto> getSaleList(Long groupId) {
+        List<UserGroup> saleList = userGroupDao.selectBySubGroupId(groupId);
+        List<SalesManDto> list = new ArrayList<>();
+        saleList.stream().filter(userGroup -> userGroup.getType()==GroupType.SALES.getValue()).forEach(userGroup -> list.add(buildSale(userGroup)));
+        return list;
+    }
+
+    private SalesManDto buildSale(UserGroup userGroup) {
+        SalesManDto salesManDto = new SalesManDto();
+        List<UserInfo> userInfos = userInfoDao.selectByGroupId(userGroup.getId());
+        UserInfo userInfo = userInfos.get(0);
+        salesManDto.setId(userGroup.getId());
+        salesManDto.setAddress(userGroup.getAddress());
+        salesManDto.setGroupNo(userGroup.getGroupNo());
+        salesManDto.setIdCard(userGroup.getIdCard());
+        salesManDto.setInviteCode(userInfo.getInviteCode());
+        salesManDto.setCreateTime(userInfo.getCreateTime());
+        salesManDto.setName(userInfo.getName());
+        salesManDto.setQq(userInfo.getQq());
+        salesManDto.setSubGroup(userGroup.getSubGroupName());
+        salesManDto.setTel(userInfo.getTel());
+        salesManDto.setLoginId(userInfo.getLoginId());
+        return salesManDto;
     }
 }

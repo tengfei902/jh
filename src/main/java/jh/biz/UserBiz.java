@@ -1,5 +1,6 @@
 package jh.biz;
 
+import hf.base.model.SalesManDto;
 import hf.base.model.UserChannelPage;
 import jh.model.po.AdminBankCard;
 import jh.model.po.UserBankCard;
@@ -43,4 +44,6 @@ public interface UserBiz {
     void saveUserGroup(UserGroup userGroup);
 
     List<UserChannelPage> getUserChannelInfo(Long groupId);
+
+    List<SalesManDto> getSaleList(Long groupId);
 }

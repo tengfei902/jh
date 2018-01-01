@@ -4,6 +4,7 @@ public class UserGroupRequest {
     private String user;
     private String agent;
     private Integer status;
+    private Integer notStatus;
     private String companyId;
     private Integer type;
     private Integer pageSize;
@@ -63,5 +64,13 @@ public class UserGroupRequest {
 
     public void setPageIndex(Integer pageIndex) {
         this.pageIndex = pageIndex;
+    }
+
+    public Integer getNotStatus() {
+        return notStatus;
+    }
+
+    public void setNotStatus(Integer notStatus) {
+        this.notStatus = notStatus;
     }
 }

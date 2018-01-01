@@ -2,9 +2,7 @@ package jh.api;
 
 import hf.base.contants.CodeManager;
 import hf.base.contants.Constants;
-import hf.base.enums.ChannelStatus;
-import hf.base.enums.GroupStatus;
-import hf.base.enums.UserStatus;
+import hf.base.enums.*;
 import hf.base.exceptions.BizFailException;
 import hf.base.model.*;
 import hf.base.utils.Pagenation;
@@ -15,6 +13,7 @@ import jh.biz.AccountBiz;
 import jh.biz.ChannelBiz;
 import jh.biz.TrdBiz;
 import jh.biz.UserBiz;
+import jh.biz.service.ArchService;
 import jh.biz.service.CacheService;
 import jh.dao.local.*;
 import jh.model.po.*;
@@ -23,11 +22,13 @@ import jh.model.po.Account;
 import jh.model.po.AdminAccount;
 import jh.model.po.AdminBankCard;
 import jh.model.po.Channel;
+import jh.model.po.ChannelProvider;
 import jh.model.po.UserBankCard;
 import jh.model.po.UserChannel;
 import jh.model.po.UserGroup;
 import jh.model.po.UserGroupExt;
 import jh.model.po.UserInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
@@ -70,6 +72,8 @@ public class UserApi {
     private ChannelProviderDao channelProviderDao;
     @Autowired
     private UserGroupExtDao userGroupExtDao;
+    @Autowired
+    private ArchService archService;
 
     @RequestMapping(value = "/get_user_list",method = RequestMethod.POST)
     public @ResponseBody
@@ -80,6 +84,9 @@ public class UserApi {
 
     @RequestMapping(value = "/get_user_group_list",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<Pagenation<UserGroup>> getUserGroupList(@RequestBody UserGroupRequest request) {
+        if(request.getStatus()!= null) {
+            request.setNotStatus(GroupStatus.CANCEL.getValue());
+        }
         List<UserGroup> list = userBiz.getUserGroupList(request);
         int currentPage = null == request.getPageIndex()?1:request.getPageIndex();
         int pageSize = null==request.getPageSize()?Constants.pageSize:request.getPageSize();
@@ -103,6 +110,7 @@ public class UserApi {
         String loginId = String.valueOf(params.get("loginId"));
         String password = String.valueOf(params.get("password"));
         int userType = new BigDecimal(params.get("userType").toString()).intValue();
+
         UserInfo userInfo = userInfoDao.selectByLoginId(loginId,Utils.convertPassword(password));
 
         if(Objects.isNull(userInfo)) {
@@ -113,6 +121,9 @@ public class UserApi {
 
         if(userGroup.getType() != userType) {
             if(userType==3 && userGroup.getType() == 10) {
+                return ResponseResult.success(userInfo);
+            }
+            if(userType ==2 && userGroup.getType() == GroupType.SALES.getValue()) {
                 return ResponseResult.success(userInfo);
             }
             return ResponseResult.failed(CodeManager.GET_USER_FAILED,"用户类型错误",new UserInfo());
@@ -589,5 +600,120 @@ public class UserApi {
         String providerCode = data.get("providerCode").toString();
         List<Channel> channels = channelDao.selectByProviderCode(providerCode);
         return ResponseResult.success(channels);
+    }
+
+    @RequestMapping(value = "/del_group",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> deleteGroup(@RequestBody Map<String,Object> data) {
+        Long groupId = new BigDecimal(data.get("groupId").toString()).longValue();
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(groupId);
+
+        if(userGroup.getType() == GroupType.SUPER.getValue()) {
+            return ResponseResult.failed("9999999","该商户不能删除",false);
+        }
+
+        userGroupDao.deleteByPrimaryKey(userGroup.getId());
+
+        List<UserInfo> userInfos = userInfoDao.selectByGroupId(userGroup.getId());
+        for(UserInfo userInfo:userInfos) {
+            userInfoDao.deleteByPrimaryKey(userInfo.getId());
+        }
+
+        return ResponseResult.success(true);
+    }
+
+    @RequestMapping(value = "/get_sales_list",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List<SalesManDto>> getSalesList(@RequestBody Map<String,Object> data) {
+        Long groupId = new BigDecimal(data.get("groupId").toString()).longValue();
+        List<SalesManDto> list  = userBiz.getSaleList(groupId);
+        return ResponseResult.success(list);
+    }
+
+    @RequestMapping(value = "/save_sale_info",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveSale(@RequestBody Map<String,Object> data) {
+        String id = String.valueOf(data.get("id"));
+        String name = String.valueOf(data.get("name"));
+        String loginId = String.valueOf(data.get("loginId"));
+        String idCard = String.valueOf(data.get("idCard"));
+        String tel = String.valueOf(data.get("tel"));
+        String qq = String.valueOf(data.get("qq"));
+        String address = String.valueOf(data.get("address"));
+        String subGroupId = String.valueOf(data.get("subGroupId"));
+        String password = String.valueOf(data.get("password"));
+
+        UserGroup subUserGroup = userGroupDao.selectByPrimaryKey(Long.parseLong(subGroupId));
+
+        UserGroup userGroup = new UserGroup();
+        String groupNo = archService.getId();
+        userGroup.setGroupNo(groupNo);
+        userGroup.setSubGroupNo(subUserGroup.getGroupNo());
+        userGroup.setSubGroupName(subUserGroup.getName());
+        userGroup.setSubGroupId(subUserGroup.getId());
+        userGroup.setCipherCode("");
+        userGroup.setTel(tel);
+        userGroup.setIdCard(idCard);
+        userGroup.setName(name);
+        userGroup.setOwnerName(name);
+        userGroup.setAddress(address);
+        userGroup.setCompanyId(subUserGroup.getCompanyId());
+        userGroup.setType(GroupType.SALES.getValue());
+        userGroup.setCallbackUrl("");
+        userGroup.setStatus(GroupStatus.AVAILABLE.getValue());
+
+        if(StringUtils.isEmpty(id)) {
+            userGroupDao.insertSelective(userGroup);
+
+            UserInfo userInfo = new UserInfo();
+            userInfo.setIdCard(idCard);
+            userInfo.setAddress(address);
+            userInfo.setTel(tel);
+            userInfo.setQq(qq);
+            userInfo.setName(name);
+            userInfo.setType(UserType.ADMIN.getValue());
+            userInfo.setStatus(UserStatus.AVAILABLE.getValue());
+            userInfo.setPassword(Utils.convertPassword(password));
+            userInfo.setLoginId(loginId);
+            userInfo.setGroupId(userGroup.getId());
+            userInfo.setInviteCode(RandomStringUtils.random(16, 20, 110, true, true));
+
+            userInfoDao.insertSelective(userInfo);
+        } else {
+            userGroup.setId(Long.parseLong(id));
+            userGroupDao.updateByPrimaryKeySelective(userGroup);
+
+            List<UserInfo> userInfos = userInfoDao.selectByGroupId(Long.parseLong(id));
+
+            if(CollectionUtils.isEmpty(userInfos)) {
+                UserInfo userInfo = new UserInfo();
+                userInfo.setIdCard(idCard);
+                userInfo.setAddress(address);
+                userInfo.setTel(tel);
+                userInfo.setQq(qq);
+                userInfo.setName(name);
+                userInfo.setType(UserType.ADMIN.getValue());
+                userInfo.setStatus(UserStatus.AVAILABLE.getValue());
+                userInfo.setPassword(Utils.convertPassword(password));
+                userInfo.setLoginId(loginId);
+                userInfo.setGroupId(userGroup.getId());
+                userInfo.setInviteCode(RandomStringUtils.random(16, 20, 110, true, true));
+
+                userInfoDao.insertSelective(userInfo);
+            } else {
+                UserInfo userInfo = userInfos.get(0);
+                userInfo.setIdCard(idCard);
+                userInfo.setAddress(address);
+                userInfo.setTel(tel);
+                userInfo.setQq(qq);
+                userInfo.setName(name);
+                userInfo.setType(UserType.ADMIN.getValue());
+                userInfo.setStatus(UserStatus.AVAILABLE.getValue());
+                userInfo.setPassword(Utils.convertPassword(password));
+                userInfo.setLoginId(loginId);
+                userInfo.setGroupId(userGroup.getId());
+                userInfo.setInviteCode(RandomStringUtils.random(16, 20, 110, true, true));
+                userInfoDao.updateByPrimaryKeySelective(userInfo);
+            }
+        }
+
+        return ResponseResult.success(true);
     }
 }

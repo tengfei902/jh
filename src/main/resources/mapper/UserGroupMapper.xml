@@ -241,6 +241,10 @@
     <if test="name != null" >
       and name like concat(concat('%',#{name,jdbcType=VARCHAR}),'%')
     </if>
+    <if test="notStatus != null and notStatus!=''" >
+      and status != #{notStatus,jdbcType=INTEGER}
+    </if>
+    and type != 4
     order by id desc
   </select>
 
