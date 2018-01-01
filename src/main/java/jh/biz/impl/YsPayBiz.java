@@ -7,7 +7,9 @@ import hf.base.enums.ChannelProvider;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
 import jh.biz.service.PayService;
+import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserGroupExtDao;
+import jh.dao.remote.CallBackClient;
 import jh.dao.remote.PayClient;
 import jh.model.dto.*;
 import jh.model.po.*;
@@ -32,6 +34,10 @@ public class YsPayBiz extends AbstractPayBiz {
     private PayService payService;
     @Autowired
     private UserGroupExtDao userGroupExtDao;
+    @Autowired
+    private UserGroupDao userGroupDao;
+    @Autowired
+    private CallBackClient callBackClient;
 
     @Override
     PayClient getPayClient() {
@@ -168,16 +174,14 @@ public class YsPayBiz extends AbstractPayBiz {
         PayMsgRecord hfToUserMsgRecord = new PayMsgRecord(payMsgRecord.getOutTradeNo(),payMsgRecord.getMerchantNo(),payMsgRecord.getService(),OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),resultMap);
         try {
             payMsgRecordDao.insertSelective(hfToUserMsgRecord);
-        } catch (DuplicateKeyException e ){
+        } catch (DuplicateKeyException e ) {
             logger.warn(String.format("pay msg already exists,%s,%s,%s",hfToUserMsgRecord.getOutTradeNo(),hfToUserMsgRecord.getTradeType(),hfToUserMsgRecord.getOperateType()));
         }
 
         if("0".equalsIgnoreCase(status)) {
-//            payService.saveOprLog(payRequest);
             payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.PROCESSING.getValue());
         } else {
-            payService.payFailed(payRequest.getOutTradeNo());
-//            payRequestDao.updateFailed(payRequest.getId(),PayRequestStatus.OPR_GENERATED.getValue(),new Gson().toJson(payResult));
+            payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.PAY_FAILED.getValue());
         }
     }
 
@@ -234,5 +238,27 @@ public class YsPayBiz extends AbstractPayBiz {
         } else {
             payService.payFailed(out_trade_no);
         }
+    }
+
+    @Override
+    public void notice(PayRequest payRequest) {
+        payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        if(payRequest.getStatus() != PayRequestStatus.OPR_SUCCESS.getValue()) {
+            return;
+        }
+
+        UserGroup userGroup = userGroupDao.selectByGroupNo(payRequest.getMchId());
+        String url = userGroup.getCallbackUrl();
+        if(StringUtils.isEmpty(url)) {
+            logger.warn(String.format("callback url is null,%s",url));
+            return;
+        }
+
+        return;
+    }
+
+    @Override
+    public void promote(PayRequest payRequest) {
+
     }
 }

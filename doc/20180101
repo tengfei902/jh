@@ -1,0 +1,1 @@
+alter table pay_request add pay_result varchar(32) not null default '' after status;

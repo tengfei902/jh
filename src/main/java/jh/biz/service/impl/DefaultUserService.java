@@ -1,6 +1,7 @@
 package jh.biz.service.impl;
 
 import hf.base.enums.GroupType;
+import hf.base.enums.UserStatus;
 import jh.biz.service.UserService;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
@@ -31,6 +32,7 @@ public class DefaultUserService implements UserService {
         userGroupDao.insertSelective(userGroup);
         userInfo.setGroupId(userGroup.getId());
         userInfo.setInviteCode(RandomStringUtils.random(16, 20, 110, true, true));
+        userInfo.setStatus(UserStatus.AVAILABLE.getValue());
         userInfoDao.insertSelective(userInfo);
     }
 

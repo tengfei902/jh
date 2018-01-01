@@ -61,15 +61,25 @@ public abstract class AbstractPayBiz implements PayBiz {
             case PROCESSING:
                 break;
             case PAY_FAILED:
+                //失败
                 break;
             case OPR_SUCCESS:
+                //收到回复消息
+                notice(payRequest);
+                break;
+            case PAY_SUCCESS:
+                notice(payRequest);
+                break;
+            case USER_NOTIFIED:
+
                 break;
             case OPR_FINISHED:
                 break;
         }
     }
 
-    private void doRemoteCall(PayRequest payRequest) {
+    @Override
+    public void doRemoteCall(PayRequest payRequest) {
         PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(payRequest.getOutTradeNo(), OperateType.HF_CLIENT.getValue(), TradeType.PAY.getValue());
         Map<String,Object> params = new Gson().fromJson(payMsgRecord.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
         Map<String,Object> result = getPayClient().unifiedorder(params);
@@ -83,11 +93,6 @@ public abstract class AbstractPayBiz implements PayBiz {
 
     @Override
     public void payFailed(String outTradeNo) {
-
-    }
-
-    @Override
-    public void promote(String outTradeNo) {
 
     }
 

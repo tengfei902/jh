@@ -189,4 +189,14 @@ public class FxtPayBiz extends AbstractPayBiz {
     public void finishPay(Map<String, Object> map) {
 
     }
+
+    @Override
+    public void notice(PayRequest payRequest) {
+
+    }
+
+    @Override
+    public void promote(PayRequest payRequest) {
+
+    }
 }

@@ -24,7 +24,7 @@ public interface PayRequestDao {
 
     int updateStatusById(@Param("id") Long id,@Param("fromStatus") int fromStatus,@Param("toStatus") int toStatus);
 
-    List<PayRequest> selectUnfinishedList(@Param("createTime") Date createTime);
+    List<PayRequest> selectUnfinishedList(@Param("currentId")Long currentId, @Param("createTime") Date createTime);
 
     List<PayRequest> selectWaitingPromote();
 

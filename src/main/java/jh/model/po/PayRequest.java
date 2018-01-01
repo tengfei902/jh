@@ -32,6 +32,8 @@ public class PayRequest {
 
     private Integer status;
 
+    private String payResult;
+
     private Date createTime;
 
     private Date updateTime;
@@ -212,5 +214,13 @@ public class PayRequest {
 
     public void setChannelProviderCode(String channelProviderCode) {
         this.channelProviderCode = channelProviderCode;
+    }
+
+    public String getPayResult() {
+        return payResult;
+    }
+
+    public void setPayResult(String payResult) {
+        this.payResult = payResult;
     }
 }

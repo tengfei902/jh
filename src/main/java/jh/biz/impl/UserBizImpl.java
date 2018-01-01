@@ -206,15 +206,14 @@ public class UserBizImpl implements UserBiz {
     @Override
     @Transactional
     public void submit(Long userId, Long groupId) {
-        UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
-
-        if(userInfo.getStatus() == UserStatus.NEW.getValue()) {
-            int count = userInfoDao.updateStatusById(userId, UserStatus.NEW.getValue(),UserStatus.SUBMITED.getValue());
-            if(count<=0) {
-                throw new BizFailException("update userinfo failed");
-            }
-        }
-
+//        UserInfo userInfo = userInfoDao.selectByPrimaryKey(userId);
+//
+//        if(userInfo.getStatus() == UserStatus.NEW.getValue()) {
+//            int count = userInfoDao.updateStatusById(userId, UserStatus.NEW.getValue(),UserStatus.SUBMITED.getValue());
+//            if(count<=0) {
+//                throw new BizFailException("update userinfo failed");
+//            }
+//        }
         userGroupDao.updateStatusById(groupId, GroupStatus.NEW.getValue(),GroupStatus.SUBMITED.getValue());
 //        if(count<=0) {
 //            throw new BizFailException("update user group failed");
@@ -278,17 +277,17 @@ public class UserBizImpl implements UserBiz {
         if(count<=0) {
             throw new BizFailException("update user group status failed");
         }
-        UserInfoRequest request = new UserInfoRequest();
-        request.setGroupId(groupId);
-        request.setType(UserType.ADMIN.getValue());
-        request.setStatus(UserStatus.SUBMITED.getValue());
-        List<UserInfo> list =  userInfoDao.select(request);
-        for(UserInfo userInfo:list) {
-            count = userInfoDao.updateStatusById(userInfo.getId(),UserStatus.SUBMITED.getValue(),UserStatus.AVAILABLE.getValue());
-            if(count<=0) {
-                throw new BizFailException("update userInfo status failed");
-            }
-        }
+//        UserInfoRequest request = new UserInfoRequest();
+//        request.setGroupId(groupId);
+//        request.setType(UserType.ADMIN.getValue());
+//        request.setStatus(UserStatus.SUBMITED.getValue());
+//        List<UserInfo> list =  userInfoDao.select(request);
+//        for(UserInfo userInfo:list) {
+//            count = userInfoDao.updateStatusById(userInfo.getId(),UserStatus.SUBMITED.getValue(),UserStatus.AVAILABLE.getValue());
+//            if(count<=0) {
+//                throw new BizFailException("update userInfo status failed");
+//            }
+//        }
 
         Account account = new Account();
         account.setGroupId(groupId);

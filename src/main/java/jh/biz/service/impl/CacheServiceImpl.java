@@ -9,7 +9,6 @@ import jh.dao.local.HfPropertiesDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.local.UserInfoDao;
 import jh.model.po.Account;
-import jh.model.po.Channel;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
