@@ -78,11 +78,11 @@ public class PayApi {
 
         try {
             payFlow.invoke(out_trade_no,PayRequestStatus.PROCESSING);
-            payMsgRecord = payMsgRecordDao.selectByTradeNo(out_trade_no, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+            payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
             return payMsgRecord.getMsgBody();
 
         } catch (BizFailException e) {
-            payMsgRecord = payMsgRecordDao.selectByTradeNo(out_trade_no, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+            payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
             if(!Objects.isNull(payMsgRecord)) {
                 return payMsgRecord.getMsgBody();
             }
