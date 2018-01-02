@@ -12,6 +12,7 @@ import jh.biz.PayBiz;
 import jh.biz.UserBiz;
 import jh.biz.service.PayBizCollection;
 import jh.dao.local.*;
+import jh.dao.remote.CallBackClient;
 import jh.dao.remote.PayClient;
 import jh.model.po.*;
 import jh.test.BaseTestCase;
@@ -72,6 +73,8 @@ public class PayBizTest extends BaseTestCase {
     private PayClient payClient;
 
     private List<Long> groupIds;
+    @Autowired
+    private CallBackClient callBackClient;
 
     @Before
     public void prepareData() throws Exception {
@@ -596,5 +599,32 @@ public class PayBizTest extends BaseTestCase {
         payBiz.notice(payRequest);
         payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
         Assert.assertEquals(PayRequestStatus.OPR_FINISHED.getValue(),payRequest.getStatus().intValue());
+    }
+
+    @Test
+    public void testCallRemoteUrl() {
+        String url = "http://tingt5.cn/WechatHuiFuFuPay/Notify.html";
+        Map<String,Object> resutMap = new HashMap<>();
+        resutMap.put("errcode","0");
+        //msg
+        resutMap.put("message","支付成功");
+
+        resutMap.put("no","1234312");
+        //out_trade_no
+        resutMap.put("out_trade_no","123456");
+        //mch_id
+        resutMap.put("merchant_no","1234546");
+        //total
+        resutMap.put("total","12345");
+        //fee
+        resutMap.put("fee","22");
+        //trade_type 1:收单 2:撤销 3:退款
+        resutMap.put("trade_type","1");
+        //sign_type
+        resutMap.put("sign_type","MD5");
+        String sign = Utils.encrypt(resutMap,"1234312");
+        resutMap.put("sign",sign);
+
+        callBackClient.post(url,resutMap);
     }
 }

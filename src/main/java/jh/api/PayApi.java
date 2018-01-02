@@ -112,7 +112,11 @@ public class PayApi {
 
         String out_trade_no = String.valueOf(params.get("out_trade_no"));
         PayRequest payRequest = payRequestDao.selectByTradeNo(out_trade_no);
-        payBiz.notice(payRequest);
+        try {
+            payBiz.notice(payRequest);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
         return CodeManager.SUCCESS;
     }
