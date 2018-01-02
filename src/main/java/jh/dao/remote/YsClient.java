@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import hf.base.client.BaseClient;
 import hf.base.model.RemoteParams;
+import jh.biz.service.impl.PayServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -12,11 +15,13 @@ import java.util.Map;
 public class YsClient extends BaseClient implements PayClient {
     private static final String payUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=apiPay";
     private static final String checkPayUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=queryOrder";
+    private Logger logger = LoggerFactory.getLogger(YsClient.class);
 
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
         RemoteParams remoteParams = new RemoteParams(payUrl).withParams(params);
         String result = super.post(remoteParams);
+        logger.info(String.format("unifiedorder finished,%s,%s",params.get("out_trade_no"),result));
         return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());
     }
 

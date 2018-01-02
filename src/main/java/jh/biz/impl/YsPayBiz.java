@@ -160,11 +160,11 @@ public class YsPayBiz extends AbstractPayBiz {
         }
 
         String status = String.valueOf(payResult.get("status"));
-
+        String message = String.valueOf(null==payResult.get("message")?"":payResult.get("message"));
         Map<String,Object> resultMap = new HashMap<>();
         if("0".equalsIgnoreCase(status)) {
             resultMap.put("errcode",CodeManager.PAY_SUCCESS);
-            resultMap.put("message","下单成功");
+            resultMap.put("message",message);
             resultMap.put("no",payRequest.getId());
             resultMap.put("out_trade_no",payRequest.getOutTradeNo().split("_")[1]);
             resultMap.put("pay_info",payResult.get("package"));
@@ -175,7 +175,7 @@ public class YsPayBiz extends AbstractPayBiz {
             resultMap.put("sign",sign);
         } else {
             resultMap.put("errcode",status);
-            resultMap.put("message","订单失败");
+            resultMap.put("message",message);
         }
         PayMsgRecord hfToUserMsgRecord = new PayMsgRecord(payMsgRecord.getOutTradeNo(),payMsgRecord.getMerchantNo(),payMsgRecord.getService(),OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),resultMap);
         try {
