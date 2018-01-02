@@ -14,6 +14,7 @@ import java.util.Map;
 @Component
 public class YsClient extends BaseClient implements PayClient {
     private static final String payUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=apiPay";
+    private static final String queryUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=queryOrder";
     private static final String checkPayUrl = "https://www.uuplus.cc/index.php?g=Wap&m=BankPay&a=queryOrder";
     private Logger logger = LoggerFactory.getLogger(YsClient.class);
 
@@ -37,7 +38,9 @@ public class YsClient extends BaseClient implements PayClient {
 
     @Override
     public Map<String, Object> orderinfo(Map<String, Object> params) {
-        return null;
+        RemoteParams remoteParams = new RemoteParams(queryUrl).withParams(params);
+        String result = super.post(remoteParams);
+        return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());
     }
 
     @Override

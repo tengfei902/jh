@@ -1,9 +1,13 @@
 package jh.test.pay;
 
+import com.google.gson.Gson;
+import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
+import jh.dao.remote.YsClient;
 import jh.test.BaseCommitTestCase;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteTest extends BaseCommitTestCase {
+    @Autowired
+    private YsClient ysClient;
 
     @Test
     public void testPay() {
@@ -51,5 +57,13 @@ public class RemoteTest extends BaseCommitTestCase {
 
         String sign = Utils.encrypt2(map,"d4653889e27b45fb51bae4eb427c1a92");
         Assert.assertEquals("15452C3B22FFBFF177254024731B8850",sign);
+    }
+
+    @Test
+    public void testQueryOrder() {
+        String mchId = "102555074371";
+        String outTradeNo = "5139_20180102175624604";
+        Map<String,Object> result = ysClient.orderinfo(MapUtils.buildMap("mch_id",mchId,"out_trade_no",outTradeNo));
+        System.out.println(new Gson().toJson(result));
     }
 }

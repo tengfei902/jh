@@ -2,6 +2,7 @@ package jh.api;
 
 import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
+import hf.base.enums.ChannelProvider;
 import hf.base.enums.OperateType;
 import hf.base.enums.PayRequestStatus;
 import hf.base.enums.TradeType;
@@ -12,11 +13,10 @@ import jh.biz.PayFlow;
 import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.PayBizCollection;
-import jh.dao.local.PayMsgRecordDao;
-import jh.dao.local.PayRequestDao;
-import jh.model.po.PayMsgRecord;
-import jh.model.po.PayRequest;
+import jh.dao.local.*;
+import jh.model.po.*;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,12 @@ public class PayApi {
     private PayBiz payBiz;
     @Autowired
     private PayFlow payFlow;
+    @Autowired
+    private UserGroupDao userGroupDao;
+    @Autowired
+    private UserChannelDao userChannelDao;
+    @Autowired
+    private UserGroupExtDao userGroupExtDao;
 
     protected Logger logger = LoggerFactory.getLogger(PayApi.class);
 
@@ -121,5 +127,72 @@ public class PayApi {
         }
 
         return CodeManager.SUCCESS;
+    }
+
+    @RequestMapping(value = "/queryOrder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody String queryOrder(@RequestBody Map<String,Object> params) {
+        String version = String.valueOf(params.get("version"));
+        String merchant_no = String.valueOf(params.get("merchant _no"));
+        String out_trade_no = String.valueOf(params.get("out_trade_no"));
+        String nonce_str = String.valueOf(params.get("nonce_str"));
+        String sign_type = String.valueOf(params.get("sign_type"));
+        String sign = String.valueOf(params.get("sign"));
+
+        Map<String,Object> map = new HashMap<>();
+        if(StringUtils.isEmpty(merchant_no) || StringUtils.isEmpty(out_trade_no)) {
+            map.put("errcode",2);
+            map.put("message","merchant_no或out_trade_no不能为空");
+            return new Gson().toJson(map);
+        }
+
+        UserGroup userGroup = userGroupDao.selectByGroupNo(merchant_no);
+        PayRequest payRequest = payRequestDao.selectByTradeNo(String.format("%s_%s",merchant_no,out_trade_no));
+        UserGroupExt userGroupExt = userGroupExtDao.selectByUnq(userGroup.getId(),ChannelProvider.YS.getCode());
+
+        UserChannel userChannel = userChannelDao.selectByGroupChannelCode(userGroup.getId(),String.valueOf(map.get("service")), ChannelProvider.YS.getCode());
+        map.put("errcode","0");
+        map.put("service",payRequest.getService());
+        map.put("no",payRequest.getId());
+        map.put("out_trade_no",out_trade_no);
+        map.put("name",payRequest.getBody());
+        map.put("remark",payRequest.getRemark());
+        map.put("total",payRequest.getTotalFee());
+        int payStatus = payRequest.getStatus();
+        PayRequestStatus payRequestStatus = PayRequestStatus.parse(payStatus);
+        switch (payRequestStatus) {
+            case NEW:
+                map.put("status","0");
+                break;
+            case OPR_GENERATED:
+                map.put("status","0");
+                break;
+            case PROCESSING:
+                map.put("status","2");
+                break;
+            case OPR_SUCCESS:
+                map.put("status",1);
+                break;
+            case USER_NOTIFIED:
+                map.put("status",1);
+                break;
+            case PAY_SUCCESS:
+                map.put("status",1);
+                break;
+            case PAY_FAILED:
+                map.put("status",4);
+                break;
+            case OPR_FINISHED:
+                map.put("status",4);
+                break;
+        }
+        map.put("createtime",payRequest.getCreateTime().getTime());
+        map.put("paytime",payRequest.getUpdateTime().getTime());
+        map.put("merchant_no",payRequest.getMchId());
+        map.put("fee_rate",userChannel.getFeeRate());
+        map.put("sign_type","MD5");
+        String returnSign = Utils.encrypt(map,userGroup.getCipherCode());
+        map.put("sign",returnSign);
+
+        return new Gson().toJson(map);
     }
 }
