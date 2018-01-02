@@ -171,7 +171,7 @@ public class YsPayBiz extends AbstractPayBiz {
             resultMap.put("total",payRequest.getTotalFee());
             resultMap.put("sign_type","MD5");
             UserGroup userGroup = cacheService.getGroup(payRequest.getMchId());
-            String sign = Utils.encrypt(resultMap,userGroup.getCipherCode());
+            String sign = Utils.encrypt2(resultMap,userGroup.getCipherCode());
             resultMap.put("sign",sign);
         } else {
             resultMap.put("errcode",status);
