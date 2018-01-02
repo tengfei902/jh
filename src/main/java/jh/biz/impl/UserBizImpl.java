@@ -389,4 +389,54 @@ public class UserBizImpl implements UserBiz {
         salesManDto.setLoginId(userInfo.getLoginId());
         return salesManDto;
     }
+
+    @Transactional
+    @Override
+    public void editSubGroup(Long groupId, Long subGroupId) {
+        UserGroup userGroup = userGroupDao.selectByPrimaryKey(groupId);
+        if(Objects.isNull(userGroup)) {
+            throw new BizFailException("用户不存在");
+        }
+
+        UserGroup subUserGroup = userGroupDao.selectByPrimaryKey(subGroupId);
+        if(Objects.isNull(subUserGroup)) {
+            throw new BizFailException("上级用户不存在");
+        }
+
+        List<UserChannel> userChannels = userChannelDao.selectByGroupId(groupId);
+        if(CollectionUtils.isNotEmpty(userChannels)) {
+            for(UserChannel userChannel:userChannels) {
+
+                UserChannel updateUserChannel = new UserChannel();
+                updateUserChannel.setId(userChannel.getId());
+                updateUserChannel.setSubGroupId(subGroupId);
+                UserChannel subUserChannel = userChannelDao.selectByGroupChannel(subGroupId,userChannel.getChannelId());
+                if(Objects.isNull(subUserChannel)) {
+                    updateUserChannel.setSubFeeRate(new BigDecimal("0"));
+                    updateUserChannel.setStatus(ChannelStatus.DELETED.getStatus());
+                } else {
+                    updateUserChannel.setSubFeeRate(subUserChannel.getFeeRate());
+                    BigDecimal subFeeRate = subUserChannel.getFeeRate();
+                    if(userChannel.getFeeRate().compareTo(subFeeRate)<=0) {
+                        updateUserChannel.setFeeRate(subFeeRate.add(new BigDecimal("0.1")));
+                    }
+                }
+                int count = userChannelDao.updateByPrimaryKeySelective(updateUserChannel);
+                if(count<=0) {
+                    throw new BizFailException("更新失败");
+                }
+            }
+        }
+
+        UserGroup updateUserGroup = new UserGroup();
+        updateUserGroup.setId(groupId);
+        updateUserGroup.setSubGroupId(subGroupId);
+        updateUserGroup.setSubGroupName(subUserGroup.getName());
+        updateUserGroup.setSubGroupNo(subUserGroup.getGroupNo());
+
+        int count = userGroupDao.updateByPrimaryKeySelective(updateUserGroup);
+        if(count<=0) {
+            throw new BizFailException("更新失败");
+        }
+    }
 }

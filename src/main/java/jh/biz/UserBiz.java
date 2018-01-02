@@ -46,4 +46,6 @@ public interface UserBiz {
     List<UserChannelPage> getUserChannelInfo(Long groupId);
 
     List<SalesManDto> getSaleList(Long groupId);
+
+    void editSubGroup(Long groupId,Long subGroupId);
 }

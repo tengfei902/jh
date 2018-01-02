@@ -212,6 +212,12 @@
       <if test="updateTime != null" >
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="subGroupId != null" >
+        sub_group_id = #{subGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="subFeeRate != null" >
+        sub_fee_rate = #{subFeeRate,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>

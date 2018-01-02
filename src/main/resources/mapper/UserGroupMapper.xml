@@ -170,6 +170,15 @@
       <if test="callbackUrl != null" >
         callback_url = #{callbackUrl,jdbcType=VARCHAR},
       </if>
+      <if test="subGroupId != null" >
+        sub_group_id = #{subGroupId,jdbcType=BIGINT},
+      </if>
+      <if test="subGroupName != null" >
+        sub_group_name = #{subGroupName,jdbcType=VARCHAR},
+      </if>
+      <if test="subGroupNo != null" >
+        sub_group_no = #{subGroupNo,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>

@@ -716,4 +716,12 @@ public class UserApi {
 
         return ResponseResult.success(true);
     }
+
+    @RequestMapping(value = "/edit_sub_group",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> editSubGroup(@RequestBody Map<String,Object> data) {
+        Long groupId = Long.parseLong(data.get("groupId").toString());
+        Long subGroupId = Long.parseLong(data.get("subGroupId").toString());
+        userBiz.editSubGroup(groupId,subGroupId);
+        return ResponseResult.success(true);
+    }
 }
