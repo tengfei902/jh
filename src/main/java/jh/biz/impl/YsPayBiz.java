@@ -160,7 +160,7 @@ public class YsPayBiz extends AbstractPayBiz {
         }
 
         String status = String.valueOf(payResult.get("status"));
-        String message = String.valueOf(null==payResult.get("message")?"":payResult.get("message"));
+        String message = String.valueOf(null==payResult.get("msg")?"":payResult.get("msg"));
         Map<String,Object> resultMap = new HashMap<>();
         if("0".equalsIgnoreCase(status)) {
             resultMap.put("errcode",CodeManager.PAY_SUCCESS);

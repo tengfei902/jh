@@ -75,14 +75,14 @@ public class PayApi {
         } catch (BizFailException e) {
             return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
         }
-
+        String outTradeNo = String.format("%s_%s",mchId,out_trade_no);
         try {
-            payFlow.invoke(out_trade_no,PayRequestStatus.PROCESSING);
-            payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+            payFlow.invoke(outTradeNo,PayRequestStatus.PROCESSING);
+            payMsgRecord = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
             return payMsgRecord.getMsgBody();
 
         } catch (BizFailException e) {
-            payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+            payMsgRecord = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
             if(!Objects.isNull(payMsgRecord)) {
                 return payMsgRecord.getMsgBody();
             }
