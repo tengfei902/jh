@@ -122,7 +122,7 @@ public class YsPayBiz extends AbstractPayBiz {
         if(!Utils.isEmpty(appid)) {
             outRequest.put("appid",appid);
         }
-        sign = Utils.encrypt(outRequest,userGroupExt.getCipherCode());
+        sign = Utils.encrypt2(outRequest,userGroupExt.getCipherCode());
         outRequest.put("sign",sign);
 
         PayMsgRecord inPayMsgRecord = new PayMsgRecord(outTradeNo,merchant_no,service, OperateType.USER_HF.getValue(), TradeType.PAY.getValue(),map);
@@ -171,7 +171,7 @@ public class YsPayBiz extends AbstractPayBiz {
             resultMap.put("total",payRequest.getTotalFee());
             resultMap.put("sign_type","MD5");
             UserGroup userGroup = cacheService.getGroup(payRequest.getMchId());
-            String sign = Utils.encrypt2(resultMap,userGroup.getCipherCode());
+            String sign = Utils.encrypt(resultMap,userGroup.getCipherCode());
             resultMap.put("sign",sign);
         } else {
             resultMap.put("errcode",status);
