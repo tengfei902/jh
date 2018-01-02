@@ -40,8 +40,8 @@ public abstract class AbstractPayBiz implements PayBiz {
     @Autowired
     protected ChannelDao channelDao;
 
-    private static final String[] needFields = {"service","version","merchant_no","outlet_no","total","name","remark","out_trade_no",
-            "create_ip","out_notify_url","authcode","nonce_str","sign"};
+    private static final String[] needFields = {"service","version","merchant_no","total","name","remark","out_trade_no",
+            "create_ip","nonce_str","sign","sign_type"};
 
     abstract PayClient getPayClient();
     abstract void handlePayResult(PayRequest payRequest,PayMsgRecord payMsgRecord,Map<String, Object> payResult);

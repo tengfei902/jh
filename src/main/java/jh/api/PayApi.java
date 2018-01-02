@@ -111,36 +111,8 @@ public class PayApi {
         }
 
         String out_trade_no = String.valueOf(params.get("out_trade_no"));
-
         PayRequest payRequest = payRequestDao.selectByTradeNo(out_trade_no);
-
-        Map<String,Object> resutMap = new HashMap<>();
-
-        if(payRequest.getStatus() == PayRequestStatus.OPR_SUCCESS.getValue()) {
-
-            //code 0成功 99失败
-            resutMap.put("code","0");
-            //msg
-            resutMap.put("msg","支付成功");
-            //out_trade_no
-            resutMap.put("out_trade_no",payRequest.getOutTradeNo());
-            //mch_id
-            resutMap.put("mch_id",payRequest.getMchId());
-            //total
-            resutMap.put("total",payRequest.getTotalFee());
-            //fee
-            resutMap.put("fee",payRequest.getFee());
-            //trade_type 1:收单 2:撤销 3:退款
-            resutMap.put("trade_type","1");
-            //sign_type
-            resutMap.put("sign_type","MD5");
-            //sign
-//            String sign = Utils.encrypt(resutMap,);
-        }
-
-        if(payRequest.getStatus() == PayRequestStatus.PAY_FAILED.getValue() || payRequest.getStatus() == PayRequestStatus.OPR_FINISHED.getValue()) {
-
-        }
+        payBiz.notice(payRequest);
 
         return CodeManager.SUCCESS;
     }
