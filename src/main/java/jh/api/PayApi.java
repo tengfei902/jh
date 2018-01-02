@@ -110,8 +110,10 @@ public class PayApi {
             logger.warn(e.getMessage());
         }
 
+        String mchId = String.valueOf(params.get("merchant_no"));
         String out_trade_no = String.valueOf(params.get("out_trade_no"));
-        PayRequest payRequest = payRequestDao.selectByTradeNo(out_trade_no);
+        String outTradeNo = String.format("%s_%s",mchId,out_trade_no);
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         try {
             payBiz.notice(payRequest);
         } catch (Exception e) {
