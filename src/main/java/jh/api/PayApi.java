@@ -13,6 +13,8 @@ import jh.biz.PayFlow;
 import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.PayBizCollection;
+import jh.biz.service.TradeBizFactory;
+import jh.biz.trade.TradeBiz;
 import jh.dao.local.*;
 import jh.model.po.*;
 import org.apache.commons.collections.MapUtils;
@@ -35,66 +37,79 @@ import java.util.Objects;
 @RequestMapping("/pay")
 public class PayApi {
     @Autowired
-    private PayMsgRecordDao payMsgRecordDao;
-    @Autowired
     private PayRequestDao payRequestDao;
-    @Autowired
-    private PayBizCollection payBizCollection;
     @Autowired
     @Qualifier("ysPayBiz")
     private PayBiz payBiz;
-    @Autowired
-    private PayFlow payFlow;
     @Autowired
     private UserGroupDao userGroupDao;
     @Autowired
     private UserChannelDao userChannelDao;
     @Autowired
     private UserGroupExtDao userGroupExtDao;
+    @Autowired
+    private TradeBizFactory tradeBizFactory;
 
     protected Logger logger = LoggerFactory.getLogger(PayApi.class);
 
     @RequestMapping(value = "/unifiedorder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody String unifiedorder(@RequestBody Map<String,Object> params) {
-        if(MapUtils.isEmpty(params)) {
-            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode", CodeManager.PARAM_CHECK_FAILED,"message","service不能为空"));
-        }
-        PayBiz payBiz = payBizCollection.getPayBiz(String.valueOf(params.get("service")));
-        if(Objects.isNull(payBiz)) {
-            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",CodeManager.PARAM_CHECK_FAILED,"message","service错误"));
-        }
         try {
-            payBiz.checkParam(params);
+            String mchId = String.valueOf(params.get("merchant_no"));
+            String service = String.valueOf(params.get("service"));
+            TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(mchId,service);
+            Map<String,Object> resultMap = tradeBiz.pay(params);
+            return new Gson().toJson(resultMap);
         } catch (BizFailException e) {
-            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
-        }
-
-        String out_trade_no = String.valueOf(params.get("out_trade_no"));
-        String mchId = String.valueOf(params.get("merchant_no"));
-        PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
-        if(!Objects.isNull(payMsgRecord)) {
-            return payMsgRecord.getMsgBody();
-        }
-
-        try {
-            payBiz.savePayRequest(params);
-        } catch (BizFailException e) {
-            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
-        }
-        String outTradeNo = String.format("%s_%s",mchId,out_trade_no);
-        try {
-            payFlow.invoke(outTradeNo,PayRequestStatus.PROCESSING);
-            payMsgRecord = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
-            return payMsgRecord.getMsgBody();
-
-        } catch (BizFailException e) {
-            payMsgRecord = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
-            if(!Objects.isNull(payMsgRecord)) {
-                return payMsgRecord.getMsgBody();
-            }
-            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
+            Map<String,Object> result = hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage());
+            return new Gson().toJson(result);
+        } catch (Exception e) {
+            Map<String,Object> result = hf.base.utils.MapUtils.buildMap("errcode",CodeManager.FAILED);
+            return new Gson().toJson(result);
         }
     }
+//
+//    @RequestMapping(value = "/unifiedorder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+//    public @ResponseBody String unifiedorder(@RequestBody Map<String,Object> params) {
+//        if(MapUtils.isEmpty(params)) {
+//            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode", CodeManager.PARAM_CHECK_FAILED,"message","service不能为空"));
+//        }
+//        PayBiz payBiz = payBizCollection.getPayBiz(String.valueOf(params.get("service")));
+//        if(Objects.isNull(payBiz)) {
+//            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",CodeManager.PARAM_CHECK_FAILED,"message","service错误"));
+//        }
+//        try {
+//            payBiz.checkParam(params);
+//        } catch (BizFailException e) {
+//            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
+//        }
+//
+//        String out_trade_no = String.valueOf(params.get("out_trade_no"));
+//        String mchId = String.valueOf(params.get("merchant_no"));
+//        PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(String.format("%s_%s",mchId,out_trade_no), OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+//        if(!Objects.isNull(payMsgRecord)) {
+//            return payMsgRecord.getMsgBody();
+//        }
+//
+//        try {
+//            payBiz.savePayRequest(params);
+//        } catch (BizFailException e) {
+//            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
+//        }
+//        String outTradeNo = String.format("%s_%s",mchId,out_trade_no);
+//        try {
+//            payFlow.invoke(outTradeNo,PayRequestStatus.PROCESSING);
+//            payMsgRecord = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+//            return payMsgRecord.getMsgBody();
+//
+//        } catch (BizFailException e) {
+//            payMsgRecord = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+//            if(!Objects.isNull(payMsgRecord)) {
+//                return payMsgRecord.getMsgBody();
+//            }
+//            return new Gson().toJson(hf.base.utils.MapUtils.buildMap("errcode",e.getCode(),"message",e.getMessage()));
+//        }
+//    }
 
     /**
      * 友收宝支付回调

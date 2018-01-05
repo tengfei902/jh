@@ -44,4 +44,9 @@
 		<property name="requestContextAttribute" value="rc"/><!--request属性引用名称-->
 		<property name="toolboxConfigLocation" value="/WEB-INF/toolbox.xml"/>
 	</bean>
+
+	<bean id="commonConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:/META-INF/config/app-custom.properties"></property>
+		<property name="fileEncoding" value="utf-8"></property>
+	</bean>
 </beans>

@@ -29,9 +29,18 @@ public class FxtPayBiz extends AbstractPayBiz {
     @Qualifier("fxtClient")
     private PayClient payClient;
 
+    private static String[] requestFields = {"service","version","merchant_no","outlet_no","total","name","remark","out_trade_no","create_ip","out_notify_url","authcode","nonce_str","sign_type","sign"};
+    private static String[] unifiedorderRespFields = {"errcode","message","no","out_trade_no","code_url","pay_info","total","transaction_id","paytime","sign_type","sign"};
+
+
     @Override
     public void checkParam(Map<String, Object> map) {
-        super.checkField(map);
+        for(String field:requestFields) {
+            if(Objects.isNull(map.get(field))) {
+                throw new BizFailException(CodeManager.PARAM_CHECK_FAILED,String.format("参数错误:%s不能为空",field));
+            }
+        }
+
         String service = String.valueOf(map.get("service"));
         String sub_openid = String.valueOf(map.get("sub_openid"));
         String buyer_id = String.valueOf(map.get("buyer_id"));

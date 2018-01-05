@@ -1,0 +1,157 @@
+package jh.model.dto.trade.unifiedorder;
+
+import hf.base.annotations.Field;
+import jh.model.dto.trade.IEntity;
+
+public class HfPayRequest implements IEntity {
+    @Field(required = true,defaults = "1.0")
+    private String version;
+    @Field(required = true)
+    private String service;
+    @Field(required = true)
+    private String merchant_no;
+    @Field(required = true,defaults = "")
+    private String outlet_no;
+    @Field(required = true)
+    private String total;
+    @Field(required = true)
+    private String name;
+    @Field(required = true)
+    private String remark;
+    @Field(required = true)
+    private String out_trade_no;
+    @Field(required = true,defaults = "127.0.0.1")
+    private String create_ip;
+    @Field
+    private String sub_open_id;
+    @Field
+    private String buyer_id;
+    @Field(required = true)
+    private String authcode;
+    @Field(required = true)
+    private String nonce_str;
+    @Field(required = true)
+    private String sign_type;
+    @Field(required = true)
+    private String sign;
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getMerchant_no() {
+        return merchant_no;
+    }
+
+    public void setMerchant_no(String merchant_no) {
+        this.merchant_no = merchant_no;
+    }
+
+    public String getOutlet_no() {
+        return outlet_no;
+    }
+
+    public void setOutlet_no(String outlet_no) {
+        this.outlet_no = outlet_no;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getOut_trade_no() {
+        return out_trade_no;
+    }
+
+    public void setOut_trade_no(String out_trade_no) {
+        this.out_trade_no = out_trade_no;
+    }
+
+    public String getCreate_ip() {
+        return create_ip;
+    }
+
+    public void setCreate_ip(String create_ip) {
+        this.create_ip = create_ip;
+    }
+
+    public String getSub_open_id() {
+        return sub_open_id;
+    }
+
+    public void setSub_open_id(String sub_open_id) {
+        this.sub_open_id = sub_open_id;
+    }
+
+    public String getBuyer_id() {
+        return buyer_id;
+    }
+
+    public void setBuyer_id(String buyer_id) {
+        this.buyer_id = buyer_id;
+    }
+
+    public String getAuthcode() {
+        return authcode;
+    }
+
+    public void setAuthcode(String authcode) {
+        this.authcode = authcode;
+    }
+
+    public String getNonce_str() {
+        return nonce_str;
+    }
+
+    public void setNonce_str(String nonce_str) {
+        this.nonce_str = nonce_str;
+    }
+
+    public String getSign_type() {
+        return sign_type;
+    }
+
+    public void setSign_type(String sign_type) {
+        this.sign_type = sign_type;
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
+}

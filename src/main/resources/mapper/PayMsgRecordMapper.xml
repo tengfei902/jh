@@ -9,12 +9,13 @@
     <result column="operate_type" property="operateType" jdbcType="INTEGER" />
     <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
     <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="cipher_code" property="cipherCode" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="jh.model.po.PayMsgRecord" extends="BaseResultMap" >
     <result column="msg_body" property="msgBody" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, out_trade_no, merchant_no, service, `operate_type`,`trade_type`, `status`
+    id, out_trade_no, merchant_no, service, `operate_type`,`trade_type`, `status`,cipher_code
   </sql>
   <sql id="Blob_Column_List" >
     msg_body
@@ -66,6 +67,9 @@
       <if test="msgBody != null" >
         msg_body,
       </if>
+      <if test="cipherCode != null" >
+        cipher_code,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -91,6 +95,9 @@
       </if>
       <if test="msgBody != null" >
         #{msgBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="cipherCode != null" >
+        #{cipherCode,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>

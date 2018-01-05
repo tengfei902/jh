@@ -1,0 +1,1 @@
+alter table pay_msg_record add cipher_code varchar(100) not null default '';

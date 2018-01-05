@@ -21,14 +21,27 @@ public class PayMsgRecord {
 
     private String msgBody;
 
+    private String cipherCode;
+
     public PayMsgRecord() {}
 
-    public PayMsgRecord(String outTradeNo, String merchantNo, String service, Integer operateType, Integer tradeType, Map<String,Object> map) {
+    public PayMsgRecord(String outTradeNo, String merchantNo, String service, Integer operateType, Integer tradeType, Object map) {
         this.outTradeNo = outTradeNo;
         this.merchantNo = merchantNo;
         this.service = service;
         this.operateType = operateType;
         this.tradeType = tradeType;
+        this.cipherCode = "";
+        this.msgBody = new Gson().toJson(map);
+    }
+
+    public PayMsgRecord(String outTradeNo, String merchantNo, String service, Integer operateType, Integer tradeType,String cipherCode, Map<String,Object> map) {
+        this.outTradeNo = outTradeNo;
+        this.merchantNo = merchantNo;
+        this.service = service;
+        this.operateType = operateType;
+        this.tradeType = tradeType;
+        this.cipherCode = cipherCode;
         this.msgBody = new Gson().toJson(map);
     }
 
@@ -94,5 +107,13 @@ public class PayMsgRecord {
 
     public void setTradeType(Integer tradeType) {
         this.tradeType = tradeType;
+    }
+
+    public String getCipherCode() {
+        return cipherCode;
+    }
+
+    public void setCipherCode(String cipherCode) {
+        this.cipherCode = cipherCode;
     }
 }

@@ -9,6 +9,7 @@ import hf.base.utils.MapUtils;
 import hf.base.utils.Pagenation;
 import hf.base.utils.TypeConverter;
 import jh.biz.TrdBiz;
+import jh.model.PropertyConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import java.util.*;
 public class TrdTest extends BaseTestCase {
     @Autowired
     private TrdBiz trdBiz;
+    @Autowired
+    private PropertyConfig propertyConfig;
 
     @Test
     public void testConvertDate() throws Exception {
@@ -85,5 +88,10 @@ public class TrdTest extends BaseTestCase {
             System.out.println(str);
         }
 
+    }
+
+    @Test
+    public void testGetConfig() {
+        System.out.println(propertyConfig.getCallbackUrl());
     }
 }

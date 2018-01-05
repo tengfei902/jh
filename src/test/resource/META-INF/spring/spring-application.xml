@@ -23,4 +23,9 @@
 
 	<bean class="org.springframework.web.client.RestTemplate"/>
 	<bean class="jh.utils.BeanContextUtils"/>
+
+	<bean id="commonConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:/META-INF/config/app-custom.properties"></property>
+		<property name="fileEncoding" value="utf-8"></property>
+	</bean>
 </beans>
