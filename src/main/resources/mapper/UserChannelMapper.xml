@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="jh.model.po.UserChannel" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="channel_name" property="channelName" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
     <result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
     <result column="provider_code" property="providerCode" jdbcType="VARCHAR" />
     <result column="channel_id" property="channelId" jdbcType="BIGINT" />
@@ -23,7 +24,7 @@
     <result column="sub_fee_rate" property="subFeeRate" jdbcType="DECIMAL" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, channel_name, channel_code,provider_code, channel_id, group_id, group_name, fee_rate, standard_fee_rate,
+    id, channel_name,code, channel_code,provider_code, channel_id, group_id, group_name, fee_rate, standard_fee_rate,
     mch_id, cipher_code, callback_url, `status`, version, create_time, update_time,sub_group_id,
     company_id,sub_fee_rate
   </sql>
@@ -57,6 +58,9 @@
       </if>
       <if test="channelName != null" >
         channel_name,
+      </if>
+      <if test="code != null" >
+        code,
       </if>
       <if test="channelCode != null" >
         channel_code,
@@ -116,6 +120,9 @@
       </if>
       <if test="channelName != null" >
         #{channelName,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
       </if>
       <if test="channelCode != null" >
         #{channelCode,jdbcType=VARCHAR},

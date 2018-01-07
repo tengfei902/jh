@@ -1,30 +1,42 @@
 package jh.dao.remote;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import hf.base.client.BaseClient;
+import hf.base.model.RemoteParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by tengfei on 2017/10/28.
  */
 @Component
-public class FxtClient implements PayClient {
+public class FxtClient extends BaseClient implements PayClient {
 
-    private String URL = "http://pay.51fuxintong.com/wx.php/OpenApi";
-    private String UNIFIEDORDER = "/unifiedorder";
+    private Logger logger = LoggerFactory.getLogger(FxtClient.class);
+
+    private String unifiedorderUrl = "http://pay.51fuxintong.com/wx.php/OpenApi/unifiedorder";
 
     @Autowired
     private RestTemplate restTemplate;
 
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
-        return null;
+        RemoteParams remoteParams = new RemoteParams(unifiedorderUrl).withParams(params);
+        String result = super.post(remoteParams);
+        logger.info(String.format("unifiedorder finished,%s,%s",params.get("out_trade_no"),result));
+        return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());
     }
 
     @Override
     public Map<String, Object> refundorder(Map<String, Object> params) {
-        return null;
+        return new HashMap<>();
     }
 
     @Override

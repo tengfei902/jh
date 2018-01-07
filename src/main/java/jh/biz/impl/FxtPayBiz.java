@@ -191,17 +191,43 @@ public class FxtPayBiz extends AbstractPayBiz {
 
     @Override
     public void checkCallBack(Map<String, Object> map) {
-
+        String[] needFields = {"errcode","message","no","out_trade_no","sign_type","sign"};
+        if(MapUtils.isEmpty(map)) {
+            throw new BizFailException("callback result empty");
+        }
+        for(String field:needFields) {
+            if(Objects.isNull(map.get(field))) {
+                throw new BizFailException(String.format("%s is null",field));
+            }
+        }
     }
 
     @Override
     public void finishPay(Map<String, Object> map) {
+        String tradeNo = String.valueOf(map.get("out_trade_no"));
+        PayRequest payRequest = payRequestDao.selectByTradeNo(tradeNo);
 
-    }
+        if(Objects.isNull(payRequest)) {
+            throw new BizFailException("payRequest is null");
+        }
 
-    @Override
-    public void notice(PayRequest payRequest) {
+        PayRequestStatus payRequestStatus = PayRequestStatus.parse(payRequest.getStatus()) ;
+        if(payRequestStatus != PayRequestStatus.PROCESSING && payRequestStatus!=PayRequestStatus.OPR_GENERATED) {
+            throw new BizFailException("status invalid");
+        }
 
+        UserGroup userGroup = cacheService.getGroup(payRequest.getMchId());
+
+        PayMsgRecord payMsgRecord = new PayMsgRecord(tradeNo,userGroup.getGroupNo(),payRequest.getService(),OperateType.CALLBACK_CLIENT_HF.getValue(),TradeType.PAY.getValue(),map);
+        payService.savePayMsg(payMsgRecord);
+
+        String errcode = String.valueOf(map.get("errcode"));
+
+        if("0".equalsIgnoreCase(errcode)) {
+            payService.paySuccess(tradeNo);
+        } else {
+            payService.payFailed(tradeNo);
+        }
     }
 
     @Override

@@ -49,7 +49,8 @@ public class ChannelBizImpl implements ChannelBiz {
             userChannelDao.updateByPrimaryKeySelective(userChannel);
         } else {
             Channel channel = channelDao.selectByPrimaryKey(userChannel.getChannelId());
-            userChannel.setChannelCode(channel.getCode());
+            userChannel.setCode(channel.getCode());
+            userChannel.setChannelCode(channel.getChannelCode());
             userChannel.setChannelName(channel.getChannelName());
             userChannel.setStandardFeeRate(channel.getFeeRate());
             UserGroup userGroup = userGroupDao.selectByPrimaryKey(userChannel.getGroupId());

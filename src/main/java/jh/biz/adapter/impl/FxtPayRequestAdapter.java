@@ -71,7 +71,7 @@ public class FxtPayRequestAdapter implements Adapter<FxtPayRequest> {
 
         ChannelCode channelCode = ChannelCode.parseFromCode(service);
 
-        if(channelCode == ChannelCode.WX_OPEN && Utils.isEmpty(payRequest.getSub_open_id())) {
+        if(channelCode == ChannelCode.WX_OPEN && Utils.isEmpty(payRequest.getSub_openid())) {
             throw new BizFailException(CodeManager.PARAM_CHECK_FAILED,"参数错误,微信公众号支付sub_openid不能为空");
         }
         if(channelCode == ChannelCode.ALI_OPEN && Utils.isEmpty(payRequest.getBuyer_id())) {
@@ -94,7 +94,7 @@ public class FxtPayRequestAdapter implements Adapter<FxtPayRequest> {
         fxtPayRequest.setOut_trade_no(outTradeNo);
         fxtPayRequest.setCreate_ip(payRequest.getCreate_ip());
         fxtPayRequest.setOut_notify_url(propertyConfig.getCallbackUrl());
-        fxtPayRequest.setSub_openid(payRequest.getSub_open_id());
+        fxtPayRequest.setSub_openid(payRequest.getSub_openid());
         fxtPayRequest.setBuyer_id(payRequest.getBuyer_id());
         fxtPayRequest.setAuthcode(payRequest.getAuthcode());
         fxtPayRequest.setSign_type("MD5");
@@ -104,15 +104,16 @@ public class FxtPayRequestAdapter implements Adapter<FxtPayRequest> {
 
         PayRequest hfPayRequest = new PayRequest();
         hfPayRequest.setOutTradeNo(outTradeNo);
-        hfPayRequest.setBody(hfPayRequest.getBody());
-        hfPayRequest.setMchId(hfPayRequest.getMchId());
-        hfPayRequest.setSubOpenid(hfPayRequest.getSubOpenid());
-        hfPayRequest.setBuyerId(hfPayRequest.getBuyerId());
-        hfPayRequest.setService(hfPayRequest.getService());
-        hfPayRequest.setAppid(hfPayRequest.getAppid());
-        hfPayRequest.setSign(hfPayRequest.getSign());
-        hfPayRequest.setTotalFee(hfPayRequest.getTotalFee());
+        hfPayRequest.setBody(String.format("%s_%s",fxtPayRequest.getName(),fxtPayRequest.getRemark()));
+        hfPayRequest.setMchId(payRequest.getMerchant_no());
+        hfPayRequest.setSubOpenid(payRequest.getSub_openid());
+        hfPayRequest.setBuyerId(payRequest.getBuyer_id());
+        hfPayRequest.setService(payRequest.getService());
+        hfPayRequest.setAppid("");
+        hfPayRequest.setSign(payRequest.getSign());
+        hfPayRequest.setTotalFee(Integer.parseInt(payRequest.getTotal()));
         hfPayRequest.setChannelProviderCode(ChannelProvider.FXT.getCode());
+
         payService.savePayRequest(Arrays.asList(inPayMsgRecord,outPayMsgRecord),hfPayRequest);
 
         fxtPayRequest.setNonce_str(Utils.getRandomString(8));

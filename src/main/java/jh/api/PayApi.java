@@ -13,6 +13,7 @@ import jh.biz.PayFlow;
 import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.PayBizCollection;
+import jh.biz.service.PayService;
 import jh.biz.service.TradeBizFactory;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.*;
@@ -42,6 +43,9 @@ public class PayApi {
     @Qualifier("ysPayBiz")
     private PayBiz payBiz;
     @Autowired
+    @Qualifier("fxtPayBiz")
+    private PayBiz fxtPayBiz;
+    @Autowired
     private UserGroupDao userGroupDao;
     @Autowired
     private UserChannelDao userChannelDao;
@@ -49,6 +53,10 @@ public class PayApi {
     private UserGroupExtDao userGroupExtDao;
     @Autowired
     private TradeBizFactory tradeBizFactory;
+    @Autowired
+    private CacheService cacheService;
+    @Autowired
+    private PayService payService;
 
     protected Logger logger = LoggerFactory.getLogger(PayApi.class);
 
@@ -137,6 +145,33 @@ public class PayApi {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         try {
             payBiz.notice(payRequest);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return CodeManager.SUCCESS;
+    }
+
+    @RequestMapping(value = "/fxt/payCallBack",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody String fxtCallBack(@RequestBody Map<String,Object> params) {
+        try {
+            fxtPayBiz.checkCallBack(params);
+        } catch (BizFailException e) {
+            logger.warn(e.getMessage());
+            return CodeManager.FAILED;
+        }
+
+        try {
+            fxtPayBiz.finishPay(params);
+        } catch (BizFailException e) {
+            logger.warn(e.getMessage());
+            return CodeManager.FAILED;
+        }
+
+        String out_trade_no = String.valueOf(params.get("out_trade_no"));
+        PayRequest payRequest = payRequestDao.selectByTradeNo(out_trade_no);
+        try {
+            fxtPayBiz.notice(payRequest);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

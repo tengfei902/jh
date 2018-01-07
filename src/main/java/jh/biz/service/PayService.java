@@ -14,6 +14,8 @@ import java.util.Map;
  */
 public interface PayService {
     void saveOprLog(PayRequest payRequest);
+    void remoteSuccess(PayRequest payRequest,PayMsgRecord hfResultMsg);
+    void payFailed(String outTradeNo,PayMsgRecord hfResultMsg);
     void paySuccess(String outTradeNo);
     void payFailed(String outTradeNo);
     void payPromote(String outTradeNo);

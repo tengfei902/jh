@@ -9,6 +9,7 @@ public class UserChannel {
     @Field
     private Long id;
     private String channelName;
+    private String code;
     private String channelCode;
     @Field
     private String providerCode;
@@ -188,5 +189,13 @@ public class UserChannel {
 
     public void setProviderCode(String providerCode) {
         this.providerCode = providerCode;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

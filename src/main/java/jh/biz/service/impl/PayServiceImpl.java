@@ -2,9 +2,7 @@ package jh.biz.service.impl;
 
 import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
-import hf.base.enums.OprStatus;
-import hf.base.enums.OprType;
-import hf.base.enums.PayRequestStatus;
+import hf.base.enums.*;
 import hf.base.exceptions.BizFailException;
 import hf.base.exceptions.RetryableException;
 import hf.base.utils.BdUtils;
@@ -202,6 +200,13 @@ public class PayServiceImpl implements PayService {
 
     @Transactional
     @Override
+    public void payFailed(String outTradeNo, PayMsgRecord hfResultMsg) {
+        payFailed(outTradeNo);
+        payMsgRecordDao.insertSelective(hfResultMsg);
+    }
+
+    @Transactional
+    @Override
     public void payFailed(String outTradeNo) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         if(payRequest.getStatus() != PayRequestStatus.OPR_GENERATED.getValue() && payRequest.getStatus() != PayRequestStatus.PROCESSING.getValue()) {
@@ -383,5 +388,15 @@ public class PayServiceImpl implements PayService {
         } catch (DuplicateKeyException e) {
             logger.warn(String.format("msg already exist,outTradeNo:%s,tradeType:%s,operateType:%s",payMsgRecord.getOutTradeNo(),payMsgRecord.getTradeType(),payMsgRecord.getOperateType()));
         }
+    }
+
+    @Transactional
+    @Override
+    public void remoteSuccess(PayRequest payRequest,PayMsgRecord hfResultMsg) {
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_GENERATED.getValue(),PayRequestStatus.PROCESSING.getValue());
+        if(count<=0) {
+            throw new BizFailException("update pay request status failed,%s",payRequest.getOutTradeNo());
+        }
+        payMsgRecordDao.insertSelective(hfResultMsg);
     }
 }

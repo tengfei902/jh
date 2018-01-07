@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Objects;
@@ -71,11 +72,13 @@ public class FxtPayResponseAdapter implements Adapter<HfPayResponse> {
         response.setErrcode(errCode);
         response.setMessage(message);
 
+        PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),response);
+
         if(StringUtils.equalsIgnoreCase("0",errCode) || StringUtils.equalsIgnoreCase("4",errCode)) {
             PayRequest payRequest = payRequestDao.selectByTradeNo(String.valueOf(request.get("out_trade_no")));
             UserGroup userGroup = cacheService.getGroup(payRequest.getMchId());
             response.setNo(String.valueOf(payRequest.getId()));
-            response.setOut_trade_no(payRequest.getOutTradeNo().split(",")[1]);
+            response.setOut_trade_no(payRequest.getOutTradeNo().split("_")[1]);
             if(!Objects.isNull(request.get("pay_info"))) {
                 response.setPay_info(String.valueOf(request.get("pay_info")));
             }
@@ -86,22 +89,10 @@ public class FxtPayResponseAdapter implements Adapter<HfPayResponse> {
             String sign = Utils.encrypt(hf.base.utils.MapUtils.beanToMap(response),userGroup.getCipherCode());
 
             response.setSign(sign);
-
-            int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.PROCESSING.getValue());
-            if(count<=0) {
-                throw new BizFailException("update pay request status failed,%s",payRequest.getOutTradeNo());
-            }
+            payService.remoteSuccess(payRequest,hfResultMsg);
         } else {
-            payService.payFailed(inputMsgRecord.getOutTradeNo());
+            payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);
         }
-
-        PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),response);
-        try {
-            payMsgRecordDao.insertSelective(hfResultMsg);
-        } catch (DuplicateKeyException e) {
-            logger.warn(String.format("msg already exist,%s",new Gson().toJson(hfResultMsg)));
-        }
-
         return response;
     }
 }

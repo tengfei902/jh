@@ -65,11 +65,15 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         String sign = Utils.encrypt(map,payMsgRecord.getCipherCode());
         map.put("sign",sign);
 
+        PayMsgRecord hfResultMsg = payMsgRecordDao.selectByTradeNo(payMsgRecord.getOutTradeNo(),OperateType.HF_USER.getValue(),TradeType.PAY.getValue());
+        if(!Objects.isNull(hfResultMsg)) {
+            return;
+        }
         PayMsgRecord resultMsg = payMsgRecordDao.selectByTradeNo(payMsgRecord.getOutTradeNo(),OperateType.CLIENT_HF.getValue(),TradeType.PAY.getValue());
 
         Map<String,Object> resultMap;
         if(Objects.isNull(resultMsg)) {
-            resultMap = getClient().refundorder(map);
+            resultMap = getClient().unifiedorder(map);
         } else {
             resultMap = new Gson().fromJson(resultMsg.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
         }
@@ -92,7 +96,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
 
         doPayFlow(tradeNo,requestMap);
 
-        PayMsgRecord result = payMsgRecordDao.selectByTradeNo(outTradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
+        PayMsgRecord result = payMsgRecordDao.selectByTradeNo(tradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
         return new Gson().fromJson(result.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
     }
 }

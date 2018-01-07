@@ -45,7 +45,7 @@ public class TradeBizFactory {
 
         UserGroup userGroup = cacheService.getGroup(mchId);
         for(ChannelProvider provider:ChannelProvider.values()) {
-            Channel channel = channelDao.selectByCode(service,channelCode.getCode());
+            Channel channel = channelDao.selectByCode(service,provider.getCode());
 
             if(Objects.isNull(channel) || channel.getStatus() != ChannelStatus.VALID.getStatus()) {
                 continue;

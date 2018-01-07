@@ -4,13 +4,13 @@ import hf.base.annotations.Field;
 import jh.model.dto.trade.IEntity;
 
 public class HfPayRequest implements IEntity {
-    @Field(required = true,defaults = "1.0")
+    @Field
     private String version;
     @Field(required = true)
     private String service;
     @Field(required = true)
     private String merchant_no;
-    @Field(required = true,defaults = "")
+    @Field
     private String outlet_no;
     @Field(required = true)
     private String total;
@@ -20,10 +20,10 @@ public class HfPayRequest implements IEntity {
     private String remark;
     @Field(required = true)
     private String out_trade_no;
-    @Field(required = true,defaults = "127.0.0.1")
+    @Field
     private String create_ip;
     @Field
-    private String sub_open_id;
+    private String sub_openid;
     @Field
     private String buyer_id;
     @Field(required = true)
@@ -107,12 +107,12 @@ public class HfPayRequest implements IEntity {
         this.create_ip = create_ip;
     }
 
-    public String getSub_open_id() {
-        return sub_open_id;
+    public String getSub_openid() {
+        return sub_openid;
     }
 
-    public void setSub_open_id(String sub_open_id) {
-        this.sub_open_id = sub_open_id;
+    public void setSub_openid(String sub_openid) {
+        this.sub_openid = sub_openid;
     }
 
     public String getBuyer_id() {

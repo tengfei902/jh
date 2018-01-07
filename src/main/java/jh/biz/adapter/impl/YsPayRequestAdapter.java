@@ -17,11 +17,13 @@ import jh.model.dto.trade.unifiedorder.HfPayRequest;
 import jh.model.dto.trade.unifiedorder.YsPayRequest;
 import jh.model.po.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
+@Service
 public class YsPayRequestAdapter implements Adapter<YsPayRequest> {
     @Autowired
     private CacheService cacheService;
@@ -66,7 +68,7 @@ public class YsPayRequestAdapter implements Adapter<YsPayRequest> {
 
         ChannelCode channelCode = ChannelCode.parseFromCode(service);
 
-        if(channelCode == ChannelCode.WX_OPEN && Utils.isEmpty(payRequest.getSub_open_id())) {
+        if(channelCode == ChannelCode.WX_OPEN && Utils.isEmpty(payRequest.getSub_openid())) {
             throw new BizFailException(CodeManager.PARAM_CHECK_FAILED,"参数错误,微信公众号支付sub_openid不能为空");
         }
         if(channelCode == ChannelCode.ALI_OPEN && Utils.isEmpty(payRequest.getBuyer_id())) {
@@ -83,8 +85,8 @@ public class YsPayRequestAdapter implements Adapter<YsPayRequest> {
         ysPayRequest.setBody(payRequest.getName());
         ysPayRequest.setOut_trade_no(outTradeNo);
         ysPayRequest.setMch_id(outMerchantNo);
-        if(!Utils.isEmpty(payRequest.getSub_open_id())) {
-            ysPayRequest.setSub_openid(payRequest.getSub_open_id());
+        if(!Utils.isEmpty(payRequest.getSub_openid())) {
+            ysPayRequest.setSub_openid(payRequest.getSub_openid());
         }
         if(!Utils.isEmpty(payRequest.getBuyer_id())) {
             ysPayRequest.setBuyer_id(payRequest.getBuyer_id());
