@@ -34,6 +34,8 @@ public abstract class AbstractTradeBiz implements TradeBiz {
 
     abstract PayClient getClient();
 
+    abstract String getSign(Map<String,Object> map,String cipherCode);
+
     protected void doPayFlow(String tradeNo,Map<String,Object> map) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(tradeNo);
         if(Objects.isNull(payRequest)) {
@@ -45,6 +47,10 @@ public abstract class AbstractTradeBiz implements TradeBiz {
             throw new BizFailException("处理失败");
         }
 
+        doPayFlow(payRequest);
+    }
+
+    public void doPayFlow(PayRequest payRequest) {
         switch (PayRequestStatus.parse(payRequest.getStatus())) {
             case NEW:
                 payService.saveOprLog(payRequest);
@@ -62,7 +68,8 @@ public abstract class AbstractTradeBiz implements TradeBiz {
     private void doRemotePay(PayRequest payRequest) {
         PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(payRequest.getOutTradeNo(), OperateType.HF_CLIENT.getValue(), TradeType.PAY.getValue());
         Map<String,Object> map = new Gson().fromJson(payMsgRecord.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
-        String sign = Utils.encrypt(map,payMsgRecord.getCipherCode());
+        map.put("nonce_str",Utils.getRandomString(8));
+        String sign = getSign(map,payMsgRecord.getCipherCode());
         map.put("sign",sign);
 
         PayMsgRecord hfResultMsg = payMsgRecordDao.selectByTradeNo(payMsgRecord.getOutTradeNo(),OperateType.HF_USER.getValue(),TradeType.PAY.getValue());

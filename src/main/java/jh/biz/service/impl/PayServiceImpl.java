@@ -202,6 +202,11 @@ public class PayServiceImpl implements PayService {
     @Override
     public void payFailed(String outTradeNo, PayMsgRecord hfResultMsg) {
         payFailed(outTradeNo);
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.PAY_FAILED.getValue());
+        if(count<=0) {
+            throw new BizFailException("update status failed");
+        }
         payMsgRecordDao.insertSelective(hfResultMsg);
     }
 
@@ -398,5 +403,47 @@ public class PayServiceImpl implements PayService {
             throw new BizFailException("update pay request status failed,%s",payRequest.getOutTradeNo());
         }
         payMsgRecordDao.insertSelective(hfResultMsg);
+    }
+
+    @Transactional
+    @Override
+    public void startRefund(PayRequest payRequest, PayMsgRecord payMsgRecord) {
+        int count = 0;
+        if(PayRequestStatus.USER_NOTIFIED == PayRequestStatus.parse(payRequest.getStatus())) {
+            count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.USER_NOTIFIED.getValue(),PayRequestStatus.REFUNDING.getValue());
+        } else if(PayRequestStatus.OPR_SUCCESS == PayRequestStatus.parse(payRequest.getStatus())) {
+            count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.REFUNDING.getValue());
+        }
+        if(count<=0) {
+            throw new BizFailException("update payrequest refunding failed");
+        }
+        payMsgRecordDao.insertSelective(payMsgRecord);
+    }
+
+    @Transactional
+    @Override
+    public void finishRefund(PayRequest payRequest) {
+        payRequest = payRequestDao.selectByTradeNo(payRequest.getOutTradeNo());
+        if(payRequest.getStatus() == PayRequestStatus.REFUNDED.getValue()) {
+            return;
+        }
+
+        int count = payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.REFUNDING.getValue(),PayRequestStatus.REFUNDED.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update status to refuned failed,%s",payRequest.getOutTradeNo()));
+        }
+        AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(payRequest.getOutTradeNo());
+        count = adminAccountOprLogDao.updateStatusById(adminAccountOprLog.getId(),OprStatus.PAY_SUCCESS.getValue(),OprStatus.REFUND.getValue());
+        if(count<=0) {
+            throw new BizFailException(String.format("update admin account opr log status failed,%s",payRequest.getOutTradeNo()));
+        }
+
+        List<AccountOprLog> logs = accountOprLogDao.selectByTradeNo(payRequest.getOutTradeNo());
+        for(AccountOprLog log:logs) {
+            count = accountOprLogDao.updateStatusById(log.getId(),OprStatus.PAY_SUCCESS.getValue(),OprStatus.REFUND.getValue());
+            if(count<=0) {
+                throw new BizFailException(String.format("update opr log status failed,%s",payRequest.getOutTradeNo()));
+            }
+        }
     }
 }

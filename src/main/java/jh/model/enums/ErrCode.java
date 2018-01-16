@@ -1,5 +1,7 @@
 package jh.model.enums;
 
+import java.math.BigDecimal;
+
 /**
  * Created by tengfei on 2017/10/28.
  */
@@ -11,9 +13,19 @@ public enum ErrCode {
     PAY_FAILED(3,"支付失败"),
     WAITING_PAY(4,"等待用户支付");
 
-    ErrCode(Integer value,String desc) {}
+    private Integer value;
+    private String desc;
+
+    ErrCode(Integer value,String desc) {
+        this.value = value;
+        this.desc = desc;
+    }
 
     public Integer getValue() {
-        return this.getValue();
+        return this.value;
+    }
+
+    public static boolean equals(String input,ErrCode target) {
+        return new BigDecimal(input).intValue() == target.getValue();
     }
 }

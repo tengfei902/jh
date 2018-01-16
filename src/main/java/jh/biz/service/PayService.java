@@ -25,5 +25,6 @@ public interface PayService {
     void savePayRequest(List<PayMsgRecord> msgRecords,PayRequest payRequest);
     void updateDailyLimit();
     void savePayMsg(PayMsgRecord payMsgRecord);
-
+    void startRefund(PayRequest payRequest,PayMsgRecord payMsgRecord);
+    void finishRefund(PayRequest payRequest);
 }

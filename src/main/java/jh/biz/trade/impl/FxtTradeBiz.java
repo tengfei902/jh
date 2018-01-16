@@ -1,18 +1,18 @@
 package jh.biz.trade.impl;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import hf.base.enums.OperateType;
-import hf.base.enums.TradeType;
+import hf.base.utils.MapUtils;
+import hf.base.utils.Utils;
 import jh.biz.adapter.Adapter;
-import jh.biz.adapter.impl.FxtPayRequestAdapter;
-import jh.biz.adapter.impl.FxtPayResponseAdapter;
-import jh.dao.local.PayMsgRecordDao;
+import jh.biz.adapter.impl.*;
 import jh.dao.remote.PayClient;
-import jh.model.po.PayMsgRecord;
+import jh.model.dto.trade.query.FxtQueryRequest;
+import jh.model.dto.trade.refund.FxtRefundRequest;
+import jh.model.dto.trade.refund.HfRefundResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class FxtTradeBiz extends AbstractTradeBiz {
@@ -23,6 +23,12 @@ public class FxtTradeBiz extends AbstractTradeBiz {
     private FxtPayRequestAdapter fxtPayRequestAdapter;
     @Autowired
     private FxtPayResponseAdapter fxtPayResponseAdapter;
+    @Autowired
+    private FxtQueryRequestAdapter fxtQueryRequestAdapter;
+    @Autowired
+    private FxtRefundRequestAdapter fxtRefundRequestAdapter;
+    @Autowired
+    private FxtRefundResponseAdapter fxtRefundResponseAdapter;
 
     @Override
     Adapter getRequestAdapter() {
@@ -37,5 +43,25 @@ public class FxtTradeBiz extends AbstractTradeBiz {
     @Override
     PayClient getClient() {
         return payClient;
+    }
+
+    @Override
+    String getSign(Map<String, Object> map, String cipherCode) {
+        return Utils.encrypt(map,cipherCode);
+    }
+
+    @Override
+    public Map<String, Object> query(Map<String, Object> requestMap) {
+        FxtQueryRequest fxtQueryRequest = fxtQueryRequestAdapter.adpat(requestMap);
+        Map<String,Object> resultMap = payClient.orderinfo(MapUtils.beanToMap(fxtQueryRequest));
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> refund(Map<String, Object> requestMap) {
+        FxtRefundRequest fxtRefundRequest = fxtRefundRequestAdapter.adpat(requestMap);
+        Map<String,Object> refundResult = payClient.refundorder(MapUtils.beanToMap(fxtRefundRequest));
+        HfRefundResponse hfRefundResponse = fxtRefundResponseAdapter.adpat(refundResult);
+        return MapUtils.beanToMap(hfRefundResponse);
     }
 }

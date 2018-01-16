@@ -267,7 +267,7 @@
     select
     <include refid="Base_Column_List" />
     from pay_request
-    where status = 5 order by id
+    where status in (10,20) order by id
 --     and <![CDATA[ DATE_FORMAT(update_time,'yyyy-MM-dd') < CURRENT_DATE ]]> order by id
   </select>
 

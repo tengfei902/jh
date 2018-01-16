@@ -7,7 +7,11 @@ import hf.base.model.RemoteParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -29,7 +33,7 @@ public class FxtClient extends BaseClient implements PayClient {
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
         RemoteParams remoteParams = new RemoteParams(unifiedorderUrl).withParams(params);
-        String result = super.post(remoteParams);
+        String result = super.post(remoteParams,MediaType.APPLICATION_FORM_URLENCODED);
         logger.info(String.format("unifiedorder finished,%s,%s",params.get("out_trade_no"),result));
         return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());
     }

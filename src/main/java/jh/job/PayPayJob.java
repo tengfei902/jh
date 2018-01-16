@@ -1,6 +1,8 @@
 package jh.job;
 
 import jh.biz.PayBiz;
+import jh.biz.service.TradeBizFactory;
+import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
 import jh.model.po.PayRequest;
 import org.apache.commons.collections.CollectionUtils;
@@ -23,12 +25,11 @@ public class PayPayJob {
     private Logger logger = LoggerFactory.getLogger(PayPayJob.class);
 
     @Autowired
-    @Qualifier("ysPayBiz")
-    private PayBiz payBiz;
-    @Autowired
     private PayRequestDao payRequestDao;
+    @Autowired
+    private TradeBizFactory tradeBizFactory;
 
-    @Scheduled(cron = "0 0/1 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void doPay() {
         logger.info(String.format("Start do pay,current time:%s",new Date()));
         Date date = DateUtils.addMinutes(new Date(),-1);
@@ -37,7 +38,11 @@ public class PayPayJob {
         while (!CollectionUtils.isEmpty(payRequestList)) {
             count++;
             logger.info(String.format("do pay loop size:%s",count));
-            payRequestList.parallelStream().forEach(payRequest -> payBiz.pay(payRequest));
+
+            payRequestList.parallelStream().forEach(payRequest -> {
+                TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(payRequest.getMchId(),payRequest.getService());
+                tradeBiz.doPayFlow(payRequest);
+            });
 
             if(count>=1000) {
                 logger.warn("loop more than 1000,break");

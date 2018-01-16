@@ -17,6 +17,7 @@ import jh.dao.local.UserGroupDao;
 import jh.model.dto.trade.unifiedorder.FxtPayResponse;
 import jh.model.dto.trade.unifiedorder.HfPayRequest;
 import jh.model.dto.trade.unifiedorder.HfPayResponse;
+import jh.model.enums.ErrCode;
 import jh.model.po.PayMsgRecord;
 import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
@@ -29,6 +30,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 
@@ -74,7 +76,7 @@ public class FxtPayResponseAdapter implements Adapter<HfPayResponse> {
 
         PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),response);
 
-        if(StringUtils.equalsIgnoreCase("0",errCode) || StringUtils.equalsIgnoreCase("4",errCode)) {
+        if(ErrCode.equals(errCode,ErrCode.SUCCESS) || ErrCode.equals(errCode,ErrCode.WAITING_PAY)) {
             PayRequest payRequest = payRequestDao.selectByTradeNo(String.valueOf(request.get("out_trade_no")));
             UserGroup userGroup = cacheService.getGroup(payRequest.getMchId());
             response.setNo(String.valueOf(payRequest.getId()));

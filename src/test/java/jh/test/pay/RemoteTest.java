@@ -3,7 +3,9 @@ package jh.test.pay;
 import com.google.gson.Gson;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
+import jh.dao.local.UserGroupDao;
 import jh.dao.remote.YsClient;
+import jh.model.po.UserGroup;
 import jh.test.BaseCommitTestCase;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,22 +23,25 @@ import java.util.Map;
 public class RemoteTest extends BaseCommitTestCase {
     @Autowired
     private YsClient ysClient;
+    @Autowired
+    private UserGroupDao userGroupDao;
 
     @Test
     public void testPay() {
+        UserGroup userGroup = userGroupDao.selectByGroupNo("13588");
+
         Map<String,Object> payParams = new HashMap<>();
         payParams.put("version","1.0");
-        payParams.put("service","01");
-        payParams.put("merchant_no","123456");
-        payParams.put("total","1000000");//10000.00
-        payParams.put("name","转账10000");
-        payParams.put("remark","转账10000");
-        payParams.put("out_trade_no","123456231");
+        payParams.put("service","02");
+        payParams.put("merchant_no",userGroup.getGroupNo());
+        payParams.put("total","100");//10000.00
+        payParams.put("name","转账1");
+        payParams.put("remark","转账1");
+        payParams.put("out_trade_no","42136512514");
         payParams.put("create_ip","127.0.0.1");
-        payParams.put("sub_openid","123454125");
         payParams.put("nonce_str", Utils.getRandomString(8));
         payParams.put("sign_type","MD5");
-        String cipherCode = "123445566";
+        String cipherCode = userGroup.getCipherCode();
         String sign = Utils.encrypt(payParams,cipherCode);
         payParams.put("sign",sign);
 
