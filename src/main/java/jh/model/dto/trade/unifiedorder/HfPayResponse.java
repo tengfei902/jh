@@ -9,6 +9,7 @@ public class HfPayResponse implements IEntity {
     private String out_trade_no;
     private String pay_info;
     private String total;
+    private String code_url;
     private String sign_type;
     private String sign;
 
@@ -74,5 +75,13 @@ public class HfPayResponse implements IEntity {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    public String getCode_url() {
+        return code_url;
+    }
+
+    public void setCode_url(String code_url) {
+        this.code_url = code_url;
     }
 }

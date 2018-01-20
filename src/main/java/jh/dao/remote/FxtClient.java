@@ -33,6 +33,7 @@ public class FxtClient extends BaseClient implements PayClient {
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
         RemoteParams remoteParams = new RemoteParams(unifiedorderUrl).withParams(params);
+        logger.info(new Gson().toJson(params));
         String result = super.post(remoteParams,MediaType.APPLICATION_FORM_URLENCODED);
         logger.info(String.format("unifiedorder finished,%s,%s",params.get("out_trade_no"),result));
         return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());

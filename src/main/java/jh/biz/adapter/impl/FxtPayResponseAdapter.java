@@ -87,10 +87,15 @@ public class FxtPayResponseAdapter implements Adapter<HfPayResponse> {
             if(!Objects.isNull(request.get("total"))) {
                 response.setTotal(String.valueOf(request.get("total")));
             }
+            if(!Objects.isNull(request.get("code_url"))) {
+                response.setCode_url(String.valueOf(request.get("code_url")));
+            }
+
             response.setSign_type("MD5");
             String sign = Utils.encrypt(hf.base.utils.MapUtils.beanToMap(response),userGroup.getCipherCode());
-
             response.setSign(sign);
+
+            hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),response);
             payService.remoteSuccess(payRequest,hfResultMsg);
         } else {
             payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);

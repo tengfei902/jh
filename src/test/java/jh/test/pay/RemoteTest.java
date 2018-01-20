@@ -37,7 +37,7 @@ public class RemoteTest extends BaseCommitTestCase {
         payParams.put("total","100");//10000.00
         payParams.put("name","转账1");
         payParams.put("remark","转账1");
-        payParams.put("out_trade_no","42136512514");
+        payParams.put("out_trade_no","42136512518");
         payParams.put("create_ip","127.0.0.1");
         payParams.put("nonce_str", Utils.getRandomString(8));
         payParams.put("sign_type","MD5");
