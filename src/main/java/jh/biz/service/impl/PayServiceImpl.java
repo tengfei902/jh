@@ -19,6 +19,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import sun.font.BidiUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -109,20 +110,16 @@ public class PayServiceImpl implements PayService {
 
         for(int i=0;i<groups.size();i++) {
             UserGroup group = groups.get(i);
-
-            if(i==groups.size()-1) {
+            if(i == groups.size()-1) {
+                //最后一个
                 feeMap.put(group.getId(),amount.subtract(tempFee));
-                continue;
+                break;
             }
-
-            UserChannel groupChannel = userChannelMap.get(group.getId());
-
-            BigDecimal groupTotalFee = groupChannel.getFeeRate().multiply(amount).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
-            BigDecimal groupFee = groupTotalFee.subtract(tempFee);
-            groupFee = BdUtils.max(groupFee,new BigDecimal("0"));
+            BigDecimal groupFeeRate = userChannelMap.get(groups.get(i+1).getId()).getFeeRate().subtract(userChannelMap.get(group.getId()).getFeeRate());
+            BigDecimal groupFee = amount.multiply(groupFeeRate).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP);
+            groupFee = BdUtils.min(groupFee,totalFee.subtract(tempFee));
+            tempFee = tempFee.add(groupFee);
             feeMap.put(group.getId(),groupFee);
-
-            tempFee = BdUtils.max(tempFee,groupTotalFee);
         }
 
         List<AccountOprLog> logs = new ArrayList<>();
