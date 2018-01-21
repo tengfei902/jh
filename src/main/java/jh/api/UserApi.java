@@ -725,4 +725,17 @@ public class UserApi {
         userBiz.editSubGroup(groupId,subGroupId);
         return ResponseResult.success(true);
     }
+
+    @RequestMapping(value = "/save_cipher_code",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveCipherCode(@RequestBody Map<String,Object> data) {
+        Long groupId = Long.parseLong(data.get("groupId").toString());
+        String cipherCode = data.get("cipherCode").toString();
+        UserGroup userGroup = new UserGroup();
+        userGroup.setId(groupId);
+        userGroup.setCipherCode(cipherCode);
+        userGroupDao.updateByPrimaryKeySelective(userGroup);
+        return ResponseResult.success(true);
+    }
+
+
 }
