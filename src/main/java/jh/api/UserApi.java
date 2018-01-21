@@ -612,7 +612,7 @@ public class UserApi {
             return ResponseResult.failed("9999999","该商户不能删除",false);
         }
 
-        userGroupDao.deleteByPrimaryKey(userGroup.getId());
+        userGroupDao.updateStatusById(userGroup.getId(),userGroup.getStatus(),101);
 
         List<UserInfo> userInfos = userInfoDao.selectByGroupId(userGroup.getId());
         for(UserInfo userInfo:userInfos) {

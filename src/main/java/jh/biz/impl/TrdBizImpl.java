@@ -67,7 +67,7 @@ public class TrdBizImpl implements TrdBiz {
         TradeRequestDto tradeRequestDto = new TradeRequestDto();
         tradeRequestDto.setCreateTime(payRequest.getCreateTime());
         tradeRequestDto.setFee(payRequest.getFee().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
-        tradeRequestDto.setGroupName(map.get(payRequest.getMchId()).getName());
+        tradeRequestDto.setGroupName(null==map.get(payRequest.getMchId())?"":map.get(payRequest.getMchId()).getName());
         tradeRequestDto.setId(payRequest.getId());
         tradeRequestDto.setMchId(payRequest.getMchId());
         tradeRequestDto.setOutTradeNo(payRequest.getOutTradeNo());
