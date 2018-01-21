@@ -488,6 +488,7 @@ public class UserApi {
             Pagenation<TradeRequestDto> page = trdBiz.getTradeList(tradeRequest);
             return ResponseResult.success(page);
         }catch (Exception e) {
+            e.printStackTrace();
             return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),new Pagenation<TradeRequestDto>(Collections.EMPTY_LIST));
         }
     }

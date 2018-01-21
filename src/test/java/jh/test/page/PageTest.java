@@ -1,6 +1,7 @@
 package jh.test.page;
 
 import com.google.gson.Gson;
+import hf.base.utils.Utils;
 import jh.biz.service.PageService;
 import jh.model.dto.PageInfo;
 import jh.test.BaseTestCase;
@@ -22,5 +23,10 @@ public class PageTest extends BaseTestCase {
 
         System.out.println(new Gson().toJson(pageInfoList));
 
+    }
+
+    @Test
+    public void testGetCipherCode() {
+        System.out.println(Utils.getRandomString(8));
     }
 }
