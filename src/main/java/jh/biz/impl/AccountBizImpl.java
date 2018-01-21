@@ -208,7 +208,7 @@ public class AccountBizImpl implements AccountBiz {
         accountOprInfo.setId(log.getId());
         accountOprInfo.setAccountId(log.getAccountId());
         accountOprInfo.setGroupId(log.getGroupId());
-        accountOprInfo.setName(groupMap.get(log.getGroupId()).getName());
+        accountOprInfo.setName(null == groupMap.get(log.getGroupId())?"":groupMap.get(log.getGroupId()).getName());
         accountOprInfo.setOprType(log.getType());
         accountOprInfo.setOprTypeDesc(OprType.parse(log.getType()).getDesc());
         accountOprInfo.setOutTradeNo(log.getOutTradeNo());
