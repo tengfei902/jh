@@ -217,7 +217,7 @@ public class AccountBizImpl implements AccountBiz {
         accountOprInfo.setAmount(log.getAmount());
         accountOprInfo.setOprTime(log.getCreateTime());
         accountOprInfo.setRemark(log.getRemark());
-        accountOprInfo.setMchId(groupMap.get(log.getGroupId()).getGroupNo());
+        accountOprInfo.setMchId(null==groupMap.get(log.getGroupId())?"":groupMap.get(log.getGroupId()).getGroupNo());
         accountOprInfo.setAdd(OprType.parse(log.getType()).isAdd());
         return accountOprInfo;
     }
