@@ -91,6 +91,8 @@ public class FxtPayResponseAdapter implements Adapter<HfPayResponse> {
                 response.setCode_url(String.valueOf(request.get("code_url")));
             }
 
+            response.setErrcode(String.valueOf(new BigDecimal(errCode).intValue()));
+
             response.setSign_type("MD5");
             String sign = Utils.encrypt(hf.base.utils.MapUtils.beanToMap(response),userGroup.getCipherCode());
             response.setSign(sign);
