@@ -737,5 +737,14 @@ public class UserApi {
         return ResponseResult.success(true);
     }
 
-
+    @RequestMapping(value = "/save_callback_url",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> saveCallBackUrl(@RequestBody Map<String,Object> data) {
+        Long groupId = Long.parseLong(data.get("groupId").toString());
+        String callBackUrl = data.get("callBackUrl").toString();
+        UserGroup userGroup = new UserGroup();
+        userGroup.setId(groupId);
+        userGroup.setCallbackUrl(callBackUrl);
+        userGroupDao.updateByPrimaryKeySelective(userGroup);
+        return ResponseResult.success(true);
+    }
 }
