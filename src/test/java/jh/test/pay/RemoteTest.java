@@ -34,10 +34,8 @@ public class RemoteTest extends BaseCommitTestCase {
         payParams.put("version","1.0");
         payParams.put("service","02");
         payParams.put("merchant_no",userGroup.getGroupNo());
-        payParams.put("total","100");//10000.00
-        payParams.put("name","转账1");
-        payParams.put("remark","转账1");
-        payParams.put("out_trade_no","42136512518");
+        payParams.put("total","1100");//10000.00
+        payParams.put("out_trade_no","1256521431562");
         payParams.put("create_ip","127.0.0.1");
         payParams.put("nonce_str", Utils.getRandomString(8));
         payParams.put("sign_type","MD5");
@@ -47,6 +45,27 @@ public class RemoteTest extends BaseCommitTestCase {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> entity = restTemplate.postForEntity("http://127.0.0.1:8080/jh/pay/unifiedorder",payParams,String.class, new Object[0]);
+        System.out.println(entity.getBody());
+    }
+
+    @Test
+    public void testRemotePay() {
+        Map<String,Object> payParams = new HashMap<>();
+        payParams.put("version","1.0");
+        payParams.put("service","02");
+        payParams.put("merchant_no","5151");
+        payParams.put("total","1100");//10000.00
+        payParams.put("out_trade_no","1256521431563");
+        payParams.put("create_ip","127.0.0.1");
+        payParams.put("nonce_str", Utils.getRandomString(8));
+        payParams.put("name","Lotto");
+        payParams.put("sign_type","MD5");
+        String cipherCode = "y6sfdfdf";
+        String sign = Utils.encrypt(payParams,cipherCode);
+        payParams.put("sign",sign);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://huifufu.cn/openapi/unifiedorder",payParams,String.class, new Object[0]);
         System.out.println(entity.getBody());
     }
 

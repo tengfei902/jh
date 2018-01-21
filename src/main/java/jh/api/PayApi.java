@@ -63,6 +63,7 @@ public class PayApi {
     @RequestMapping(value = "/unifiedorder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody String unifiedorder(@RequestBody Map<String,Object> params) {
         try {
+            logger.info("new pay request :" +new Gson().toJson(params));
             String mchId = String.valueOf(params.get("merchant_no"));
             String service = String.valueOf(params.get("service"));
             TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(mchId,service);
