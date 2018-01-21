@@ -522,6 +522,7 @@ public class UserApi {
             Pagenation<AccountOprInfo> pagenation = accountBiz.getAccountOprPage(accountOprRequest);
             return ResponseResult.success(pagenation);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseResult.failed(CodeManager.BIZ_FAIELD, e.getMessage(), new Pagenation<AccountOprInfo>(Collections.EMPTY_LIST));
         }
     }
