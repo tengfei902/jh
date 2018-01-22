@@ -37,10 +37,8 @@ public class FxtQueryRequestAdapter implements Adapter<FxtQueryRequest> {
 
         UserGroupExt userGroupExt = userGroupExtDao.selectByUnq(userGroup.getId(), hf.base.enums.ChannelProvider.FXT.getCode());
 
-        String tradeNo = String.format("%s_%s",merchant_no,out_trade_no);
-
         FxtQueryRequest fxtQueryRequest = new FxtQueryRequest();
-        fxtQueryRequest.setOut_trade_no(tradeNo);
+        fxtQueryRequest.setOut_trade_no(out_trade_no);
         fxtQueryRequest.setVersion("1.0");
         fxtQueryRequest.setMerchant_no(userGroupExt.getMerchantNo());
         fxtQueryRequest.setSign_type("MD5");
