@@ -44,6 +44,7 @@ public class FxtQueryRequestAdapter implements Adapter<FxtQueryRequest> {
         fxtQueryRequest.setVersion("1.0");
         fxtQueryRequest.setMerchant_no(userGroupExt.getMerchantNo());
         fxtQueryRequest.setSign_type("MD5");
+        fxtQueryRequest.setNonce_str(Utils.getRandomString(10));
         String sign = Utils.encrypt(MapUtils.beanToMap(fxtQueryRequest),userGroupExt.getCipherCode());
         fxtQueryRequest.setSign(sign);
         return fxtQueryRequest;
