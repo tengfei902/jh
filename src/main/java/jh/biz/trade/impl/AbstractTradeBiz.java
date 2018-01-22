@@ -7,6 +7,8 @@ import hf.base.enums.PayRequestStatus;
 import hf.base.enums.TradeType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
+import jh.api.PayApi;
+import jh.biz.PayBiz;
 import jh.biz.adapter.Adapter;
 import jh.biz.service.PayService;
 import jh.biz.trade.TradeBiz;
@@ -15,12 +17,17 @@ import jh.dao.local.PayRequestDao;
 import jh.dao.remote.PayClient;
 import jh.model.po.PayMsgRecord;
 import jh.model.po.PayRequest;
+import org.apache.commons.collections.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.Objects;
 
 public abstract class AbstractTradeBiz implements TradeBiz {
+    protected Logger logger = LoggerFactory.getLogger(AbstractTradeBiz.class);
+
     @Autowired
     protected PayRequestDao payRequestDao;
     @Autowired
@@ -35,6 +42,8 @@ public abstract class AbstractTradeBiz implements TradeBiz {
     abstract PayClient getClient();
 
     abstract String getSign(Map<String,Object> map,String cipherCode);
+
+    abstract PayBiz getPayBiz();
 
     protected void doPayFlow(String tradeNo,Map<String,Object> map) {
         PayRequest payRequest = payRequestDao.selectByTradeNo(tradeNo);
@@ -105,5 +114,53 @@ public abstract class AbstractTradeBiz implements TradeBiz {
 
         PayMsgRecord result = payMsgRecordDao.selectByTradeNo(tradeNo, OperateType.HF_USER.getValue(), TradeType.PAY.getValue());
         return new Gson().fromJson(result.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
+    }
+
+    @Override
+    public void handleProcessingRequest(PayRequest payRequest) {
+        payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        if(payRequest.getStatus() != PayRequestStatus.PROCESSING.getValue()) {
+            logger.warn(String.format("payRequest not processing,%s,%s",payRequest.getOutTradeNo(),payRequest.getStatus()));
+            return;
+        }
+
+        Map<String,Object> payResult = query(payRequest);
+
+        if(MapUtils.isEmpty(payResult)) {
+            logger.warn(String.format("query failed,%s",payRequest.getOutTradeNo()));
+            return;
+        }
+
+        if(Objects.isNull(payResult.get("errcode"))) {
+            logger.warn(String.format("query failed,errcode is null,%s",payRequest.getOutTradeNo()));
+        }
+        int errcode = Integer.parseInt(String.valueOf(payResult.get("errcode")));
+        if(errcode != 0) {
+            return;
+        }
+        String message = String.valueOf(payResult.get("message"));
+        String service = String.valueOf(payResult.get("service"));
+        String no = String.valueOf(payResult.get("no"));
+        String out_trade_no = String.valueOf(payResult.get("out_trade_no"));
+        int status = Integer.parseInt(String.valueOf(payResult.get("status")));
+
+        switch (status) {
+            case 0:
+                logger.info(String.format("not paid,%s",payRequest.getOutTradeNo()));
+                return;
+            case 1:
+                logger.info(String.format("pay success,%s",payRequest.getOutTradeNo()));
+                payService.paySuccess(payRequest.getOutTradeNo());
+                getPayBiz().notice(payRequest);
+                return;
+            case 2:
+                logger.info(String.format("waiting pay,%s",payRequest.getOutTradeNo()));
+                return;
+            case 3:
+            case 4:
+            case 5:
+                payService.payFailed(payRequest.getOutTradeNo());
+                getPayBiz().notice(payRequest);
+        }
     }
 }

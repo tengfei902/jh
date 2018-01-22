@@ -1,10 +1,12 @@
 package jh.biz.trade.impl;
 
 import hf.base.utils.Utils;
+import jh.biz.PayBiz;
 import jh.biz.adapter.Adapter;
 import jh.biz.adapter.impl.YsPayRequestAdapter;
 import jh.biz.adapter.impl.YsPayResponseAdapter;
 import jh.dao.remote.PayClient;
+import jh.model.po.PayRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ public class YsTradeBiz extends AbstractTradeBiz {
     @Autowired
     @Qualifier("ysClient")
     private PayClient payClient;
+    @Autowired
+    @Qualifier("ysPayBiz")
+    private PayBiz payBiz;
 
     @Override
     Adapter getRequestAdapter() {
@@ -42,7 +47,12 @@ public class YsTradeBiz extends AbstractTradeBiz {
     }
 
     @Override
-    public Map<String, Object> query(Map<String, Object> requestMap) {
+    PayBiz getPayBiz() {
+        return payBiz;
+    }
+
+    @Override
+    public Map<String, Object> query(PayRequest payRequest) {
         return null;
     }
 

@@ -26,8 +26,8 @@ public class FxtQueryRequestAdapter implements Adapter<FxtQueryRequest> {
 
     @Override
     public FxtQueryRequest adpat(Map<String, Object> request) {
-        String merchant_no = String.valueOf(request.get("merchant_no"));
-        String out_trade_no = String.valueOf(request.get("out_trade_no"));
+        String merchant_no = String.valueOf(request.get("mchId"));
+        String out_trade_no = String.valueOf(request.get("outTradeNo"));
 
         UserGroup userGroup = cacheService.getGroup(merchant_no);
 

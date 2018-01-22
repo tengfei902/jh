@@ -15,6 +15,7 @@ import jh.biz.service.TradeBizFactory;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.*;
 import jh.dao.remote.PayClient;
+import jh.job.pay.PayJob;
 import jh.model.po.*;
 import jh.test.BaseTestCase;
 import org.apache.commons.lang.math.RandomUtils;
@@ -66,6 +67,8 @@ public class TradeBizTest extends BaseTestCase {
     private AdminAccountOprLogDao adminAccountOprLogDao;
     @Autowired
     private AccountOprLogDao accountOprLogDao;
+    @Autowired
+    private PayJob payJob;
 
     private List<Long> groupIds;
 
@@ -202,7 +205,9 @@ public class TradeBizTest extends BaseTestCase {
             groupIds = newGroupIds;
 
             ReflectionTestUtils.setField(payApi,"tradeBizFactory",mockTradeBizFactory);
+            ReflectionTestUtils.setField(payJob,"tradeBizFactory",mockTradeBizFactory);
             Mockito.when(mockTradeBizFactory.getTradeBiz(Mockito.anyString(),Mockito.anyString())).thenReturn(fxtTradeBiz);
+            Mockito.when(mockTradeBizFactory.getTradeBiz(Mockito.anyString())).thenReturn(fxtTradeBiz);
             ReflectionTestUtils.setField(fxtTradeBiz,"payClient",fxtPayClient);
         }
     }
@@ -410,5 +415,76 @@ public class TradeBizTest extends BaseTestCase {
             System.out.println(new Gson().toJson(oprLog));
             Assert.assertTrue(oprLog.getStatus() == OprStatus.PAY_FAILED.getValue());
         }
+
+        //test job callback
+
+        groupId = groupIds.get(2);
+        userGroup = userGroupDao.selectByPrimaryKey(groupId);
+        String outTradeNo = String.valueOf(RandomUtils.nextLong());
+        successMap = new HashMap<>();
+        successMap.put("errcode","0");
+        successMap.put("message","成功");
+        successMap.put("no",String.valueOf(RandomUtils.nextLong()));
+        successMap.put("out_trade_no",String.format("%s_%s",userGroup.getGroupNo(),outTradeNo));
+        successMap.put("sign_type","MD5");
+        successMap.put("sign",Utils.getRandomString(8));
+        Mockito.when(fxtPayClient.unifiedorder(Mockito.anyMap())).thenReturn(successMap);
+
+        payParams = new HashMap<>();
+        payParams.put("version","1.0");
+        payParams.put("service","01");
+        payParams.put("merchant_no",userGroup.getGroupNo());
+//        payParams.put("outlet_no","1234321");
+        payParams.put("total","1000000");//10000.00
+        payParams.put("name","转账10000");
+        payParams.put("remark","转账10000");
+        payParams.put("out_trade_no",outTradeNo);
+        payParams.put("create_ip","127.0.0.1");
+        payParams.put("sub_openid","123454125");
+        payParams.put("nonce_str", Utils.getRandomString(8));
+        payParams.put("sign_type","MD5");
+        payParams.put("authcode",String.valueOf(RandomUtils.nextLong()));
+
+        cipherCode = userGroup.getCipherCode();
+        sign = Utils.encrypt(payParams,cipherCode);
+        payParams.put("sign",sign);
+
+        result = payApi.unifiedorder(payParams);
+        System.out.println(result);
+        tradeNo = String.format("%s_%s",payParams.get("merchant_no"),payParams.get("out_trade_no"));
+
+        //payrequest
+        payRequest = payRequestDao.selectByTradeNo(tradeNo);
+        Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.PROCESSING.getValue());
+
+        adminAccountOprLog = adminAccountOprLogDao.selectByNo(tradeNo);
+        System.out.println(new Gson().toJson(adminAccountOprLog));
+        Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.NEW.getValue());
+
+        oprLogs = accountOprLogDao.selectByTradeNo(tradeNo);
+        Assert.assertTrue(oprLogs.size()>0);
+        for(AccountOprLog oprLog:oprLogs) {
+            System.out.println(new Gson().toJson(oprLog));
+            Assert.assertTrue(oprLog.getStatus() == OprStatus.NEW.getValue());
+        }
+
+        try {
+            Thread.sleep(50*1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Mockito.when(fxtPayClient.orderinfo(Mockito.anyMap())).thenReturn(MapUtils.buildMap("errcode","0","status","1"));
+        payJob.handleProcessingPayRequest();
+
+        tradeNo = String.format("%s_%s",payParams.get("merchant_no"),payParams.get("out_trade_no"));
+        payRequest = payRequestDao.selectByTradeNo(tradeNo);
+        Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+        List<AccountOprLog> logs = accountOprLogDao.selectByTradeNo(tradeNo);
+        for(AccountOprLog oprLog:logs) {
+            Assert.assertEquals(oprLog.getStatus().intValue(),OprStatus.PAY_SUCCESS.getValue());
+        }
+
+        adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
+        Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.PAY_SUCCESS.getValue());
     }
 }

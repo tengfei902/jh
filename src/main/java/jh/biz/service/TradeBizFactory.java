@@ -33,6 +33,20 @@ public class TradeBizFactory {
     @Qualifier("ysTradeBiz")
     private TradeBiz ysTradeBiz;
 
+    public TradeBiz getTradeBiz(String providerCode) {
+        ChannelProvider channelProvider = ChannelProvider.parse(providerCode);
+        if(null == channelProvider) {
+            throw new BizFailException(String.format("no provider found,%s",providerCode));
+        }
+        switch (channelProvider) {
+            case FXT:
+                return fxtTradeBiz;
+            case YS:
+                return ysTradeBiz;
+        }
+        throw new BizFailException(String.format("no provider found,%s",providerCode));
+    }
+
     public TradeBiz getTradeBiz(String mchId,String service) {
         if(StringUtils.isEmpty(mchId) || StringUtils.isEmpty(service)) {
             throw new BizFailException(CodeManager.PARAM_CHECK_FAILED,"商户编号参数错误");

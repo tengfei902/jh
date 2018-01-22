@@ -1,7 +1,5 @@
 package jh.dao.remote;
 
-import hf.base.client.BaseClient;
-
 import java.util.Map;
 
 public interface PayClient {

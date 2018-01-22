@@ -288,6 +288,12 @@
     <if test="status != null">
       and status = #{status,jdbcType=INTEGER}
     </if>
+    <if test="statusList != null and statusList.size()>0">
+      and status in
+      <foreach item="status" index="index" collection="statusList" open="(" separator="," close=")">
+        #{status}
+      </foreach>
+    </if>
     <if test="type != null">
       and trade_type = #{type,jdbcType=INTEGER}
     </if>
@@ -297,7 +303,18 @@
         #{item}
       </foreach>
     </if>
-    order by id DESC
+    <if test="startId != null">
+      and id >= #{startId,jdbcType=BIGINT}
+    </if>
+    <if test="lastTime != null">
+      and <![CDATA[ create_time < #{lastTime,jdbcType=TIMESTAMP} ]]>
+    </if>
+    <if test="sortType != null and sortType =='asc'">
+      order by id ASC
+    </if>
+    <if test="sortType == null or sortType =='desc'">
+      order by id DESC
+    </if>
     limit #{startIndex,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
   </select>
 
