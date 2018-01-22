@@ -3,6 +3,7 @@ package jh.dao.local;
 import jh.model.po.PayRequest;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -35,4 +36,6 @@ public interface PayRequestDao {
     int updateFailed(@Param("id") Long id,@Param("fromStatus") int fromStatus,@Param("remark")String remark);
 
     int updatePayResult(@Param("id")Long id,@Param("payResult")String payResult,@Param("version") int version);
+
+    int updateActualAmount(@Param("id")Long id, @Param("actualAmount")BigDecimal actualAmount,@Param("fee") BigDecimal fee,@Param("version")int version);
 }

@@ -255,6 +255,8 @@ public class TradeBizTest extends BaseTestCase {
         String tradeNo = String.format("%s_%s",payParams.get("merchant_no"),payParams.get("out_trade_no"));
         PayRequest payRequest = payRequestDao.selectByTradeNo(tradeNo);
 
+        System.out.println("payRequest amount:"+payRequest.getTotalFee()+",actualAmount:"+payRequest.getActualAmount()+",fee:"+payRequest.getFee());
+
         Assert.assertEquals(payRequest.getStatus().intValue(), PayRequestStatus.PROCESSING.getValue());
 
         AdminAccountOprLog adminAccountOprLog = adminAccountOprLogDao.selectByNo(tradeNo);

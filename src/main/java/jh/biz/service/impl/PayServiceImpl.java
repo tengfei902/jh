@@ -140,6 +140,11 @@ public class PayServiceImpl implements PayService {
             throw new BizFailException("batch insert logs failed");
         }
 
+        payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        count = payRequestDao.updateActualAmount(payRequest.getId(),amount.subtract(totalFee),totalFee,payRequest.getVersion());
+        if(count<=0) {
+            throw new BizFailException("update pay request actualAmount failed");
+        }
         count = payRequestDao.updateStatusById(payRequest.getId(), PayRequestStatus.NEW.getValue(),PayRequestStatus.OPR_GENERATED.getValue());
         if(count<=0) {
             throw new BizFailException("update pay request status failed");
