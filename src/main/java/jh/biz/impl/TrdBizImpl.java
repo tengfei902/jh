@@ -1,5 +1,6 @@
 package jh.biz.impl;
 
+import hf.base.enums.OprType;
 import hf.base.enums.PayRequestStatus;
 import hf.base.enums.TradeType;
 import hf.base.model.TradeRequest;
@@ -9,8 +10,10 @@ import hf.base.utils.Pagenation;
 import jh.biz.TrdBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
+import jh.dao.local.AccountOprLogDao;
 import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
+import jh.model.po.AccountOprLog;
 import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
 import org.apache.commons.collections.CollectionUtils;
@@ -32,6 +35,8 @@ public class TrdBizImpl implements TrdBiz {
     private UserService userService;
     @Autowired
     private UserGroupDao userGroupDao;
+    @Autowired
+    private AccountOprLogDao accountOprLogDao;
 
     @Override
     public Pagenation<TradeRequestDto> getTradeList(TradeRequest request) {
@@ -66,13 +71,22 @@ public class TrdBizImpl implements TrdBiz {
     private TradeRequestDto buildPayRequest(PayRequest payRequest,Map<String,UserGroup> map) {
         TradeRequestDto tradeRequestDto = new TradeRequestDto();
         tradeRequestDto.setCreateTime(payRequest.getCreateTime());
-        tradeRequestDto.setFee(payRequest.getFee().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
         tradeRequestDto.setGroupName(null==map.get(payRequest.getMchId())?"":map.get(payRequest.getMchId()).getName());
         tradeRequestDto.setId(payRequest.getId());
         tradeRequestDto.setMchId(payRequest.getMchId());
         tradeRequestDto.setOutTradeNo(payRequest.getOutTradeNo());
         tradeRequestDto.setType(payRequest.getTradeType());
+
         tradeRequestDto.setActualAmount(payRequest.getActualAmount().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+        tradeRequestDto.setFee(payRequest.getFee().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+        if(payRequest.getActualAmount().compareTo(BigDecimal.ZERO)<=0) {
+            if(null!=map.get(payRequest.getMchId())) {
+                AccountOprLog accountOprLog = accountOprLogDao.selectByUnq(payRequest.getOutTradeNo(),map.get(payRequest.getMchId()).getId(), OprType.PAY.getValue());
+                tradeRequestDto.setActualAmount(accountOprLog.getAmount().divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
+                tradeRequestDto.setFee((new BigDecimal(payRequest.getTotalFee()).subtract(accountOprLog.getAmount())).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP) );
+            }
+        }
+
         tradeRequestDto.setAmoun(new BigDecimal(payRequest.getTotalFee()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP));
         tradeRequestDto.setSuccessTime(payRequest.getUpdateTime());
         tradeRequestDto.setTypeDesc(TradeType.parse(payRequest.getTradeType()).getDesc());
