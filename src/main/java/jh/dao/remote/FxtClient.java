@@ -26,6 +26,7 @@ public class FxtClient extends BaseClient implements PayClient {
     private Logger logger = LoggerFactory.getLogger(FxtClient.class);
 
     private String unifiedorderUrl = "http://pay.51fuxintong.com/wx.php/OpenApi/unifiedorder";
+    private static final String orderInfoUrl = "http://pay.51fuxintong.com/wx.php/OpenApi/orderinfo";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -51,7 +52,11 @@ public class FxtClient extends BaseClient implements PayClient {
 
     @Override
     public Map<String, Object> orderinfo(Map<String, Object> params) {
-        return null;
+        RemoteParams remoteParams = new RemoteParams(orderInfoUrl).withParams(params);
+        logger.info(new Gson().toJson(params));
+        String result = super.post(remoteParams,MediaType.APPLICATION_FORM_URLENCODED);
+        logger.info(String.format("orderinfo finished,%s,%s",params.get("out_trade_no"),result));
+        return new Gson().fromJson(result,new TypeToken<Map<String,Object>>(){}.getType());
     }
 
     @Override

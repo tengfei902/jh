@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
 import jh.dao.local.UserGroupDao;
+import jh.dao.remote.FxtClient;
 import jh.dao.remote.YsClient;
 import jh.model.po.UserGroup;
 import jh.test.BaseCommitTestCase;
@@ -25,6 +26,8 @@ public class RemoteTest extends BaseCommitTestCase {
     private YsClient ysClient;
     @Autowired
     private UserGroupDao userGroupDao;
+    @Autowired
+    private FxtClient fxtClient;
 
     @Test
     public void testPay() {
@@ -88,6 +91,20 @@ public class RemoteTest extends BaseCommitTestCase {
         String mchId = "102555074371";
         String outTradeNo = "5139_20180102175624604";
         Map<String,Object> result = ysClient.orderinfo(MapUtils.buildMap("mch_id",mchId,"out_trade_no",outTradeNo));
+        System.out.println(new Gson().toJson(result));
+    }
+
+    @Test
+    public void doQuery() {
+        Map<String,Object> params = new HashMap<>();
+        params.put("version","1.0");
+        params.put("merchant_no","212000912");
+        params.put("out_trade_no","5132_20180122133710");
+        params.put("nonce_str",Utils.getRandomString(10));
+        params.put("sign_type","MD5");
+        String sign = Utils.encrypt(params,"38ntxf73xznze26bmnr1uw3er94rce8t");
+        params.put("sign",sign);
+        Map<String,Object> result = fxtClient.orderinfo(params);
         System.out.println(new Gson().toJson(result));
     }
 }
