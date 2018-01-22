@@ -343,6 +343,19 @@ public class UserApi {
         }
     }
 
+    @RequestMapping(value = "/update_user_channel_status",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<Boolean> updateUserChannelStatus(@RequestBody Map<String,Object> data) {
+        try {
+            UserChannel userChannel = TypeConverter.convert(data,UserChannel.class);
+            userChannelDao.updateByPrimaryKeySelective(userChannel);
+            return ResponseResult.success(Boolean.TRUE);
+        } catch (BizFailException e) {
+            return ResponseResult.failed(CodeManager.BIZ_FAIELD,e.getMessage(),Boolean.FALSE);
+        } catch (Exception e) {
+            throw new BizFailException(e.getMessage());
+        }
+    }
+
 
     @RequestMapping(value = "/del_channel",method = RequestMethod.POST)
     public @ResponseBody ResponseResult<Boolean> deleteChannel(@RequestBody Map<String,Object> data) {
