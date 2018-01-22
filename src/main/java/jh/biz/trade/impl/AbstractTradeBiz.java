@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 
@@ -134,7 +135,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         if(Objects.isNull(payResult.get("errcode"))) {
             logger.warn(String.format("query failed,errcode is null,%s",payRequest.getOutTradeNo()));
         }
-        int errcode = Integer.parseInt(String.valueOf(payResult.get("errcode")));
+        int errcode = new BigDecimal(String.valueOf(payResult.get("errcode"))).intValue();
         if(errcode != 0) {
             return;
         }
@@ -142,7 +143,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         String service = String.valueOf(payResult.get("service"));
         String no = String.valueOf(payResult.get("no"));
         String out_trade_no = String.valueOf(payResult.get("out_trade_no"));
-        int status = Integer.parseInt(String.valueOf(payResult.get("status")));
+        int status = new BigDecimal(String.valueOf(payResult.get("status"))).intValue();
 
         switch (status) {
             case 0:
