@@ -9,8 +9,10 @@ import jh.biz.service.TradeBizFactory;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
 import jh.model.po.PayRequest;
+import jh.model.po.UserGroup;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,41 @@ public class PayJob {
     }
 
     @Scheduled(cron = "0 0/5 * * * ?")
+    public void handleNoNoticingRequest() {
+        logger.info("Start handleNoNoticingRequest");
+        Long startId = 0L;
+        int page = 1;
+        int pageSize = 500;
+        while(page<100) {
+            Map<String,Object> map = MapUtils.buildMap("status", PayRequestStatus.OPR_SUCCESS.getValue(),
+                    "type", TradeType.PAY.getValue(),"startId",startId,"lastTime", DateUtils.addHours(new Date(),-2),
+                    "startIndex",(page-1)*pageSize,
+                    "pageSize",pageSize,"sortType","asc");
+            List<PayRequest> list = payRequestDao.select(map);
+
+            if(CollectionUtils.isEmpty(list)) {
+                break;
+            }
+
+            page++;
+            startId = list.get(list.size()-1).getId();
+
+            list.parallelStream().forEach(payRequest -> {
+                payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+                if(payRequest.getStatus() != PayRequestStatus.OPR_SUCCESS.getValue()) {
+                    return;
+                }
+                if(StringUtils.equalsIgnoreCase(payRequest.getPayResult(),"0")) {
+                    payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+                } else {
+                    payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
+                }
+            });
+        }
+
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void doPromote() {
         List<PayRequest> list = payRequestDao.selectWaitingPromote();
         list.parallelStream().forEach(payRequest -> {
@@ -73,4 +110,6 @@ public class PayJob {
             }
         });
     }
+
+
 }
