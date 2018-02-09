@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Component
+//@Component
 public class PayJob {
     protected Logger logger = LoggerFactory.getLogger(PayJob.class);
     @Autowired

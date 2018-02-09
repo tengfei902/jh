@@ -16,4 +16,8 @@ public interface CacheService {
     UserGroup getGroup(String groupNo);
 
     String getProp(String key,String defaultValue);
+
+    String getPublicKey();
+
+    String getPrivateKey();
 }

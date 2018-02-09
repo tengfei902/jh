@@ -1,6 +1,7 @@
 package jh.test.pay;
 
 import com.google.gson.Gson;
+import com.sun.javafx.scene.shape.PathUtils;
 import hf.base.enums.ChannelProvider;
 import hf.base.enums.GroupType;
 import hf.base.enums.OprStatus;
@@ -29,7 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -486,5 +492,22 @@ public class TradeBizTest extends BaseTestCase {
 
         adminAccountOprLog = adminAccountOprLogDao.selectByNo(outTradeNo);
         Assert.assertEquals(adminAccountOprLog.getStatus().intValue(),OprStatus.PAY_SUCCESS.getValue());
+    }
+
+    @Test
+    public void testGetKey() throws Exception {
+        String file = "/META-INF/key/rsa_public_key.pem";
+        URL fileURL = this.getClass().getResource(file);
+        InputStream inputStream = this.getClass().getResourceAsStream(file);
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        String s = br.readLine();
+        StringBuffer publickey = new StringBuffer();
+        s = br.readLine();
+        while (s.charAt(0) != '-') {
+            publickey = publickey.append(s + "\r");
+            s = br.readLine();
+        }
+        System.out.println("public-key:"+publickey.toString());
     }
 }

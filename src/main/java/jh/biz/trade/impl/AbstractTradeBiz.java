@@ -75,7 +75,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         }
     }
 
-    private void doRemotePay(PayRequest payRequest) {
+    public void doRemotePay(PayRequest payRequest) {
         PayMsgRecord payMsgRecord = payMsgRecordDao.selectByTradeNo(payRequest.getOutTradeNo(), OperateType.HF_CLIENT.getValue(), TradeType.PAY.getValue());
         Map<String,Object> map = new Gson().fromJson(payMsgRecord.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
         map.put("nonce_str",Utils.getRandomString(8));

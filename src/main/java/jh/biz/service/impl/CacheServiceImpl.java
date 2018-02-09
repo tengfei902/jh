@@ -3,6 +3,7 @@ package jh.biz.service.impl;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import hf.base.exceptions.BizFailException;
 import jh.biz.service.CacheService;
 import jh.dao.local.AccountDao;
 import jh.dao.local.HfPropertiesDao;
@@ -11,9 +12,16 @@ import jh.dao.local.UserInfoDao;
 import jh.model.po.Account;
 import jh.model.po.UserGroup;
 import jh.model.po.UserInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -26,6 +34,8 @@ public class CacheServiceImpl implements CacheService {
     private UserGroupDao userGroupDao;
     @Autowired
     private HfPropertiesDao hfPropertiesDao;
+
+    private Map<String,String> cacheMap = new ConcurrentHashMap<>();
 
     private LoadingCache<Long,UserInfo> userCache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -114,6 +124,60 @@ public class CacheServiceImpl implements CacheService {
             return propCache.get(key);
         } catch (Exception e) {
             return defaultValue;
+        }
+    }
+
+    @Override
+    public String getPublicKey() {
+        String key = cacheMap.get("public_key");
+        if(!StringUtils.isEmpty(key)) {
+            return key;
+        }
+        try {
+            String file = "/META-INF/key/rsa_public_key.pem";
+            InputStream inputStream = this.getClass().getResourceAsStream(file);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            String s = br.readLine();
+            StringBuffer publickey = new StringBuffer();
+            s = br.readLine();
+            while (s.charAt(0) != '-') {
+                publickey = publickey.append(s).append("/");
+                s = br.readLine();
+            }
+
+            cacheMap.put("public_key",publickey.toString());
+            return publickey.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BizFailException(e.getMessage());
+        }
+    }
+
+    @Override
+    public String getPrivateKey() {
+        String key = cacheMap.get("private_key");
+        if(!StringUtils.isEmpty(key)) {
+            return key;
+        }
+        try {
+            String file = "/META-INF/key/private_key.pem";
+            InputStream inputStream = this.getClass().getResourceAsStream(file);
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            String s = br.readLine();
+            StringBuffer privateKey = new StringBuffer();
+            s = br.readLine();
+            while (s.charAt(0) != '-') {
+                privateKey = privateKey.append(s).append("/");
+                s = br.readLine();
+            }
+
+            cacheMap.put("private_key",privateKey.toString());
+            return privateKey.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BizFailException(e.getMessage());
         }
     }
 }

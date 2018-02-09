@@ -32,6 +32,9 @@ public class TradeBizFactory {
     @Autowired
     @Qualifier("ysTradeBiz")
     private TradeBiz ysTradeBiz;
+    @Autowired
+    @Qualifier("wwTradeBiz")
+    private TradeBiz wwTradeBiz;
 
     public TradeBiz getTradeBiz(String providerCode) {
         ChannelProvider channelProvider = ChannelProvider.parse(providerCode);
@@ -76,6 +79,10 @@ public class TradeBizFactory {
 
             if(ChannelProvider.YS == provider) {
                 return ysTradeBiz;
+            }
+
+            if(ChannelProvider.WW == provider) {
+                return wwTradeBiz;
             }
         }
 

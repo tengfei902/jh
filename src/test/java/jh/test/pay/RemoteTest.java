@@ -13,11 +13,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,10 +30,10 @@ public class RemoteTest extends BaseCommitTestCase {
 
         Map<String,Object> payParams = new HashMap<>();
         payParams.put("version","1.0");
-        payParams.put("service","02");
+        payParams.put("service","09");
         payParams.put("merchant_no",userGroup.getGroupNo());
         payParams.put("total","1100");//10000.00
-        payParams.put("out_trade_no","1256521431562");
+        payParams.put("out_trade_no","1256521431578");
         payParams.put("create_ip","127.0.0.1");
         payParams.put("nonce_str", Utils.getRandomString(8));
         payParams.put("sign_type","MD5");
@@ -106,5 +101,10 @@ public class RemoteTest extends BaseCommitTestCase {
         params.put("sign",sign);
         Map<String,Object> result = fxtClient.orderinfo(params);
         System.out.println(new Gson().toJson(result));
+    }
+
+    @Test
+    public void testWWH5Pay() {
+
     }
 }
