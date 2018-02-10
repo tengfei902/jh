@@ -11,20 +11,16 @@ import java.util.Map;
  * Created by tengfei on 2017/10/28.
  */
 public interface PayBiz {
-    void checkParam(Map<String,Object> map);
-    Long savePayRequest(Map<String,Object> map);
+//    void checkParam(Map<String,Object> map);
+//    Long savePayRequest(Map<String,Object> map);
     void doRemoteCall(PayRequest payRequest);
-    void notice(PayRequest payRequest);
-    void promote(PayRequest payRequest);
-
-    void pay(PayRequest payRequest);
+//    void promote(PayRequest payRequest);
+//    void pay(PayRequest payRequest);
     void checkCallBack(Map<String,Object> map);
     void finishPay(Map<String,Object> map);
-
-    void paySuccess(String outTradeNo);
-    void payFailed(String outTradeNo);
-
-    RefundResponse refund(RefundRequest refundRequest);
-    ReverseResponse reverse(ReverseRequest reverseRequest);
+//    void paySuccess(String outTradeNo);
+//    void payFailed(String outTradeNo);
+//    RefundResponse refund(RefundRequest refundRequest);
+//    ReverseResponse reverse(ReverseRequest reverseRequest);
     ChannelProvider getProvider();
 }

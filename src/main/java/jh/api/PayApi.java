@@ -3,22 +3,16 @@ package jh.api;
 import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
 import hf.base.enums.ChannelProvider;
-import hf.base.enums.OperateType;
 import hf.base.enums.PayRequestStatus;
-import hf.base.enums.TradeType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
 import jh.biz.PayBiz;
-import jh.biz.PayFlow;
-import jh.biz.impl.AbstractPayBiz;
 import jh.biz.service.CacheService;
-import jh.biz.service.PayBizCollection;
 import jh.biz.service.PayService;
 import jh.biz.service.TradeBizFactory;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.*;
 import jh.model.po.*;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +39,15 @@ public class PayApi {
     @Autowired
     @Qualifier("fxtPayBiz")
     private PayBiz fxtPayBiz;
+    @Autowired
+    @Qualifier("wwTradeBiz")
+    private TradeBiz wwTradeBiz;
+    @Autowired
+    @Qualifier("ysTradeBiz")
+    private TradeBiz ysTradeBiz;
+    @Autowired
+    @Qualifier("fxtTradeBiz")
+    private TradeBiz fxtTradeBiz;
     @Autowired
     private UserGroupDao userGroupDao;
     @Autowired
@@ -145,7 +148,7 @@ public class PayApi {
         String outTradeNo = String.format("%s_%s",mchId,out_trade_no);
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
         try {
-            payBiz.notice(payRequest);
+            ysTradeBiz.notice(payRequest);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -172,12 +175,21 @@ public class PayApi {
         String out_trade_no = String.valueOf(params.get("out_trade_no"));
         PayRequest payRequest = payRequestDao.selectByTradeNo(out_trade_no);
         try {
-            fxtPayBiz.notice(payRequest);
+            fxtTradeBiz.notice(payRequest);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
 
         return CodeManager.SUCCESS;
+    }
+
+    @RequestMapping(value = "/ww/payCallBack",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
+    public @ResponseBody String wwCallBack(@RequestBody Map<String,String> params) {
+        String result = wwTradeBiz.handleCallBack(params);
+        String tradeNo = params.get("orderNum");
+        PayRequest payRequest = payRequestDao.selectByTradeNo(tradeNo);
+        wwTradeBiz.notice(payRequest);
+        return result;
     }
 
     @RequestMapping(value = "/queryOrder",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")

@@ -1,6 +1,5 @@
 package jh.biz.trade.impl;
 
-import hf.base.enums.ChannelProvider;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
 import jh.biz.PayBiz;
@@ -13,13 +12,10 @@ import jh.model.dto.trade.query.FxtQueryRequest;
 import jh.model.dto.trade.refund.FxtRefundRequest;
 import jh.model.dto.trade.refund.HfRefundResponse;
 import jh.model.po.PayRequest;
-import jh.model.po.UserGroup;
-import jh.model.po.UserGroupExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service

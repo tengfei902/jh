@@ -34,6 +34,8 @@ public class HfPayRequest implements IEntity {
     private String sign_type;
     @Field(required = true)
     private String sign;
+    @Field
+    private String bank_code;
 
     public String getVersion() {
         return version;
@@ -153,5 +155,13 @@ public class HfPayRequest implements IEntity {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    public String getBank_code() {
+        return bank_code;
+    }
+
+    public void setBank_code(String bank_code) {
+        this.bank_code = bank_code;
     }
 }

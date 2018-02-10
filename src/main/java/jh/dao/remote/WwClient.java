@@ -1,5 +1,7 @@
 package jh.dao.remote;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import hf.base.client.BaseClient;
 import hf.base.exceptions.BizFailException;
 import hf.base.model.RemoteParams;
@@ -22,6 +24,7 @@ public class WwClient extends BaseClient implements PayClient {
 
     private static final String H5_PAY_URL = "http://47.97.175.195:8692/pay/payment/toH5";
     private static final String WY_PAY_URL = "http://pay1.hlqlb.cn:8692/pay/payment/toPayment";
+    private static final String QUERY_URL = "http://47.97.175.195:8682/posp/cashierDesk/orderQuery";
 
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
@@ -57,7 +60,9 @@ public class WwClient extends BaseClient implements PayClient {
 
     @Override
     public Map<String, Object> orderinfo(Map<String, Object> params) {
-        return null;
+        RemoteParams remoteParams = new RemoteParams(QUERY_URL).withParams(params);
+        String result = super.post(remoteParams, MediaType.APPLICATION_FORM_URLENCODED);
+        return new Gson().fromJson(result,new TypeToken<Map<String,String>>(){}.getType());
     }
 
     @Override

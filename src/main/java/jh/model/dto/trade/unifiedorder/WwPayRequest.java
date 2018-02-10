@@ -12,6 +12,8 @@ public class WwPayRequest implements IEntity {
     private String callbackUrl;
     private String signStr;
     private String channelCode;
+    private String bankCode;
+    private String goodsName;
 
     public String getMemberCode() {
         return memberCode;
@@ -83,5 +85,21 @@ public class WwPayRequest implements IEntity {
 
     public void setChannelCode(String channelCode) {
         this.channelCode = channelCode;
+    }
+
+    public String getBankCode() {
+        return bankCode;
+    }
+
+    public void setBankCode(String bankCode) {
+        this.bankCode = bankCode;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
     }
 }

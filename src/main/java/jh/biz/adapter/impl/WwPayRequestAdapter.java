@@ -81,7 +81,7 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
         WwPayRequest wwPayRequest = new WwPayRequest();
 
         if(channelCode == ChannelCode.WX_H5) {
-            wwPayRequest.setCallbackUrl(propertyConfig.getCallbackUrl());
+            wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
             wwPayRequest.setIp("127.0.0.1");
             wwPayRequest.setMemberCode(outMerchantNo);
             wwPayRequest.setOrderNum(outTradeNo);
@@ -89,15 +89,20 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
             wwPayRequest.setPayType("1");
             wwPayRequest.setChannelCode(payRequest.getService());
         } else if(channelCode == ChannelCode.WY) {
-            wwPayRequest.setCallbackUrl(propertyConfig.getCallbackUrl());
+            wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
             wwPayRequest.setMemberCode(outMerchantNo);
             wwPayRequest.setOrderNum(outTradeNo);
             wwPayRequest.setPayMoney(String.valueOf(new BigDecimal(payRequest.getTotal()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP)));
             wwPayRequest.setChannelCode(payRequest.getService());
+            if(!Utils.isEmpty(payRequest.getBank_code())) {
+                wwPayRequest.setBankCode(payRequest.getBank_code());
+            }
+            if(!Utils.isEmpty(payRequest.getRemark())) {
+                wwPayRequest.setGoodsName(payRequest.getRemark());
+            }
         } else {
             throw new BizFailException("no channel defined");
         }
-
 
         PayMsgRecord inPayMsgRecord = new PayMsgRecord(outTradeNo,payRequest.getMerchant_no(),service, OperateType.USER_HF.getValue(), TradeType.PAY.getValue(),request);
         PayMsgRecord outPayMsgRecord = new PayMsgRecord(outTradeNo,outMerchantNo,channel.getChannelCode(),OperateType.HF_CLIENT.getValue(),TradeType.PAY.getValue(),outCipherCode, MapUtils.beanToMap(wwPayRequest));

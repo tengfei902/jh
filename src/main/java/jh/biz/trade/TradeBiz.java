@@ -10,4 +10,7 @@ public interface TradeBiz {
     Map<String,Object> refund(Map<String,Object> requestMap);
     void doPayFlow(PayRequest payRequest);
     void handleProcessingRequest(PayRequest payRequest);
+    String handleCallBack(Map<String,String> map);
+    void notice(PayRequest payRequest);
+    void finishPay(Map<String,String> map);
 }

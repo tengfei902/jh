@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+//@Component
 public class PayPayJob {
 
     private Logger logger = LoggerFactory.getLogger(PayPayJob.class);

@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-//@Component
+@Component
 public class PayJob {
     protected Logger logger = LoggerFactory.getLogger(PayJob.class);
     @Autowired
@@ -101,7 +101,7 @@ public class PayJob {
     @Scheduled(cron = "0 0/5 * * * ?")
     public void doPromote() {
         List<PayRequest> list = payRequestDao.selectWaitingPromote();
-        list.parallelStream().forEach(payRequest -> {
+        list.stream().forEach(payRequest -> {
             try {
                 payService.payPromote(payRequest.getOutTradeNo());
             } catch (Exception e) {
@@ -110,6 +110,4 @@ public class PayJob {
             }
         });
     }
-
-
 }

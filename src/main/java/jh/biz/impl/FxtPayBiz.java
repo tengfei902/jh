@@ -33,7 +33,6 @@ public class FxtPayBiz extends AbstractPayBiz {
     private static String[] unifiedorderRespFields = {"errcode","message","no","out_trade_no","code_url","pay_info","total","transaction_id","paytime","sign_type","sign"};
 
 
-    @Override
     public void checkParam(Map<String, Object> map) {
         for(String field:requestFields) {
             if(Objects.isNull(map.get(field))) {
@@ -54,7 +53,6 @@ public class FxtPayBiz extends AbstractPayBiz {
         }
     }
 
-    @Override
     public Long savePayRequest(Map<String, Object> map) {
         UserGroup userGroup = cacheService.getGroup(String.valueOf(map.get("merchant_no")));
         if(Objects.isNull(userGroup) || userGroup.getStatus() != GroupStatus.AVAILABLE.getValue()) {
@@ -175,16 +173,6 @@ public class FxtPayBiz extends AbstractPayBiz {
     }
 
     @Override
-    public RefundResponse refund(RefundRequest refundRequest) {
-        return null;
-    }
-
-    @Override
-    public ReverseResponse reverse(ReverseRequest reverseRequest) {
-        return null;
-    }
-
-    @Override
     public ChannelProvider getProvider() {
         return ChannelProvider.FXT;
     }
@@ -228,10 +216,5 @@ public class FxtPayBiz extends AbstractPayBiz {
         } else {
             payService.payFailed(tradeNo);
         }
-    }
-
-    @Override
-    public void promote(PayRequest payRequest) {
-
     }
 }

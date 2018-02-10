@@ -3,14 +3,18 @@ package jh.test.pay;
 import com.google.gson.Gson;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
+import jh.biz.trade.TradeBiz;
+import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.remote.FxtClient;
 import jh.dao.remote.YsClient;
+import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
 import jh.test.BaseCommitTestCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
@@ -23,6 +27,11 @@ public class RemoteTest extends BaseCommitTestCase {
     private UserGroupDao userGroupDao;
     @Autowired
     private FxtClient fxtClient;
+    @Autowired
+    @Qualifier("wwTradeBiz")
+    private TradeBiz wwTradeBiz;
+    @Autowired
+    private PayRequestDao payRequestDao;
 
     @Test
     public void testPay() {
@@ -83,10 +92,9 @@ public class RemoteTest extends BaseCommitTestCase {
 
     @Test
     public void testQueryOrder() {
-        String mchId = "102555074371";
-        String outTradeNo = "5139_20180102175624604";
-        Map<String,Object> result = ysClient.orderinfo(MapUtils.buildMap("mch_id",mchId,"out_trade_no",outTradeNo));
-        System.out.println(new Gson().toJson(result));
+        String outTradeNo = "13588_20180209173021";
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        wwTradeBiz.handleProcessingRequest(payRequest);
     }
 
     @Test
