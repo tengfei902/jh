@@ -29,7 +29,7 @@ public class WwClient extends BaseClient implements PayClient {
     @Override
     public Map<String, Object> unifiedorder(Map<String, Object> params) {
         String url = null;
-        if(StringUtils.equalsIgnoreCase(params.get("channelCode").toString(),"04")) {
+        if(StringUtils.equalsIgnoreCase(params.get("channelCode").toString(),"04") || StringUtils.equalsIgnoreCase(params.get("channelCode").toString(),"10")) {
             url = H5_PAY_URL;
         }
         if(StringUtils.equalsIgnoreCase(params.get("channelCode").toString(),"09")) {

@@ -81,12 +81,22 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
         WwPayRequest wwPayRequest = new WwPayRequest();
 
         if(channelCode == ChannelCode.WX_H5) {
-            wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
-            wwPayRequest.setIp("127.0.0.1");
             wwPayRequest.setMemberCode(outMerchantNo);
             wwPayRequest.setOrderNum(outTradeNo);
             wwPayRequest.setPayMoney(String.valueOf(new BigDecimal(payRequest.getTotal()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP)));
             wwPayRequest.setPayType("1");
+            wwPayRequest.setSceneInfo("慧富微信H5支付");
+            wwPayRequest.setIp("127.0.0.1");
+            wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
+            wwPayRequest.setChannelCode(payRequest.getService());
+        } else if(channelCode == ChannelCode.QQ_H5) {
+            wwPayRequest.setMemberCode(outMerchantNo);
+            wwPayRequest.setOrderNum(outTradeNo);
+            wwPayRequest.setPayMoney(String.valueOf(new BigDecimal(payRequest.getTotal()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP)));
+            wwPayRequest.setPayType("3");
+            wwPayRequest.setSceneInfo("慧富QQH5支付");
+            wwPayRequest.setIp("127.0.0.1");
+            wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
             wwPayRequest.setChannelCode(payRequest.getService());
         } else if(channelCode == ChannelCode.WY) {
             wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());

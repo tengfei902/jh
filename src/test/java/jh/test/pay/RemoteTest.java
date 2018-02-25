@@ -1,7 +1,6 @@
 package jh.test.pay;
 
 import com.google.gson.Gson;
-import hf.base.utils.MapUtils;
 import hf.base.utils.Utils;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
@@ -39,10 +38,10 @@ public class RemoteTest extends BaseCommitTestCase {
 
         Map<String,Object> payParams = new HashMap<>();
         payParams.put("version","1.0");
-        payParams.put("service","09");
+        payParams.put("service","10");
         payParams.put("merchant_no",userGroup.getGroupNo());
         payParams.put("total","1100");//10000.00
-        payParams.put("out_trade_no","1256521431578");
+        payParams.put("out_trade_no","1256521431579");
         payParams.put("create_ip","127.0.0.1");
         payParams.put("nonce_str", Utils.getRandomString(8));
         payParams.put("sign_type","MD5");
