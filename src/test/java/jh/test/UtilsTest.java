@@ -1,7 +1,11 @@
 package jh.test;
 
 import hf.base.utils.EpaySignUtil;
+import hf.base.utils.Utils;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UtilsTest {
 
@@ -64,5 +68,19 @@ public class UtilsTest {
     public void testSubstring() {
         String result = content.substring(content.indexOf("<form"),content.indexOf("</form>")+7);
         System.out.println(result);
+    }
+
+    @Test
+    public void testEncript() {
+        String url = "create_ip=127.0.0.1&merchant_no=5160&name=2018032151545398&nonce_str=17548&out_trade_no=2018032151545398&service=09&sign_type=MD5&total=12300&version=1.0&key=JCwetYdyJCcWXhyd4QjieakDsWdJjzeF";
+        Map<String,Object> map = new HashMap<>();
+        map.put("create_ip","127.0.0.1");
+        map.put("merchant_no","5160");
+        map.put("name","2018032151545398");
+        map.put("nonce_str","17548");
+        map.put("out_trade_no","2018032151545398");
+        map.put("service","09");
+//        map.put()
+//        System.out.println(Utils.checkEncrypt());
     }
 }

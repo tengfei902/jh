@@ -34,23 +34,25 @@ public class RemoteTest extends BaseCommitTestCase {
 
     @Test
     public void testPay() {
-        UserGroup userGroup = userGroupDao.selectByGroupNo("13588");
+//        UserGroup userGroup = userGroupDao.selectByGroupNo("13588");
 
         Map<String,Object> payParams = new HashMap<>();
-        payParams.put("version","1.0");
-        payParams.put("service","10");
-        payParams.put("merchant_no",userGroup.getGroupNo());
-        payParams.put("total","1100");//10000.00
-        payParams.put("out_trade_no","1256521431579");
         payParams.put("create_ip","127.0.0.1");
+        payParams.put("merchant_no","5160");
         payParams.put("nonce_str", Utils.getRandomString(8));
+        payParams.put("name","12342131541");
+        payParams.put("out_trade_no","12565214315999");
+        payParams.put("service","09");
         payParams.put("sign_type","MD5");
-        String cipherCode = userGroup.getCipherCode();
+        payParams.put("total",12300);//10000.00
+        payParams.put("version","1.0");
+
+        String cipherCode = "JCwetYdyJCcWXhyd4QjieakDsWdJjzeF";
         String sign = Utils.encrypt(payParams,cipherCode);
         payParams.put("sign",sign);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> entity = restTemplate.postForEntity("http://127.0.0.1:8080/jh/pay/unifiedorder",payParams,String.class, new Object[0]);
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://huifufu.cn/openapi/unifiedorder",payParams,String.class, new Object[0]);
         System.out.println(entity.getBody());
     }
 
