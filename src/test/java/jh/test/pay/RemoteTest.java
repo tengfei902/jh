@@ -10,6 +10,7 @@ import jh.dao.remote.YsClient;
 import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
 import jh.test.BaseCommitTestCase;
+import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +38,17 @@ public class RemoteTest extends BaseCommitTestCase {
         UserGroup userGroup = userGroupDao.selectByGroupNo("13588");
 
         Map<String,Object> payParams = new HashMap<>();
-        payParams.put("version","1.0");
-        payParams.put("service","10");
-        payParams.put("merchant_no",userGroup.getGroupNo());
-        payParams.put("total","1100");//10000.00
-        payParams.put("out_trade_no","1256521431579");
         payParams.put("create_ip","127.0.0.1");
+        payParams.put("merchant_no",userGroup.getGroupNo());
         payParams.put("nonce_str", Utils.getRandomString(8));
+        payParams.put("name","测试");
+        payParams.put("out_trade_no",String.valueOf(RandomUtils.nextLong()));
+        payParams.put("service","10");
         payParams.put("sign_type","MD5");
-        String cipherCode = userGroup.getCipherCode();
-        String sign = Utils.encrypt(payParams,cipherCode);
+        payParams.put("total","100");//10000.00
+        payParams.put("version","1.0");
+
+        String sign = Utils.encrypt(payParams,userGroup.getCipherCode());
         payParams.put("sign",sign);
 
         RestTemplate restTemplate = new RestTemplate();

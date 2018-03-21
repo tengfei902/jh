@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -69,6 +70,10 @@ public class PayApi {
             logger.info("new pay request :" +new Gson().toJson(params));
             String mchId = String.valueOf(params.get("merchant_no"));
             String service = String.valueOf(params.get("service"));
+
+            BigDecimal total = new BigDecimal(params.get("total").toString());
+            params.put("total",String.valueOf(total.intValue()));
+
             TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(mchId,service);
             Map<String,Object> resultMap = tradeBiz.pay(params);
             return new Gson().toJson(resultMap);
