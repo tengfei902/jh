@@ -52,7 +52,7 @@ public class RemoteTest extends BaseCommitTestCase {
         payParams.put("sign",sign);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> entity = restTemplate.postForEntity("http://127.0.0.1:8080/jh/pay/unifiedorder",payParams,String.class, new Object[0]);
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://huifufu.cn/openapi/unifiedorder",payParams,String.class, new Object[0]);
         System.out.println(entity.getBody());
     }
 
