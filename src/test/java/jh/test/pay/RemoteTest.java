@@ -43,16 +43,16 @@ public class RemoteTest extends BaseCommitTestCase {
         payParams.put("nonce_str", Utils.getRandomString(8));
         payParams.put("name","测试");
         payParams.put("out_trade_no",String.valueOf(RandomUtils.nextLong()));
-        payParams.put("service","10");
+        payParams.put("service","04");
         payParams.put("sign_type","MD5");
-        payParams.put("total","100");//10000.00
+        payParams.put("total","11000");//10000.00
         payParams.put("version","1.0");
 
         String sign = Utils.encrypt(payParams,userGroup.getCipherCode());
         payParams.put("sign",sign);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> entity = restTemplate.postForEntity("http://huifufu.cn/openapi/unifiedorder",payParams,String.class, new Object[0]);
+        ResponseEntity<String> entity = restTemplate.postForEntity("http://127.0.0.1:8080/jh/pay/unifiedorder",payParams,String.class, new Object[0]);
         System.out.println(entity.getBody());
     }
 

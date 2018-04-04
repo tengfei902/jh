@@ -2,6 +2,7 @@ package jh.biz.adapter.impl;
 
 import com.google.gson.Gson;
 import hf.base.contants.CodeManager;
+import hf.base.enums.ChannelCode;
 import hf.base.enums.OperateType;
 import hf.base.enums.TradeType;
 import hf.base.utils.MapUtils;
@@ -52,20 +53,41 @@ public class WwPayResponseAdapter implements Adapter<WwPayResponse> {
         payResponse.setMessage("等待服务器响应");
 
         String payContent = String.valueOf(request.get("payResult"));
-        if(StringUtils.isEmpty(payContent) || !payContent.contains("pGateWayReq")) {
-            payResponse.setMessage(request.get("payResult") == null?"":String.valueOf(request.get("payResult")));
-            payResponse.setErrcode(CodeManager.PAY_FAILED);
-            PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),payResponse);
-            payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);
-            return payResponse;
+
+        ChannelCode channelCode = ChannelCode.parseFromCode(resultMsg.getService());
+        switch (channelCode) {
+            case WX_H5:
+            case QQ_H5:
+                if(StringUtils.isEmpty(payContent) || !payContent.contains("var url = ")) {
+                    payResponse.setMessage(request.get("payResult") == null?"":String.valueOf(request.get("payResult")));
+                    payResponse.setErrcode(CodeManager.BIZ_FAIELD);
+                    PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),payResponse);
+                    payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);
+                    return payResponse;
+                }
+                payResponse.setErrcode(CodeManager.PAY_SUCCESS);
+                payResponse.setMessage("下单成功");
+                String codeUrl = payContent.split("'")[1];
+                payResponse.setCode_url(codeUrl);
+                break;
+            case WY:
+                if(StringUtils.isEmpty(payContent) || !payContent.contains("pGateWayReq")) {
+                    payResponse.setMessage(request.get("payResult") == null?"":String.valueOf(request.get("payResult")));
+                    payResponse.setErrcode(CodeManager.PAY_FAILED);
+                    PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),payResponse);
+                    payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);
+                    return payResponse;
+                }
+                payResponse.setErrcode(CodeManager.PAY_SUCCESS);
+                payResponse.setMessage("下单成功");
+                String content = payContent.substring(payContent.indexOf("<form"),payContent.indexOf("</form>")+7);
+                payResponse.setPage_content(content);
+                break;
+            default:
+
         }
 
-        payResponse.setErrcode(CodeManager.PAY_SUCCESS);
-        payResponse.setMessage("下单成功");
-        String content = payContent.substring(payContent.indexOf("<form"),payContent.indexOf("</form>")+7);
-        payResponse.setPage_content(content);
         String outTradeNo = String.valueOf(request.get("outTradeNo"));
-
         PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
 
         payResponse.setNo(String.valueOf(payRequest.getId()));

@@ -7,7 +7,6 @@ import hf.base.enums.PayRequestStatus;
 import hf.base.enums.TradeType;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.Utils;
-import jh.api.PayApi;
 import jh.biz.PayBiz;
 import jh.biz.adapter.Adapter;
 import jh.biz.service.PayService;

@@ -77,6 +77,7 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
         String outMerchantNo = userGroupExt.getMerchantNo();
         String outOutLetNo = userGroupExt.getOutletNo();
         String outCipherCode = userGroupExt.getCipherCode();
+        String ip = Objects.isNull(request.get("ip"))?"127.0.0.1":String.valueOf(request.get("ip"));
 
         WwPayRequest wwPayRequest = new WwPayRequest();
 
@@ -86,7 +87,7 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
             wwPayRequest.setPayMoney(String.valueOf(new BigDecimal(payRequest.getTotal()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP)));
             wwPayRequest.setPayType("1");
             wwPayRequest.setSceneInfo("慧富微信H5支付");
-            wwPayRequest.setIp("127.0.0.1");
+            wwPayRequest.setIp(ip);
             wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
             wwPayRequest.setChannelCode(payRequest.getService());
         } else if(channelCode == ChannelCode.QQ_H5) {
@@ -95,7 +96,7 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
             wwPayRequest.setPayMoney(String.valueOf(new BigDecimal(payRequest.getTotal()).divide(new BigDecimal("100"),2,BigDecimal.ROUND_HALF_UP)));
             wwPayRequest.setPayType("3");
             wwPayRequest.setSceneInfo("慧富QQH5支付");
-            wwPayRequest.setIp("127.0.0.1");
+            wwPayRequest.setIp(ip);
             wwPayRequest.setCallbackUrl(propertyConfig.getWwCallbackUrl());
             wwPayRequest.setChannelCode(payRequest.getService());
         } else if(channelCode == ChannelCode.WY) {

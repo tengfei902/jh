@@ -10,6 +10,7 @@ public class DefaultPayResponse implements IEntity {
     private String total;
     private String sign_type;
     private String sign;
+    private String code_url;
 
     public String getErrcode() {
         return errcode;
@@ -65,5 +66,13 @@ public class DefaultPayResponse implements IEntity {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    public String getCode_url() {
+        return code_url;
+    }
+
+    public void setCode_url(String code_url) {
+        this.code_url = code_url;
     }
 }

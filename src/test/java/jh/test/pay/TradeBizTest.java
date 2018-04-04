@@ -22,6 +22,7 @@ import jh.test.BaseTestCase;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -510,4 +511,30 @@ public class TradeBizTest extends BaseTestCase {
         }
         System.out.println("public-key:"+publickey.toString());
     }
-}
+
+    @Test
+    public void testSubStringPayResult() {
+
+        String payResult = "<html>\n" +
+                "<head>\n" +
+                "    <meta http-equiv=\"pragma\" content=\"no-cache\"> \n" +
+                "    <meta http-equiv=\"cache-control\" content=\"no-cache\"> \n" +
+                "    <meta http-equiv=\"expires\" content=\"0\">  \n" +
+                "    <title>H5支付跳转</title> \n" +
+                "    \n" +
+                "</head>\n" +
+                "<body>\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "<script type=\"text/javascript\">\n" +
+                "        var url = 'https://qpay.qq.com/qr/5e792654';\n" +
+                "        window.location.href = url;\n" +
+                "    \n" +
+                "</script>\n" +
+                "\n" +
+                "</body>\n" +
+                "</html>";
+
+        System.out.println(payResult.split("'")[1]);
+    }}
