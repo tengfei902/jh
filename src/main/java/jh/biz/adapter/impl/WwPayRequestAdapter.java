@@ -77,7 +77,7 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
         String outMerchantNo = userGroupExt.getMerchantNo();
         String outOutLetNo = userGroupExt.getOutletNo();
         String outCipherCode = userGroupExt.getCipherCode();
-        String ip = Objects.isNull(request.get("ip"))?"127.0.0.1":String.valueOf(request.get("ip"));
+        String ip = Objects.isNull(request.get("create_ip"))?"127.0.0.1":String.valueOf(request.get("create_ip"));
 
         WwPayRequest wwPayRequest = new WwPayRequest();
 
