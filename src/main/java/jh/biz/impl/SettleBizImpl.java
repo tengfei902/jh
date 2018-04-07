@@ -220,9 +220,9 @@ public class SettleBizImpl implements SettleBiz {
         Map<Long,UserGroup> payGroupMap = payUserGroups.parallelStream().collect(Collectors.toMap(UserGroup::getId,Function.identity()));
 
         List<WithDrawInfo> result = new ArrayList<>();
-        tasks.parallelStream().forEach(settleTask -> result.add(buildWithDrawInfo(settleTask,withDrawGroupMap,payGroupMap)));
+        tasks.forEach(settleTask -> result.add(buildWithDrawInfo(settleTask,withDrawGroupMap,payGroupMap)));
 
-        return new Pagenation<WithDrawInfo>(result,count,withDrawRequest.getCurrentPage(),withDrawRequest.getPageSize());
+        return new Pagenation<>(result,count,withDrawRequest.getCurrentPage(),withDrawRequest.getPageSize());
     }
 
     private Map<String,Object> buildWithDrawMap(WithDrawRequest withDrawRequest) {

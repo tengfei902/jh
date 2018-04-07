@@ -75,11 +75,11 @@ public class TrdBizImpl implements TrdBiz {
         Map<String,UserGroup> mchMap = userGroups.parallelStream().collect(Collectors.toMap(UserGroup::getGroupNo,Function.identity()));
 
         List<TradeRequestDto> result = new ArrayList<>();
-        list.parallelStream().forEach(payRequest -> result.add(buildPayRequest(payRequest,mchMap)));
+        list.forEach(payRequest -> result.add(buildPayRequest(payRequest,mchMap)));
 
         Integer totalSize = payRequestDao.selectCount(params);
 
-        return new Pagenation<TradeRequestDto>(result,totalSize,request.getCurrentPage(),request.getPageSize());
+        return new Pagenation<>(result,totalSize,request.getCurrentPage(),request.getPageSize());
     }
 
     private TradeRequestDto buildPayRequest(PayRequest payRequest,Map<String,UserGroup> map) {
