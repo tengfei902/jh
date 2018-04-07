@@ -23,11 +23,13 @@
     <result column="remark" property="remark" jdbcType="VARCHAR" />
     <result column="channel_provider_code" property="channelProviderCode" jdbcType="VARCHAR" />
     <result column="out_notify_url" property="outNotifyUrl" jdbcType="VARCHAR" />
+    <result column="notice_status" property="noticeStatus" jdbcType="INTEGER" />
+    <result column="notice_retry_time" property="noticeRetryTime" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, out_trade_no, body, mch_id, sub_openid, buyer_id, service, appid, sign, `status`, 
     create_time, update_time, version,trade_type,fee,actual_amount,total_fee,remark,
-    channel_provider_code,pay_result,out_notify_url
+    channel_provider_code,pay_result,out_notify_url,notice_status,notice_retry_time
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -365,5 +367,18 @@
     where id = #{id,jdbcType=BIGINT} and version = #{version,jdbcType=INTEGER}
   </update>
 
+  <update id="updateNoticeStatus">
+    update pay_request
+    set
+    notice_status = 1
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="updateNoticeRetryTime">
+    update pay_request
+    set
+    notice_retry_time = notice_retry_time+1
+    where id = #{id,jdbcType=BIGINT}
+  </update>
 
 </mapper>

@@ -38,4 +38,8 @@ public interface PayRequestDao {
     int updatePayResult(@Param("id")Long id,@Param("payResult")String payResult,@Param("version") int version);
 
     int updateActualAmount(@Param("id")Long id, @Param("actualAmount")BigDecimal actualAmount,@Param("fee") BigDecimal fee,@Param("version")int version);
+
+    int updateNoticeStatus(@Param("id")Long id);
+
+    int updateNoticeRetryTime(@Param("id")Long id);
 }

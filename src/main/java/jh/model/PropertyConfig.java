@@ -10,6 +10,8 @@ public class PropertyConfig {
     private String callbackUrl;
     @Value("#{commonConfig[wwPayCallbackUrl]}")
     private String wwCallbackUrl;
+    @Value("#{commonConfig[outNotifyLimit]}")
+    private Integer outNotifyLimit;
 
     public String getCallbackUrl() {
         return callbackUrl;
@@ -17,5 +19,9 @@ public class PropertyConfig {
 
     public String getWwCallbackUrl() {
         return wwCallbackUrl;
+    }
+
+    public Integer getOutNotifyLimit() {
+        return outNotifyLimit;
     }
 }

@@ -24,8 +24,12 @@ public class CallBackClient extends BaseClient {
             }
         }
         RemoteParams remoteParams = new RemoteParams(url).withParams(new HashMap<>());
-        String result = super.post(remoteParams);
-        logger.info(String.format("remote call back result:%s,%s",result,new Gson().toJson(params)));
-        return StringUtils.equalsIgnoreCase(result,"SUCCESS");
+        try {
+            String result = super.post(remoteParams);
+            logger.info(String.format("remote call back result:%s,%s",result,new Gson().toJson(params)));
+            return StringUtils.equalsIgnoreCase(result,"SUCCESS");
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

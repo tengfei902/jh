@@ -16,6 +16,7 @@ import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.remote.CallBackClient;
 import jh.dao.remote.PayClient;
+import jh.model.PropertyConfig;
 import jh.model.po.PayMsgRecord;
 import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
@@ -29,6 +30,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractTradeBiz implements TradeBiz {
     protected Logger logger = LoggerFactory.getLogger(AbstractTradeBiz.class);
@@ -43,6 +45,10 @@ public abstract class AbstractTradeBiz implements TradeBiz {
     private UserGroupDao userGroupDao;
     @Autowired
     private CallBackClient callBackClient;
+    @Autowired
+    private PropertyConfig propertyConfig;
+
+    protected static final Map<String,Long> noticeRequestMap = new ConcurrentHashMap<>();
 
     abstract Adapter getRequestAdapter();
 
@@ -187,6 +193,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         if(payRequest.getStatus() != PayRequestStatus.OPR_SUCCESS.getValue()) {
             return;
         }
+        payRequestDao.updateNoticeRetryTime(payRequest.getId());
 
         UserGroup userGroup = userGroupDao.selectByGroupNo(payRequest.getMchId());
         String url = StringUtils.isEmpty(payRequest.getOutNotifyUrl())?userGroup.getCallbackUrl():payRequest.getOutNotifyUrl();
@@ -197,6 +204,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
             } else {
                 payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
             }
+            payRequestDao.updateNoticeStatus(payRequest.getId());
             return;
         }
 
@@ -225,8 +233,15 @@ public abstract class AbstractTradeBiz implements TradeBiz {
             resutMap.put("sign",sign);
 
             boolean result = callBackClient.post(url,resutMap);
+
             if(result) {
                 payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+                payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+                payRequestDao.updateNoticeStatus(payRequest.getId());
+            } else {
+                if(payRequest.getNoticeRetryTime() > propertyConfig.getOutNotifyLimit()) {
+                    payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+                }
             }
         } else {
             resutMap.put("errcode","99");
@@ -242,6 +257,12 @@ public abstract class AbstractTradeBiz implements TradeBiz {
             boolean result = callBackClient.post(url,resutMap);
             if(result) {
                 payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
+                payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+                payRequestDao.updateNoticeStatus(payRequest.getId());
+            } else {
+                if(payRequest.getNoticeRetryTime() > propertyConfig.getOutNotifyLimit()) {
+                    payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
+                }
             }
         }
     }

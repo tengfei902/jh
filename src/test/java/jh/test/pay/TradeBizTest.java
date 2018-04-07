@@ -2,10 +2,8 @@ package jh.test.pay;
 
 import com.google.gson.Gson;
 import com.sun.javafx.scene.shape.PathUtils;
+import hf.base.enums.*;
 import hf.base.enums.ChannelProvider;
-import hf.base.enums.GroupType;
-import hf.base.enums.OprStatus;
-import hf.base.enums.PayRequestStatus;
 import hf.base.utils.MapUtils;
 import hf.base.utils.TypeConverter;
 import hf.base.utils.Utils;
@@ -15,6 +13,7 @@ import jh.biz.UserBiz;
 import jh.biz.service.TradeBizFactory;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.*;
+import jh.dao.remote.CallBackClient;
 import jh.dao.remote.PayClient;
 import jh.job.pay.PayJob;
 import jh.model.po.*;
@@ -76,6 +75,8 @@ public class TradeBizTest extends BaseTestCase {
     private AccountOprLogDao accountOprLogDao;
     @Autowired
     private PayJob payJob;
+    @Mock
+    private CallBackClient callBackClient;
 
     private List<Long> groupIds;
 
@@ -537,4 +538,56 @@ public class TradeBizTest extends BaseTestCase {
                 "</html>";
 
         System.out.println(payResult.split("'")[1]);
-    }}
+    }
+
+    @Test
+    public void testNotice() {
+        UserGroup userGroup = new UserGroup();
+        userGroup.setType(GroupType.CUSTOMER.getValue());
+        userGroup.setCompanyId(1L);
+        userGroup.setSubGroupId(1L);
+        userGroup.setSubGroupName("test");
+        userGroup.setSubGroupNo("12323");
+        userGroup.setAddress("tessfag");
+        userGroup.setGroupNo(String.valueOf(RandomUtils.nextLong()));
+        userGroup.setIdCard(String.valueOf(RandomUtils.nextInt(100000)));
+        userGroup.setName("tesfs");
+        userGroup.setTel("12345223");
+        userGroup.setCipherCode("3243123r1");
+        userGroup.setOwnerName("张三");
+        userGroup.setStatus(GroupStatus.AVAILABLE.getValue());
+        userGroupDao.insertSelective(userGroup);
+
+        String outTradeNo = String.valueOf(RandomUtils.nextLong());
+        PayRequest payRequest = new PayRequest();
+        payRequest.setOutTradeNo(outTradeNo);
+        payRequest.setOutNotifyUrl("www.baidu.com");
+        payRequest.setActualAmount(new BigDecimal("1000"));
+        payRequest.setStatus(PayRequestStatus.OPR_SUCCESS.getValue());
+        payRequest.setBody("1234");
+        payRequest.setMchId(userGroup.getGroupNo());
+        payRequest.setService("04");
+        payRequest.setSign(String.valueOf(RandomUtils.nextLong()));
+        payRequestDao.insertSelective(payRequest);
+
+        payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        Mockito.when(callBackClient.post(Mockito.anyString(),Mockito.any())).thenReturn(false);
+        ReflectionTestUtils.setField(fxtTradeBiz,"callBackClient",callBackClient);
+        int i=0;
+        while (i<5) {
+            fxtTradeBiz.notice(payRequest);
+            i++;
+            payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+            Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.OPR_SUCCESS.getValue());
+            Assert.assertEquals(payRequest.getNoticeStatus(),0);
+            Assert.assertEquals(payRequest.getNoticeRetryTime(),i+1);
+        }
+
+        Mockito.when(callBackClient.post(Mockito.anyString(),Mockito.any())).thenReturn(true);
+        fxtTradeBiz.notice(payRequest);
+        payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
+        Assert.assertEquals(payRequest.getStatus().intValue(),PayRequestStatus.USER_NOTIFIED.getValue());
+        Assert.assertEquals(payRequest.getNoticeStatus(),1);
+        Assert.assertEquals(payRequest.getNoticeRetryTime(),i+1);
+    }
+}

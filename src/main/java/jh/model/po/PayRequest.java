@@ -48,6 +48,10 @@ public class PayRequest {
 
     private String outNotifyUrl;
 
+    private int noticeRetryTime;
+
+    private int noticeStatus;
+
     public PayRequest() {
 
     }
@@ -232,5 +236,21 @@ public class PayRequest {
 
     public void setOutNotifyUrl(String outNotifyUrl) {
         this.outNotifyUrl = outNotifyUrl;
+    }
+
+    public int getNoticeRetryTime() {
+        return noticeRetryTime;
+    }
+
+    public void setNoticeRetryTime(int noticeRetryTime) {
+        this.noticeRetryTime = noticeRetryTime;
+    }
+
+    public int getNoticeStatus() {
+        return noticeStatus;
+    }
+
+    public void setNoticeStatus(int noticeStatus) {
+        this.noticeStatus = noticeStatus;
     }
 }
