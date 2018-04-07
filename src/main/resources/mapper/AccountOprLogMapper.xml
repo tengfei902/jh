@@ -187,7 +187,7 @@
     select
     <include refid="Base_Column_List" />
     from account_opr_log
-    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR} order by group_id
+    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR} order by group_id,id asc
   </select>
 
   <select id="selectByGroupId" resultMap="BaseResultMap" parameterType="java.lang.String" >
@@ -207,6 +207,7 @@
         #{status}
       </foreach>
     </if>
+    order by id
   </select>
 
   <update id="updateStatusById">

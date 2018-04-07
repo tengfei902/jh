@@ -173,6 +173,7 @@
     <foreach collection="groupIds" index="index" item="groupId" open="(" separator="," close=")">
         #{groupId}
     </foreach>
+    order by id asc
   </select>
 
   <select id="select" resultMap="BaseResultMap">

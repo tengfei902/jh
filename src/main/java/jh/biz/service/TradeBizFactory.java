@@ -46,6 +46,8 @@ public class TradeBizFactory {
                 return fxtTradeBiz;
             case YS:
                 return ysTradeBiz;
+            case WW:
+                return wwTradeBiz;
         }
         throw new BizFailException(String.format("no provider found,%s",providerCode));
     }

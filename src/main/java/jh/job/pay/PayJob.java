@@ -59,7 +59,7 @@ public class PayJob {
                     TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(payRequest.getChannelProviderCode());
                     tradeBiz.handleProcessingRequest(payRequest);
                 } catch (BizFailException e) {
-                    logger.error("pay processing job failed,%s,%s",e.getMessage(),payRequest.getOutTradeNo());
+                    logger.error(String.format("pay processing job failed,%s,%s",e.getMessage(),payRequest.getOutTradeNo()));
                 }
             });
         }
