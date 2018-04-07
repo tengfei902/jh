@@ -36,6 +36,8 @@ public class HfPayRequest implements IEntity {
     private String sign;
     @Field
     private String bank_code;
+    @Field
+    private String out_notify_url;
 
     public String getVersion() {
         return version;
@@ -163,5 +165,13 @@ public class HfPayRequest implements IEntity {
 
     public void setBank_code(String bank_code) {
         this.bank_code = bank_code;
+    }
+
+    public String getOut_notify_url() {
+        return out_notify_url;
+    }
+
+    public void setOut_notify_url(String out_notify_url) {
+        this.out_notify_url = out_notify_url;
     }
 }

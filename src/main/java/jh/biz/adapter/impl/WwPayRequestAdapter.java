@@ -129,6 +129,7 @@ public class WwPayRequestAdapter implements Adapter<WwPayRequest> {
         hfPayRequest.setSign(payRequest.getSign());
         hfPayRequest.setTotalFee(Integer.parseInt(payRequest.getTotal()));
         hfPayRequest.setChannelProviderCode(ChannelProvider.WW.getCode());
+        hfPayRequest.setOutNotifyUrl(payRequest.getOut_notify_url());
 
         payService.savePayRequest(Arrays.asList(inPayMsgRecord,outPayMsgRecord),hfPayRequest);
         return wwPayRequest;

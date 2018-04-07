@@ -189,7 +189,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         }
 
         UserGroup userGroup = userGroupDao.selectByGroupNo(payRequest.getMchId());
-        String url = userGroup.getCallbackUrl();
+        String url = StringUtils.isEmpty(payRequest.getOutNotifyUrl())?userGroup.getCallbackUrl():payRequest.getOutNotifyUrl();
         if(StringUtils.isEmpty(url)) {
             logger.warn(String.format("callback url is null,%s",url));
             if(StringUtils.equalsIgnoreCase(payRequest.getPayResult(),"0")) {

@@ -46,6 +46,8 @@ public class PayRequest {
 
     private String channelProviderCode;
 
+    private String outNotifyUrl;
+
     public PayRequest() {
 
     }
@@ -222,5 +224,13 @@ public class PayRequest {
 
     public void setPayResult(String payResult) {
         this.payResult = payResult;
+    }
+
+    public String getOutNotifyUrl() {
+        return outNotifyUrl;
+    }
+
+    public void setOutNotifyUrl(String outNotifyUrl) {
+        this.outNotifyUrl = outNotifyUrl;
     }
 }

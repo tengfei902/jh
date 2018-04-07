@@ -7,6 +7,7 @@ import hf.base.utils.Utils;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
+import jh.dao.remote.CallBackClient;
 import jh.dao.remote.FxtClient;
 import jh.dao.remote.PayClient;
 import jh.dao.remote.YsClient;
@@ -39,6 +40,8 @@ public class RemoteTest extends BaseCommitTestCase {
     @Autowired
     @Qualifier("wwClient")
     private PayClient wwClient;
+    @Autowired
+    private CallBackClient callBackClient;
 
     @Test
     public void testPay() {
@@ -54,6 +57,7 @@ public class RemoteTest extends BaseCommitTestCase {
         payParams.put("sign_type","MD5");
         payParams.put("total","11000");//10000.00
         payParams.put("version","1.0");
+        payParams.put("out_notify_url","http://gate.8zhongyi.com/scan/callback/trade/pay_notify_huifu");
 
         String sign = Utils.encrypt(payParams,userGroup.getCipherCode());
         payParams.put("sign",sign);
@@ -137,5 +141,33 @@ public class RemoteTest extends BaseCommitTestCase {
         Map<String,Object> result = wwClient.orderinfo(params);
 
         System.out.println(new Gson().toJson(result));
+    }
+
+    @Test
+    public void testNotice() {
+        Map<String,Object> resutMap = new HashMap<>();
+        resutMap.put("errcode","0");
+        //msg
+        resutMap.put("message","支付成功");
+
+        resutMap.put("no","198");
+        //out_trade_no
+        resutMap.put("out_trade_no","2499897009406918");
+        //mch_id
+        resutMap.put("merchant_no","5161");
+        //total
+        resutMap.put("total","1000");
+        //fee
+        resutMap.put("fee","38");
+        //trade_type 1:收单 2:撤销 3:退款
+        resutMap.put("trade_type","1");
+        //sign_type
+        resutMap.put("sign_type","MD5");
+        String sign = Utils.encrypt(resutMap,"s3r7tWx7NQ8h78zrhNeyEyFAhNT62kXB");
+        resutMap.put("sign",sign);
+
+        boolean result = callBackClient.post("http://gate.8zhongyi.com/scan/callback/trade/pay_notify_huifu",resutMap);
+
+        System.out.println(result);
     }
 }
