@@ -226,10 +226,15 @@ public abstract class AbstractTradeBiz implements TradeBiz {
                 payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
             }
         } else {
-            resutMap.put("code","99");
-            resutMap.put("msg","支付失败");
+            resutMap.put("errcode","99");
+            resutMap.put("message","支付失败");
+            resutMap.put("no",payRequest.getId());
             resutMap.put("out_trade_no",payRequest.getOutTradeNo());
-            resutMap.put("mch_id",payRequest.getMchId());
+            resutMap.put("merchant_no",payRequest.getMchId());
+            resutMap.put("trade_type","1");
+            resutMap.put("sign_type","MD5");
+            String sign = Utils.encrypt(resutMap,userGroup.getCipherCode());
+            resutMap.put("sign",sign);
 
             boolean result = callBackClient.post(url,resutMap);
             if(result) {

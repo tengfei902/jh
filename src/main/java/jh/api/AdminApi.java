@@ -53,5 +53,11 @@ public class AdminApi {
         }
     }
 
+    @RequestMapping(value = "/trade_status_monitor",method = RequestMethod.POST)
+    public @ResponseBody ResponseResult<List> tradeStatusMonitor(@RequestBody Map<String,Object> params) {
+        String groupNo = String.valueOf(params.get("groupNo"));
+        String outTradeNo = String.valueOf("outTradeNo");
 
+        return null;
+    }
 }

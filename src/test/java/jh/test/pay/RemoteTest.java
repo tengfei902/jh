@@ -1,6 +1,7 @@
 package jh.test.pay;
 
 import com.google.gson.Gson;
+import hf.base.enums.ChannelCode;
 import hf.base.utils.Utils;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
@@ -60,19 +61,21 @@ public class RemoteTest extends BaseCommitTestCase {
     public void testRemotePay() {
         Map<String,Object> payParams = new HashMap<>();
         payParams.put("version","1.0");
-        payParams.put("service","02");
-        payParams.put("merchant_no","5151");
-        payParams.put("total","1100");//10000.00
-        payParams.put("out_trade_no","1256521431563");
-        payParams.put("create_ip","127.0.0.1");
-        payParams.put("nonce_str", Utils.getRandomString(8));
-        payParams.put("name","Lotto");
+        payParams.put("service", "04");
+        payParams.put("merchant_no","5161");
+        payParams.put("total","10000");//10000.00
+        payParams.put("out_trade_no","247103585651230");
+        payParams.put("create_ip","192_168_2_123");
+        payParams.put("nonce_str", "st1523080979677");
+        payParams.put("name","H247103585651230");
         payParams.put("sign_type","MD5");
-        String cipherCode = "y6sfdfdf";
+        payParams.put("out_notify_url","http://gate.8zhongyi.com/scan/callback/trade/pay_notify_huifu");
+        String cipherCode = "s3r7tWx7NQ8h78zrhNeyEyFAhNT62kXB";
         String sign = Utils.encrypt(payParams,cipherCode);
         payParams.put("sign",sign);
 
         RestTemplate restTemplate = new RestTemplate();
+//        ResponseEntity<String> entity = restTemplate.postForEntity("http://127.0.0.1:8080/jh/pay/unifiedorder",payParams,String.class, new Object[0]);
         ResponseEntity<String> entity = restTemplate.postForEntity("http://huifufu.cn/openapi/unifiedorder",payParams,String.class, new Object[0]);
         System.out.println(entity.getBody());
     }

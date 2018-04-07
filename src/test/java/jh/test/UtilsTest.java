@@ -1,9 +1,12 @@
 package jh.test;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import hf.base.utils.EpaySignUtil;
 import hf.base.utils.Utils;
 import org.junit.Test;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,5 +85,18 @@ public class UtilsTest {
         map.put("service","09");
 //        map.put()
 //        System.out.println(Utils.checkEncrypt());
+    }
+
+    @Test
+    public void testUnicode() throws Exception {
+        String url = "http://www.sjtaoch.cn/aggregate/H5/Pay.kb?pathid=6cac0b491641402e80c1bf44233dc5cb&redirecturl=http://47.97.175.195:8692/pay/debitNote/payCallBack?orderCode=20180405134340403029";
+        Map<String,String> map = new HashMap<>();
+        map.put("url",url);
+        System.out.println(new Gson().toJson(map));
+        Map<String,String> map1 = new  Gson().fromJson(new Gson().toJson(map),new TypeToken<Map<String,String>>(){}.getType());
+        System.out.println(map1.get("url"));
+        System.out.println(URLDecoder.decode(new Gson().toJson(map), "UTF-8"));
+        String result = new Gson().toJson(map);
+        System.out.println(new String(map1.get("url").getBytes(),"UTF-8"));
     }
 }
