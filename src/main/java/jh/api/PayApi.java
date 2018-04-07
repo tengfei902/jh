@@ -148,6 +148,7 @@ public class PayApi {
 
     @RequestMapping(value = "/ww/payCallBack",method = RequestMethod.POST ,produces = "application/json;charset=UTF-8")
     public @ResponseBody String wwCallBack(@RequestBody Map<String,String> params) {
+        logger.info(String.format("start ww callback, params:%s,",new Gson().toJson(params)));
         String result = wwTradeBiz.handleCallBack(params);
         String tradeNo = params.get("orderNum");
         PayRequest payRequest = payRequestDao.selectByTradeNo(tradeNo);

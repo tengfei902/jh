@@ -25,6 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -131,6 +134,7 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         return new Gson().fromJson(result.getMsgBody(),new TypeToken<Map<String,Object>>(){}.getType());
     }
 
+    @Retryable(value= {BizFailException.class},maxAttempts = 3,backoff = @Backoff(delay = 2000L,multiplier = 1))
     @Override
     public void handleProcessingRequest(PayRequest payRequest) {
         payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
@@ -138,7 +142,6 @@ public abstract class AbstractTradeBiz implements TradeBiz {
             logger.warn(String.format("payRequest not processing,%s,%s",payRequest.getOutTradeNo(),payRequest.getStatus()));
             return;
         }
-
         Map<String,Object> payResult = query(payRequest);
 
         if(MapUtils.isEmpty(payResult)) {

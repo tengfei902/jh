@@ -1,7 +1,6 @@
 package jh.test.pay;
 
 import com.google.gson.Gson;
-import hf.base.enums.ChannelCode;
 import hf.base.utils.EpaySignUtil;
 import hf.base.utils.Utils;
 import jh.biz.trade.TradeBiz;
@@ -57,7 +56,7 @@ public class RemoteTest extends BaseCommitTestCase {
         payParams.put("sign_type","MD5");
         payParams.put("total","11000");//10000.00
         payParams.put("version","1.0");
-        payParams.put("out_notify_url","http://gate.8zhongyi.com/scan/callback/trade/pay_notify_huifu");
+//        payParams.put("out_notify_url","http://gate.8zhongyi.com/scan/callback/trade/pay_notify_huifu");
 
         String sign = Utils.encrypt(payParams,userGroup.getCipherCode());
         payParams.put("sign",sign);
@@ -134,7 +133,7 @@ public class RemoteTest extends BaseCommitTestCase {
     public void testQuery() {
         Map<String,Object> params = new HashMap<>();
         params.put("memberCode","9010000025");
-        params.put("orderNum","5161_2499897009406918");
+        params.put("orderNum","5161_2512243979178919");
         String signUrl = Utils.getEncryptStr(params);
         String signStr = EpaySignUtil.sign(CipherUtils.private_key,signUrl);
         params.put("signStr",signStr);

@@ -84,7 +84,7 @@ public class TrdTest extends BaseTestCase {
         set.add("hssd");
         set.add("dfgfas");
         set.add("dg2134565");
-        for(String str:set) {
+        for(String  str:set) {
             System.out.println(str);
         }
 

@@ -59,7 +59,14 @@ public class WwPayResponseAdapter implements Adapter<WwPayResponse> {
             case WX_H5:
             case QQ_H5:
                 if(StringUtils.isEmpty(payContent) || !payContent.contains("var url = ")) {
-                    payResponse.setMessage(request.get("payResult") == null?"":String.valueOf(request.get("payResult")));
+                    String payResult = request.get("payResult") == null?"":String.valueOf(request.get("payResult"));
+                    try {
+                        String message = payResult.substring(payResult.indexOf("<span>")+6,payResult.lastIndexOf("</span>")).replace("<b>","").replace("</b>","").replace("\n","").replace("<p>","").replace("</p>","").replace("，",",").replace("\t","").replace("<span>","").replace("</span>","").replace("\r","");
+                        payResponse.setMessage(message);
+                    } catch (Exception e) {
+                        payResponse.setMessage(payResult);
+                    }
+
                     payResponse.setErrcode(CodeManager.BIZ_FAIELD);
                     PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),payResponse);
                     payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);
@@ -72,7 +79,13 @@ public class WwPayResponseAdapter implements Adapter<WwPayResponse> {
                 break;
             case WY:
                 if(StringUtils.isEmpty(payContent) || !payContent.contains("pGateWayReq")) {
-                    payResponse.setMessage(request.get("payResult") == null?"":String.valueOf(request.get("payResult")));
+                    String payResult = request.get("payResult") == null?"":String.valueOf(request.get("payResult"));
+                    try {
+                        String message = payResult.substring(payResult.indexOf("<span>")+6,payResult.lastIndexOf("</span>")).replace("<b>","").replace("</b>","").replace("\n","").replace("<p>","").replace("</p>","").replace("，",",").replace("\t","").replace("<span>","").replace("</span>","").replace("\r","");
+                        payResponse.setMessage(message);
+                    } catch (Exception e) {
+                        payResponse.setMessage(payResult);
+                    }
                     payResponse.setErrcode(CodeManager.PAY_FAILED);
                     PayMsgRecord hfResultMsg = new PayMsgRecord(inputMsgRecord.getOutTradeNo(),inputMsgRecord.getMerchantNo(),inputMsgRecord.getService(), OperateType.HF_USER.getValue(),TradeType.PAY.getValue(),payResponse);
                     payService.payFailed(inputMsgRecord.getOutTradeNo(),hfResultMsg);

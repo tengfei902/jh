@@ -9,19 +9,18 @@ import jh.biz.service.TradeBizFactory;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
 import jh.model.po.PayRequest;
-import jh.model.po.UserGroup;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+@EnableRetry
 @Component
 public class PayJob {
     protected Logger logger = LoggerFactory.getLogger(PayJob.class);
@@ -33,7 +32,7 @@ public class PayJob {
     private PayService payService;
 
     //银行受理中的交易
-    @Scheduled(cron = "0/2 * * * * ?")
+    @Scheduled(cron = "0/3 * * * * ?")
     public void handleProcessingPayRequest() {
         Long startId = 0L;
         int page = 1;
@@ -41,6 +40,7 @@ public class PayJob {
         while (page<100) {
             Map<String,Object> map = MapUtils.buildMap("status", PayRequestStatus.PROCESSING.getValue(),
                     "type", TradeType.PAY.getValue(),"startId",startId,
+                    "lastTime",DateUtils.addSeconds(new Date(),-3),
                     "startIndex",(page-1)*pageSize,
                     "pageSize",pageSize,"sortType","asc");
             List<PayRequest> list = payRequestDao.select(map);
@@ -65,7 +65,7 @@ public class PayJob {
         }
     }
 
-    @Scheduled(cron = "0/2 * * * * ?")
+    @Scheduled(cron = "0 0/2 * * * ?")
     public void handleNoNoticingRequest() {
         logger.info("Start handleNoNoticingRequest");
         Long startId = 0L;
@@ -73,7 +73,7 @@ public class PayJob {
         int pageSize = 500;
         while(page<100) {
             Map<String,Object> map = MapUtils.buildMap("status", PayRequestStatus.OPR_SUCCESS.getValue(),
-                    "type", TradeType.PAY.getValue(),"startId",startId,
+                    "type", TradeType.PAY.getValue(),"startId",startId,"lastTime", DateUtils.addMinutes(new Date(),-3),
                     "startIndex",(page-1)*pageSize,
                     "pageSize",pageSize,"sortType","asc");
             List<PayRequest> list = payRequestDao.select(map);

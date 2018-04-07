@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,6 +88,7 @@ public class WwTradeBiz extends AbstractTradeBiz {
         params.put("signStr",signStr);
         Map<String,Object> resultMap = wwClient.orderinfo(params);
         if(org.apache.commons.collections.MapUtils.isEmpty(resultMap)) {
+            resultMap.put("errcode",99);
             throw new BizFailException("result is null");
         }
         resultMap.put("errcode",0);
@@ -102,7 +102,16 @@ public class WwTradeBiz extends AbstractTradeBiz {
 
         logger.warn(String.format("%s query ww status : %s,%s",payRequest.getOutTradeNo(),oriRespCode,returnCode));
 
-        if(StringUtils.equals(oriRespCode,"000000") && StringUtils.equals(returnCode,"0000")) {
+        if(!StringUtils.equals(returnCode,"0000")) {
+            logger.warn(String.format("%s query failed,%s",payRequest.getOutTradeNo(),new Gson().toJson(resultMap)));
+            throw new BizFailException("retry");
+        }
+
+        if(StringUtils.equals(oriRespCode,"555555")) {
+            throw new BizFailException("retry");
+        }
+
+        if(StringUtils.equals(oriRespCode,"000000")) {
             resultMap.put("status",1);
         } else {
             resultMap.put("status",5);
