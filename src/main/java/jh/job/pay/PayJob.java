@@ -33,7 +33,7 @@ public class PayJob {
     private PayService payService;
 
     //银行受理中的交易
-    @Scheduled(cron = "0 0/2 * * * ?")
+    @Scheduled(cron = "0/2 * * * * ?")
     public void handleProcessingPayRequest() {
         Long startId = 0L;
         int page = 1;
