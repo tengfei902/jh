@@ -147,6 +147,9 @@ public abstract class AbstractTradeBiz implements TradeBiz {
         if(errcode != 0) {
             return;
         }
+
+        logger.info(String.format("%s,query result:%s",payRequest.getOutTradeNo(),new Gson().toJson(payResult)));
+
         String message = String.valueOf(payResult.get("message"));
         String service = String.valueOf(payResult.get("service"));
         String no = String.valueOf(payResult.get("no"));

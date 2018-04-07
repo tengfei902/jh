@@ -100,7 +100,7 @@ public class WwTradeBiz extends AbstractTradeBiz {
         resultMap.put("out_trade_no",orderCode);
         resultMap.put("message",oriRespMsg);
 
-        logger.warn("%s query ww status : %s,%s",payRequest.getOutTradeNo(),oriRespCode,returnCode);
+        logger.warn(String.format("%s query ww status : %s,%s",payRequest.getOutTradeNo(),oriRespCode,returnCode));
 
         if(StringUtils.equals(oriRespCode,"000000") && StringUtils.equals(returnCode,"0000")) {
             resultMap.put("status",1);

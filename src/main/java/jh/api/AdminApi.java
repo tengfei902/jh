@@ -7,7 +7,12 @@ import hf.base.utils.MapUtils;
 import hf.base.utils.ResponseResult;
 import jh.biz.TrdBiz;
 import jh.biz.UserBiz;
+import jh.biz.service.TradeBizFactory;
+import jh.biz.trade.TradeBiz;
+import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
+import jh.job.pay.PayJob;
+import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +34,12 @@ public class AdminApi {
     private UserBiz userBiz;
     @Autowired
     private TrdBiz trdBiz;
+    @Autowired
+    private PayJob payJob;
+    @Autowired
+    private TradeBizFactory tradeBizFactory;
+    @Autowired
+    private PayRequestDao payRequestDao;
 
     @RequestMapping(value = "/get_authorized_list",method = RequestMethod.POST)
     public @ResponseBody
@@ -68,4 +79,12 @@ public class AdminApi {
     public @ResponseBody Map<String,Object> orderinfo(String outTradeNo) {
         return trdBiz.orderInfo(outTradeNo);
     }
-}
+
+    @RequestMapping(value = "/runJob",method = RequestMethod.GET)
+    public @ResponseBody String runJob(String outTradeNo) {
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(payRequest.getChannelProviderCode());
+        tradeBiz.handleProcessingRequest(payRequest);
+        return "finished";
+    }
+ }
