@@ -45,6 +45,8 @@ public class PayJob {
                     "pageSize",pageSize,"sortType","asc");
             List<PayRequest> list = payRequestDao.select(map);
 
+            logger.warn("handleProcessingPayRequest , list size:"+list.size());
+
             if(CollectionUtils.isEmpty(list)) {
                 break;
             }

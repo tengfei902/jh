@@ -5,6 +5,7 @@ import hf.base.enums.GroupStatus;
 import hf.base.exceptions.BizFailException;
 import hf.base.utils.MapUtils;
 import hf.base.utils.ResponseResult;
+import jh.biz.TrdBiz;
 import jh.biz.UserBiz;
 import jh.dao.local.UserGroupDao;
 import jh.model.po.UserGroup;
@@ -26,6 +27,8 @@ public class AdminApi {
     private UserGroupDao userGroupDao;
     @Autowired
     private UserBiz userBiz;
+    @Autowired
+    private TrdBiz trdBiz;
 
     @RequestMapping(value = "/get_authorized_list",method = RequestMethod.POST)
     public @ResponseBody
@@ -59,5 +62,10 @@ public class AdminApi {
         String outTradeNo = String.valueOf("outTradeNo");
 
         return null;
+    }
+
+    @RequestMapping(value = "/orderinfo",method = RequestMethod.GET)
+    public @ResponseBody Map<String,Object> orderinfo(String outTradeNo) {
+        return trdBiz.orderInfo(outTradeNo);
     }
 }

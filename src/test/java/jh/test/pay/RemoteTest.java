@@ -2,15 +2,18 @@ package jh.test.pay;
 
 import com.google.gson.Gson;
 import hf.base.enums.ChannelCode;
+import hf.base.utils.EpaySignUtil;
 import hf.base.utils.Utils;
 import jh.biz.trade.TradeBiz;
 import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
 import jh.dao.remote.FxtClient;
+import jh.dao.remote.PayClient;
 import jh.dao.remote.YsClient;
 import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
 import jh.test.BaseCommitTestCase;
+import jh.utils.CipherUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,6 +36,9 @@ public class RemoteTest extends BaseCommitTestCase {
     private TradeBiz wwTradeBiz;
     @Autowired
     private PayRequestDao payRequestDao;
+    @Autowired
+    @Qualifier("wwClient")
+    private PayClient wwClient;
 
     @Test
     public void testPay() {
@@ -118,5 +124,18 @@ public class RemoteTest extends BaseCommitTestCase {
     @Test
     public void testWWH5Pay() {
 
+    }
+
+    @Test
+    public void testQuery() {
+        Map<String,Object> params = new HashMap<>();
+        params.put("memberCode","9010000025");
+        params.put("orderNum","5161_2499897009406918");
+        String signUrl = Utils.getEncryptStr(params);
+        String signStr = EpaySignUtil.sign(CipherUtils.private_key,signUrl);
+        params.put("signStr",signStr);
+        Map<String,Object> result = wwClient.orderinfo(params);
+
+        System.out.println(new Gson().toJson(result));
     }
 }

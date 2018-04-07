@@ -1,29 +1,36 @@
 package jh.biz.impl;
 
+import com.google.gson.Gson;
+import hf.base.enums.ChannelProvider;
 import hf.base.enums.OprType;
 import hf.base.enums.PayRequestStatus;
 import hf.base.enums.TradeType;
 import hf.base.model.TradeRequest;
 import hf.base.model.TradeRequestDto;
+import hf.base.utils.EpaySignUtil;
 import hf.base.utils.MapUtils;
 import hf.base.utils.Pagenation;
+import hf.base.utils.Utils;
 import jh.biz.TrdBiz;
 import jh.biz.service.CacheService;
 import jh.biz.service.UserService;
 import jh.dao.local.AccountOprLogDao;
 import jh.dao.local.PayRequestDao;
 import jh.dao.local.UserGroupDao;
+import jh.dao.local.UserGroupExtDao;
+import jh.dao.remote.PayClient;
 import jh.model.po.AccountOprLog;
 import jh.model.po.PayRequest;
 import jh.model.po.UserGroup;
+import jh.model.po.UserGroupExt;
+import jh.utils.CipherUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,6 +44,13 @@ public class TrdBizImpl implements TrdBiz {
     private UserGroupDao userGroupDao;
     @Autowired
     private AccountOprLogDao accountOprLogDao;
+    @Autowired
+    @Qualifier("wwClient")
+    private PayClient wwClient;
+    @Autowired
+    private CacheService cacheService;
+    @Autowired
+    private UserGroupExtDao userGroupExtDao;
 
     @Override
     public Pagenation<TradeRequestDto> getTradeList(TradeRequest request) {
@@ -94,5 +108,25 @@ public class TrdBizImpl implements TrdBiz {
         tradeRequestDto.setStatus(payRequest.getStatus());
         tradeRequestDto.setStatusDesc(PayRequestStatus.parse(payRequest.getStatus()).getDesc());
         return tradeRequestDto;
+    }
+
+    @Override
+    public Map<String,Object> orderInfo(String outTradeNo) {
+        PayRequest payRequest = payRequestDao.selectByTradeNo(outTradeNo);
+        if(Objects.isNull(payRequest)) {
+            return MapUtils.buildMap("msg","未生成交易单");
+        }
+        UserGroup userGroup = cacheService.getGroup(payRequest.getMchId());
+        UserGroupExt userGroupExt = userGroupExtDao.selectByUnq(userGroup.getId(), ChannelProvider.WW.getCode());
+        Map<String,Object> params = new HashMap<>();
+        params.put("memberCode",userGroupExt.getMerchantNo());
+        params.put("orderNum",payRequest.getOutTradeNo());
+        String signUrl = Utils.getEncryptStr(params);
+        String signStr = EpaySignUtil.sign(CipherUtils.private_key,signUrl);
+        params.put("signStr",signStr);
+        Map<String,Object> result = wwClient.orderinfo(params);
+        result.put("hfInfo",payRequest);
+
+        return MapUtils.buildMap("msg",result);
     }
 }
