@@ -40,7 +40,7 @@ public class PayJob {
         int pageSize = 500;
         while (page<100) {
             Map<String,Object> map = MapUtils.buildMap("status", PayRequestStatus.PROCESSING.getValue(),
-                    "type", TradeType.PAY.getValue(),"startId",startId,"lastTime", DateUtils.addMinutes(new Date(),-3),
+                    "type", TradeType.PAY.getValue(),"startId",startId,
                     "startIndex",(page-1)*pageSize,
                     "pageSize",pageSize,"sortType","asc");
             List<PayRequest> list = payRequestDao.select(map);
@@ -65,7 +65,7 @@ public class PayJob {
         }
     }
 
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0/2 * * * * ?")
     public void handleNoNoticingRequest() {
         logger.info("Start handleNoNoticingRequest");
         Long startId = 0L;
@@ -73,7 +73,7 @@ public class PayJob {
         int pageSize = 500;
         while(page<100) {
             Map<String,Object> map = MapUtils.buildMap("status", PayRequestStatus.OPR_SUCCESS.getValue(),
-                    "type", TradeType.PAY.getValue(),"startId",startId,"lastTime", DateUtils.addHours(new Date(),-2),
+                    "type", TradeType.PAY.getValue(),"startId",startId,
                     "startIndex",(page-1)*pageSize,
                     "pageSize",pageSize,"sortType","asc");
             List<PayRequest> list = payRequestDao.select(map);
@@ -86,15 +86,8 @@ public class PayJob {
             startId = list.get(list.size()-1).getId();
 
             list.parallelStream().forEach(payRequest -> {
-                payRequest = payRequestDao.selectByPrimaryKey(payRequest.getId());
-                if(payRequest.getStatus() != PayRequestStatus.OPR_SUCCESS.getValue()) {
-                    return;
-                }
-                if(StringUtils.equalsIgnoreCase(payRequest.getPayResult(),"0")) {
-                    payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.USER_NOTIFIED.getValue());
-                } else {
-                    payRequestDao.updateStatusById(payRequest.getId(),PayRequestStatus.OPR_SUCCESS.getValue(),PayRequestStatus.OPR_FINISHED.getValue());
-                }
+                TradeBiz tradeBiz = tradeBizFactory.getTradeBiz(payRequest.getChannelProviderCode());
+                tradeBiz.notice(payRequest);
             });
         }
 
